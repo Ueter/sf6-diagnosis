@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>スト6診断カルテ</title>
-<meta name="description" content="Buckler's Boot Campの実データから、あなたと4人のフレンドの闘い方タイプ・シーズン推移・相性を診断">
+<meta name="description" content="Buckler's Boot Campの実データから、Octopusと4人のフレンドの闘い方タイプ・シーズン推移・身内対戦成績を診断">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -129,7 +129,7 @@
   }
   .hero h1 span{ color:var(--accent); }
   .hero p{
-    max-width:66ch;
+    max-width:68ch;
     color:var(--text-muted);
     font-size:16px;
     margin:0;
@@ -197,7 +197,7 @@
   }
   .lp-value b{ color:var(--text); font-weight:500; }
 
-  /* ---------- Season trend chart ---------- */
+  /* ---------- trend / chart card shell ---------- */
   .trend-card{
     background:var(--surface);
     border:1px solid var(--border);
@@ -205,15 +205,15 @@
     padding:22px 22px 10px;
     box-shadow:var(--shadow);
   }
-  #trendChart{ width:100%; height:auto; display:block; }
-  #trendChart text{
+  svg.chart{ width:100%; height:auto; display:block; }
+  svg.chart text{
     font-family:"JetBrains Mono", monospace;
     fill:var(--text-muted);
     font-size:11px;
   }
-  #trendChart .gridline{ stroke:var(--border); stroke-width:1; }
-  #trendChart .line{ fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
-  #trendChart .dot{ stroke:var(--surface); stroke-width:1.5; }
+  svg.chart .gridline{ stroke:var(--border); stroke-width:1; }
+  svg.chart .line{ fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+  svg.chart .dot{ stroke:var(--surface); stroke-width:1.5; }
   .legend{
     display:flex;
     flex-wrap:wrap;
@@ -232,40 +232,47 @@
   }
   .legend-item.you{ color:var(--text); font-weight:600; }
 
+  /* ---------- Season / matrix tables ---------- */
   .table-scroll{ overflow-x:auto; }
-  .season-table{
+  .season-table, .matrix-table{
     width:100%;
     min-width:760px;
     border-collapse:collapse;
     font-size:13px;
   }
-  .season-table th, .season-table td{
+  .matrix-table{ min-width:560px; }
+  .season-table th, .season-table td,
+  .matrix-table th, .matrix-table td{
     padding:8px 10px;
     text-align:right;
     white-space:nowrap;
     border-bottom:1px solid var(--border);
   }
-  .season-table th{
+  .season-table th, .matrix-table th{
     font-family:"JetBrains Mono", monospace;
     font-size:11px;
     letter-spacing:.04em;
     color:var(--text-muted);
     font-weight:500;
   }
-  .season-table th:first-child, .season-table td:first-child{
+  .season-table th:first-child, .season-table td:first-child,
+  .matrix-table th:first-child, .matrix-table td:first-child{
     text-align:left;
     position:sticky;
     left:0;
     background:var(--surface);
   }
-  .season-table td{
+  .season-table td, .matrix-table td{
     font-family:"JetBrains Mono", monospace;
     font-variant-numeric: tabular-nums;
     color:var(--text-muted);
   }
-  .season-table td.na{ opacity:.35; }
-  .season-table tr.you td:first-child{ color:var(--accent); font-weight:600; }
+  .season-table td.na, .matrix-table td.na{ opacity:.35; }
+  .season-table tr.you td:first-child, .matrix-table tr.you td:first-child{ color:var(--accent); font-weight:600; }
   .season-table td.best{ color:var(--text); font-weight:700; }
+  .matrix-table td.win{ color:var(--good); font-weight:600; }
+  .matrix-table td.lose{ color:var(--bad); font-weight:600; }
+  .matrix-table td small{ opacity:.6; font-weight:400; }
 
   /* ---------- Play style breakdown ---------- */
   .style-list{
@@ -281,14 +288,15 @@
   }
   .style-name{ font-size:14px; font-weight:500; }
   .style-name.you{ color:var(--accent); font-weight:600; }
-  .style-bar{
-    display:flex;
+  .style-track{
+    position:relative;
     height:22px;
     border-radius:6px;
-    overflow:hidden;
     background:var(--surface-2);
     border:1px solid var(--border);
+    overflow:hidden;
   }
+  .style-bar{ display:flex; height:100%; }
   .style-seg{ height:100%; }
   .style-hours{
     text-align:right;
@@ -304,32 +312,52 @@
     border-top:1px solid var(--border);
   }
 
-  /* ---------- Cards ---------- */
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
-    gap:20px;
+  /* ---------- Tabs ---------- */
+  .tabs{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:22px;
   }
-  .card{
+  .tab-btn{
+    font-family:"JetBrains Mono", monospace;
+    font-size:13px;
+    letter-spacing:.02em;
+    color:var(--text-muted);
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:9px 18px;
+    cursor:pointer;
+    transition:color .15s, border-color .15s, background .15s;
+  }
+  .tab-btn:hover{ color:var(--text); }
+  .tab-btn.active{
+    color:var(--bg);
+    background:var(--accent);
+    border-color:var(--accent);
+    font-weight:600;
+  }
+  .tab-btn:focus-visible{ outline:2px solid var(--accent-2); outline-offset:2px; }
+
+  .panel{
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:14px;
-    padding:22px;
+    padding:26px;
     box-shadow:var(--shadow);
-    display:flex;
-    flex-direction:column;
-    gap:16px;
   }
-  .card.you{
-    border-color:color-mix(in srgb, var(--accent) 55%, var(--border));
-  }
-  .card-top{
+  .panel[hidden]{ display:none; }
+  .panel.you{ border-color:color-mix(in srgb, var(--accent) 55%, var(--border)); }
+
+  .panel-top{
     display:flex;
     align-items:flex-start;
     justify-content:space-between;
-    gap:10px;
+    gap:16px;
+    flex-wrap:wrap;
   }
-  .who{ display:flex; flex-direction:column; gap:6px; }
+  .panel-who{ display:flex; flex-direction:column; gap:6px; }
   .tag{
     font-family:"JetBrains Mono", monospace;
     font-size:11px;
@@ -338,7 +366,7 @@
     color:var(--text-muted);
   }
   .tag.you{ color:var(--accent); }
-  .handle{ font-size:15px; font-weight:600; }
+  .handle{ font-size:16px; font-weight:600; }
   .char-badge{
     font-family:"JetBrains Mono", monospace;
     font-size:11.5px;
@@ -352,16 +380,16 @@
     height:fit-content;
   }
   .archetype{
-    font-size:25px;
+    font-size:28px;
     font-weight:700;
     color:var(--accent);
     line-height:1.15;
-    margin:0;
+    margin:16px 0 0;
   }
   .archetype .en{
     display:block;
     font-family:"JetBrains Mono", monospace;
-    font-size:11px;
+    font-size:11.5px;
     font-weight:400;
     letter-spacing:.1em;
     text-transform:uppercase;
@@ -370,9 +398,10 @@
   }
   .stat-row{
     display:grid;
-    grid-template-columns:repeat(3, 1fr);
+    grid-template-columns:repeat(4, 1fr);
     gap:10px;
-    padding:14px 0;
+    padding:16px 0;
+    margin-top:18px;
     border-top:1px solid var(--border);
     border-bottom:1px solid var(--border);
   }
@@ -385,48 +414,72 @@
   }
   .stat .v{
     font-family:"JetBrains Mono", monospace;
-    font-size:16px;
+    font-size:17px;
     font-weight:700;
   }
-  .diagnosis{ font-size:14.5px; color:var(--text); margin:0; }
+  .diagnosis{ font-size:15px; color:var(--text); margin:18px 0 0; }
 
-  .season-strip{
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+  .panel-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+    margin-top:22px;
   }
-  .season-strip .label{
-    font-size:11px;
+  @media (max-width: 720px){ .panel-grid{ grid-template-columns:1fr; } }
+
+  .subhead{
+    font-size:12px;
     letter-spacing:.06em;
     text-transform:uppercase;
     color:var(--text-muted);
+    margin:0 0 10px;
   }
-  .season-bars{
-    display:flex;
-    align-items:flex-end;
-    gap:4px;
-    height:46px;
+
+  .roster-list{ display:flex; flex-direction:column; gap:8px; }
+  .roster-row{
+    display:grid;
+    grid-template-columns: 74px 1fr 46px 70px;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
   }
-  .season-bars .bar{
-    flex:1;
-    min-width:6px;
-    border-radius:2px 2px 0 0;
-    background:var(--player-color, var(--accent));
-    position:relative;
+  .roster-row .rc{ font-weight:600; }
+  .roster-track{
+    height:8px;
+    border-radius:4px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    overflow:hidden;
   }
-  .season-bars .bar.empty{ background:var(--surface-2); height:3px !important; align-self:flex-end; }
-  .season-caption{
-    font-family:"JetBrains Mono", monospace;
-    font-size:11px;
-    color:var(--text-muted);
-    display:flex;
-    justify-content:space-between;
+  .roster-fill{ height:100%; border-radius:4px; background:var(--player-color, var(--accent)); }
+  .roster-b{ text-align:right; color:var(--text-muted); font-family:"JetBrains Mono", monospace; }
+  .roster-wr{ text-align:right; font-family:"JetBrains Mono", monospace; font-weight:600; }
+
+  .vs-list{ display:flex; flex-direction:column; gap:8px; }
+  .vs-row{
+    display:grid;
+    grid-template-columns: 84px 1fr 90px;
+    align-items:center;
+    gap:10px;
+    font-size:13px;
   }
+  .vs-track{
+    height:10px;
+    border-radius:5px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+  .vs-fill{ height:100%; }
+  .vs-fill.win{ background:var(--good); }
+  .vs-fill.lose{ background:var(--bad); }
+  .vs-wr{ text-align:right; font-family:"JetBrains Mono", monospace; color:var(--text-muted); }
 
   .matchup-row{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
+    margin-top:22px;
   }
   .matchup{
     background:var(--surface-2);
@@ -455,6 +508,7 @@
     display:flex;
     flex-direction:column;
     gap:4px;
+    margin-top:22px;
   }
   .quote .title{ font-size:13.5px; font-weight:600; }
   .quote .comment{ font-size:13px; color:var(--text-muted); font-style:italic; }
@@ -483,6 +537,7 @@
   @media (max-width: 520px){
     .lp-row{ grid-template-columns: 78px 1fr 76px; gap:10px;}
     .matchup-row{ grid-template-columns:1fr; }
+    .stat-row{ grid-template-columns:repeat(2,1fr); }
   }
 </style>
 </head>
@@ -493,7 +548,7 @@
   <section class="hero">
     <span class="eyebrow">Buckler's Boot Camp Data · Season 0–13</span>
     <h1>スト6<span>診断カルテ</span></h1>
-    <p>あなたと4人のフレンド、あわせて5人分のランクマッチ実績を実データから読み解いた診断カルテ。現在の戦績だけでなく、シーズン0〜13の勝率推移・メインキャラの変遷・通算キャラ相性・プレイスタイル（ランクマ／カジュアル／カスタム／練習）の時間配分まで掘り下げた。</p>
+    <p>Octopusと4人のフレンド、あわせて5人分のランクマッチ＆カスタムルーム実績を実データから読み解いた診断カルテ。シーズン0〜13の勝率推移・使用キャラの全内訳・プレイスタイルに加え、身内同士の対戦成績（誰が誰に強いか）まで掘り下げた。</p>
     <div class="hero-meta">
       <span>FIGHTERS <b>5</b></span>
       <span>SEASONS TRACKED <b>14</b></span>
@@ -513,7 +568,7 @@
         <span class="lp-value mono"><b>298,767</b> LP</span>
       </div>
       <div class="lp-row">
-        <span class="lp-name you">あなた</span>
+        <span class="lp-name you">Octopus</span>
         <div class="lp-track"><div class="lp-fill" style="width:66.2%"></div></div>
         <span class="lp-value mono"><b>211,872</b> LP</span>
       </div>
@@ -538,10 +593,10 @@
   <section>
     <div class="section-head">
       <h2>シーズン別 勝率の推移</h2>
-      <p class="sub">シーズン0〜13の勝率（ランクマッチ）。線が途切れているのはそのシーズンに対戦記録がない期間。相対的な強さの推移が一目でわかる。</p>
+      <p class="sub">シーズン0〜13のランクマッチ勝率。線が途切れているのは対戦記録がない期間。実際の値は44〜63%に収まるため、軸は35〜65%にズームしている。</p>
     </div>
     <div class="trend-card">
-      <svg id="trendChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別勝率推移チャート"></svg>
+      <svg class="chart" id="trendChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別ランクマッチ勝率推移チャート"></svg>
     </div>
     <div class="legend" id="legend"></div>
     <div class="table-scroll">
@@ -552,7 +607,7 @@
   <section>
     <div class="section-head">
       <h2>プレイスタイル内訳</h2>
-      <p class="sub">キャリア通算の活動時間の内訳。ランクマッチ・カジュアル・カスタムルーム・トレーニングにどれだけ時間を使っているか。</p>
+      <p class="sub">キャリア通算の活動時間。バーの幅そのものが総プレイ時間の絶対量（shien07の1,063時間を100%として比例）、色の内訳がランクマ／練習／カスタム等の配分。</p>
     </div>
     <div class="trend-card">
       <div class="style-list" id="playstyle"></div>
@@ -562,145 +617,214 @@
 
   <section>
     <div class="section-head">
-      <h2>ファイター診断</h2>
-      <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）から診断した、5人それぞれの闘い方タイプ。</p>
+      <h2>身内対戦成績（カスタムルーム）</h2>
+      <p class="sub">縦の行が「誰視点か」、横の列が「相手」。カスタムルームはほぼ身内戦のため、各プレイヤーの現メインキャラでの対戦を身内対戦の代理指標として使用（数値がわずかに非対称なのは、まれに他のキャラ・他プレイヤーが混ざるため）。</p>
     </div>
-    <div class="grid">
-
-      <article class="card you">
-        <div class="card-top">
-          <div class="who">
-            <span class="tag you">You</span>
-            <span class="handle">Octopus</span>
-          </div>
-          <span class="char-badge">JURI</span>
-        </div>
-        <h3 class="archetype">一途の求道者<span class="en">The One-Character Devotee</span></h3>
-        <div class="stat-row">
-          <div class="stat"><span class="k">LP</span><span class="v mono">211,872</span></div>
-          <div class="stat"><span class="k">MR</span><span class="v mono">1,611</span></div>
-          <div class="stat"><span class="k">Ranked</span><span class="v mono">9,149</span></div>
-        </div>
-        <p class="diagnosis">シーズン3から一貫してJURI一筋。ランクマッチの勝率はシーズンごとに47〜54%で推移し、通算(9,149戦)では49.1%とほぼ五分。数字の派手さより、二刀流に目もくれず一人の相棒を回し続ける継続力で語るタイプ。</p>
-        <div class="season-strip" data-player="you"></div>
-        <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">CAMMY</span><span class="wr mono">60.0% (575戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">ELENA</span><span class="wr mono">34.6% (26戦)</span></div>
-        </div>
-        <div class="quote">
-          <span class="title">「Disposition for Destruction」</span>
-          <span class="comment">コメント: Just Learned the Controls — MR1,611にしてまだ「操作を覚えたばかり」を名乗る、その謙遜（？）が逆に不気味。</span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <div class="who">
-            <span class="tag">Friend</span>
-            <span class="handle">shien07</span>
-          </div>
-          <span class="char-badge">CAMMY</span>
-        </div>
-        <h3 class="archetype">鉄人グラインダー<span class="en">The Iron Grinder</span></h3>
-        <div class="stat-row">
-          <div class="stat"><span class="k">LP</span><span class="v mono">298,767</span></div>
-          <div class="stat"><span class="k">MR</span><span class="v mono">1,488</span></div>
-          <div class="stat"><span class="k">Ranked</span><span class="v mono">22,313</span></div>
-        </div>
-        <p class="diagnosis">CAMMYをシーズン3から11シーズン連続でメイン固定、5人で唯一途切れなくプレイし続けている。ランクマの勝率は44〜50%で安定推移、通算22,320戦・48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。</p>
-        <div class="season-strip" data-player="shien"></div>
-        <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">58.0% (150戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">E. HONDA</span><span class="wr mono">34.3% (265戦)</span></div>
-        </div>
-        <div class="quote">
-          <span class="title">「Let's Do This」</span>
-          <span class="comment">コメント: None — 多くを語らず、対戦数だけで語るタイプ。</span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <div class="who">
-            <span class="tag">Friend</span>
-            <span class="handle">nanashi</span>
-          </div>
-          <span class="char-badge">TERRY</span>
-        </div>
-        <h3 class="archetype">努力型ラボワーカー<span class="en">The Lab Rat</span></h3>
-        <div class="stat-row">
-          <div class="stat"><span class="k">LP</span><span class="v mono">170,483</span></div>
-          <div class="stat"><span class="k">MR</span><span class="v mono">1,606</span></div>
-          <div class="stat"><span class="k">Ranked</span><span class="v mono">4,916</span></div>
-        </div>
-        <p class="diagnosis">シーズン3〜5はKENを使用(この間の勝率50〜61%と好調)、シーズン6でTERRYに転向して以降は一貫してTERRY一本。転向後も勝率50〜55%を維持し、通算52.3%とグループトップの勝率。トレーニング224時間がランクマ197時間を上回る、5人で唯一「練習＞実戦」の全活動時間トップは練習という努力家。</p>
-        <div class="season-strip" data-player="nanashi"></div>
-        <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">78.9% (19戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">BLANKA</span><span class="wr mono">30.8% (26戦)</span></div>
-        </div>
-        <div class="quote">
-          <span class="title">「OK!」</span>
-          <span class="comment">コメント: Wants to Improve — コメント欄でも素直に上達志向、有言実行タイプ。</span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <div class="who">
-            <span class="tag">Friend</span>
-            <span class="handle">Hitsuji</span>
-          </div>
-          <span class="char-badge">ZANGIEF</span>
-        </div>
-        <h3 class="archetype">対人希求のセットコーラー<span class="en">The Set Caller</span></h3>
-        <div class="stat-row">
-          <div class="stat"><span class="k">LP</span><span class="v mono">145,783</span></div>
-          <div class="stat"><span class="k">MR</span><span class="v mono">1,400</span></div>
-          <div class="stat"><span class="k">Ranked</span><span class="v mono">6,116</span></div>
-        </div>
-        <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。</p>
-        <div class="season-strip" data-player="hitsuji"></div>
-        <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">54.4% (160戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">DHALSIM</span><span class="wr mono">26.2% (42戦)</span></div>
-        </div>
-        <div class="quote">
-          <span class="title">「A Man's Peaceful Passing」</span>
-          <span class="comment">コメント: I Want to Play Sets! — 意訳: 誰かセットしよう。</span>
-        </div>
-      </article>
-
-      <article class="card">
-        <div class="card-top">
-          <div class="who">
-            <span class="tag">Friend</span>
-            <span class="handle">hiyoko</span>
-          </div>
-          <span class="char-badge">MAI</span>
-        </div>
-        <h3 class="archetype">彷徨えるキャラ探求者<span class="en">The Wandering Seeker</span></h3>
-        <div class="stat-row">
-          <div class="stat"><span class="k">LP</span><span class="v mono">21,686</span></div>
-          <div class="stat"><span class="k">Rank</span><span class="v mono">Diamond 3</span></div>
-          <div class="stat"><span class="k">Ranked</span><span class="v mono">2,575</span></div>
-        </div>
-        <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。JP時代のシーズン3は63.3%と好スタートだったが、キャラを転々とする中で45〜51%まで低下。それでも通算(2,575戦)では49.1%とほぼ五分を維持しており、キャラを変えても地力は落ちていない。練習・カスタムルームの時間がランクマより長く、過程を楽しむタイプ。</p>
-        <div class="season-strip" data-player="hiyoko"></div>
-        <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">72.7% (11戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">MARISA</span><span class="wr mono">33.3% (15戦)</span></div>
-        </div>
-        <div class="quote">
-          <span class="title">「#KZHCUP」</span>
-          <span class="comment">コメント: None — 5人で最もマイペースな一人。</span>
-        </div>
-      </article>
-
+    <div class="table-scroll">
+      <table class="matrix-table" id="matrixTable" aria-label="身内対戦成績マトリクス"></table>
     </div>
   </section>
 
-  <p class="note">※ LP・MRはシーズンごとにリセットされ、過去シーズンの数値やマスター到達日は公式サイトからは取得できないため、ここでは各シーズンのランクマッチ成績（勝率・試合数）で強さの推移を表している。集計はすべて「ランクマッチ」限定（カジュアル・カスタムルーム・トレーニングは除く）。相性データは通算成績から、母数10戦未満の対面は信頼性が低いため除外している。</p>
+  <section>
+    <div class="section-head">
+      <h2>Octopus vs 各フレンド 対戦成績の推移</h2>
+      <p class="sub">カスタムルームでのシーズン別勝率（Octopus視点）。身内内での力関係の変化が見える。</p>
+    </div>
+    <div class="trend-card">
+      <svg class="chart" id="vsChart" viewBox="0 0 1040 380" role="img" aria-label="Octopus対フレンド勝率推移チャート"></svg>
+    </div>
+    <div class="legend" id="vsLegend"></div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>ファイター診断</h2>
+      <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）・身内対戦成績から診断した、5人それぞれの闘い方タイプ。</p>
+    </div>
+    <div class="tabs" id="tabButtons"></div>
+
+    <div class="panel you" id="panel-you" data-tab="you">
+      <div class="panel-top">
+        <div class="panel-who">
+          <span class="tag you">作成者</span>
+          <span class="handle">Octopus</span>
+        </div>
+        <span class="char-badge">JURI</span>
+      </div>
+      <h3 class="archetype">一途の求道者<span class="en">The One-Character Devotee</span></h3>
+      <div class="stat-row">
+        <div class="stat"><span class="k">LP</span><span class="v mono">211,872</span></div>
+        <div class="stat"><span class="k">MR</span><span class="v mono">1,611</span></div>
+        <div class="stat"><span class="k">Ranked</span><span class="v mono">9,149</span></div>
+        <div class="stat"><span class="k">通算勝率</span><span class="v mono">49.1%</span></div>
+      </div>
+      <p class="diagnosis">シーズン3から一貫してJURI一筋、通算9,149戦すべて同じキャラ。ランクマッチの勝率はシーズンごとに47〜54%で推移し、通算では49.1%とほぼ五分。数字の派手さより、二刀流に目もくれず一人の相棒を回し続ける継続力で語るタイプ。</p>
+      <div class="panel-grid">
+        <div>
+          <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
+          <div class="roster-list" data-roster="you"></div>
+        </div>
+        <div>
+          <p class="subhead">身内対戦成績（カスタムルーム）</p>
+          <div class="vs-list" data-vs="you"></div>
+        </div>
+      </div>
+      <div class="matchup-row">
+        <div class="matchup good"><span class="label">得意</span><span class="char">CAMMY</span><span class="wr mono">60.0% (575戦)</span></div>
+        <div class="matchup bad"><span class="label">苦手</span><span class="char">ELENA</span><span class="wr mono">34.6% (26戦)</span></div>
+      </div>
+      <div class="quote">
+        <span class="title">「Disposition for Destruction」</span>
+        <span class="comment">コメント: Just Learned the Controls — MR1,611にしてまだ「操作を覚えたばかり」を名乗る、その謙遜（？）が逆に不気味。</span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-shien07" data-tab="shien07" hidden>
+      <div class="panel-top">
+        <div class="panel-who">
+          <span class="tag">Friend</span>
+          <span class="handle">shien07</span>
+        </div>
+        <span class="char-badge">CAMMY</span>
+      </div>
+      <h3 class="archetype">鉄人グラインダー<span class="en">The Iron Grinder</span></h3>
+      <div class="stat-row">
+        <div class="stat"><span class="k">LP</span><span class="v mono">298,767</span></div>
+        <div class="stat"><span class="k">MR</span><span class="v mono">1,488</span></div>
+        <div class="stat"><span class="k">Ranked</span><span class="v mono">22,320</span></div>
+        <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.3%</span></div>
+      </div>
+      <p class="diagnosis">CAMMY使用率96.2%、5人で唯一シーズン3から11シーズン連続でプレイし続けている。ランクマの勝率は44〜50%で安定、通算48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。身内戦ではOctopus・nanashi相手にはやや苦戦気味。</p>
+      <div class="panel-grid">
+        <div>
+          <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
+          <div class="roster-list" data-roster="shien07"></div>
+        </div>
+        <div>
+          <p class="subhead">身内対戦成績（カスタムルーム）</p>
+          <div class="vs-list" data-vs="shien07"></div>
+        </div>
+      </div>
+      <div class="matchup-row">
+        <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">58.0% (150戦)</span></div>
+        <div class="matchup bad"><span class="label">苦手</span><span class="char">E. HONDA</span><span class="wr mono">34.3% (265戦)</span></div>
+      </div>
+      <div class="quote">
+        <span class="title">「Let's Do This」</span>
+        <span class="comment">コメント: None — 多くを語らず、対戦数だけで語るタイプ。</span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-nanashi" data-tab="nanashi" hidden>
+      <div class="panel-top">
+        <div class="panel-who">
+          <span class="tag">Friend</span>
+          <span class="handle">nanashi</span>
+        </div>
+        <span class="char-badge">TERRY</span>
+      </div>
+      <h3 class="archetype">努力型ラボワーカー<span class="en">The Lab Rat</span></h3>
+      <div class="stat-row">
+        <div class="stat"><span class="k">LP</span><span class="v mono">170,483</span></div>
+        <div class="stat"><span class="k">MR</span><span class="v mono">1,606</span></div>
+        <div class="stat"><span class="k">Ranked</span><span class="v mono">4,916</span></div>
+        <div class="stat"><span class="k">通算勝率</span><span class="v mono">52.3%</span></div>
+      </div>
+      <p class="diagnosis">キャリア通算ではTERRY(2,644戦)とKEN(2,272戦)がほぼ拮抗する二刀流だったが、シーズン6以降はTERRY一本に絞っている。ランクマ通算勝率52.3%は5人でトップ。トレーニング224時間がランクマ197時間を上回る、全活動時間トップも練習という努力家。身内戦ではhiyoko相手に93.6%と圧倒。</p>
+      <div class="panel-grid">
+        <div>
+          <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
+          <div class="roster-list" data-roster="nanashi"></div>
+        </div>
+        <div>
+          <p class="subhead">身内対戦成績（カスタムルーム・TERRY視点）</p>
+          <div class="vs-list" data-vs="nanashi"></div>
+        </div>
+      </div>
+      <div class="matchup-row">
+        <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">78.9% (19戦)</span></div>
+        <div class="matchup bad"><span class="label">苦手</span><span class="char">BLANKA</span><span class="wr mono">30.8% (26戦)</span></div>
+      </div>
+      <div class="quote">
+        <span class="title">「OK!」</span>
+        <span class="comment">コメント: Wants to Improve — コメント欄でも素直に上達志向、有言実行タイプ。</span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-Hitsuji" data-tab="Hitsuji" hidden>
+      <div class="panel-top">
+        <div class="panel-who">
+          <span class="tag">Friend</span>
+          <span class="handle">Hitsuji</span>
+        </div>
+        <span class="char-badge">ZANGIEF</span>
+      </div>
+      <h3 class="archetype">対人希求のセットコーラー<span class="en">The Set Caller</span></h3>
+      <div class="stat-row">
+        <div class="stat"><span class="k">LP</span><span class="v mono">145,783</span></div>
+        <div class="stat"><span class="k">MR</span><span class="v mono">1,400</span></div>
+        <div class="stat"><span class="k">Ranked</span><span class="v mono">6,116</span></div>
+        <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.0%</span></div>
+      </div>
+      <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋(98.0%)で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。身内戦ではhiyokoに強い一方、Octopus・shien07にはやや分が悪い。</p>
+      <div class="panel-grid">
+        <div>
+          <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
+          <div class="roster-list" data-roster="Hitsuji"></div>
+        </div>
+        <div>
+          <p class="subhead">身内対戦成績（カスタムルーム）</p>
+          <div class="vs-list" data-vs="Hitsuji"></div>
+        </div>
+      </div>
+      <div class="matchup-row">
+        <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">54.4% (160戦)</span></div>
+        <div class="matchup bad"><span class="label">苦手</span><span class="char">DHALSIM</span><span class="wr mono">26.2% (42戦)</span></div>
+      </div>
+      <div class="quote">
+        <span class="title">「A Man's Peaceful Passing」</span>
+        <span class="comment">コメント: I Want to Play Sets! — 意訳: 誰かセットしよう。</span>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-hiyoko" data-tab="hiyoko" hidden>
+      <div class="panel-top">
+        <div class="panel-who">
+          <span class="tag">Friend</span>
+          <span class="handle">hiyoko</span>
+        </div>
+        <span class="char-badge">MAI</span>
+      </div>
+      <h3 class="archetype">彷徨えるキャラ探求者<span class="en">The Wandering Seeker</span></h3>
+      <div class="stat-row">
+        <div class="stat"><span class="k">LP</span><span class="v mono">21,686</span></div>
+        <div class="stat"><span class="k">Rank</span><span class="v mono">Diamond 3</span></div>
+        <div class="stat"><span class="k">Ranked</span><span class="v mono">2,575</span></div>
+        <div class="stat"><span class="k">通算勝率</span><span class="v mono">49.1%</span></div>
+      </div>
+      <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。キャリア通算で最も使用しているのは現在の主力MAIではなく実はED(1,218戦)。使用率は低いがJPの勝率68.3%が全キャラ中最高で、実は一番強かったのはJPだったのかもしれない。ランクマ通算は49.1%とほぼ五分を維持する一方、身内戦（カスタムルーム）では全員に負け越し中の「胸を貸す」ポジション。</p>
+      <div class="panel-grid">
+        <div>
+          <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
+          <div class="roster-list" data-roster="hiyoko"></div>
+        </div>
+        <div>
+          <p class="subhead">身内対戦成績（カスタムルーム・MAI視点）</p>
+          <div class="vs-list" data-vs="hiyoko"></div>
+        </div>
+      </div>
+      <div class="matchup-row">
+        <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">72.7% (11戦)</span></div>
+        <div class="matchup bad"><span class="label">苦手</span><span class="char">MARISA</span><span class="wr mono">33.3% (15戦)</span></div>
+      </div>
+      <div class="quote">
+        <span class="title">「#KZHCUP」</span>
+        <span class="comment">コメント: None — 5人で最もマイペースな一人。</span>
+      </div>
+    </div>
+  </section>
+
+  <p class="note">※ LP・MRはシーズンごとにリセットされ、過去シーズンの数値やマスター到達日は公式サイトからは取得できないため、ここでは各シーズンのランクマッチ成績（勝率・試合数）で強さの推移を表している。ランクマ集計は「ランクマッチ」限定（カジュアル・カスタムルーム・トレーニングは除く）。相性・身内対戦データは通算成績から、母数10戦未満の対面は信頼性が低いため除外している。身内対戦成績はカスタムルームの対キャラ戦績を代理指標として使用しており、厳密な1対1の対戦記録ではない。</p>
 
   <footer>
     <span>DATA: Buckler's Boot Camp (streetfighter.com/6/buckler)</span>
@@ -712,8 +836,7 @@
 
 <script>
 (function(){
-  // Ranked Matches only (targetModeId=2). "All modes" was mistakenly used in an earlier draft
-  // and included Casual/Custom Room games, which skewed several win rates.
+  // ============ Ranked Matches only (targetModeId=2) season history ============
   var wins = {
     you:     [0,0,0,773,925,659,538,951,184,0,0,0,342,122],
     shien:   [0,0,0,1072,1732,998,1086,1540,938,962,825,511,679,447],
@@ -728,7 +851,7 @@
     hitsuji: [0,0,0,0,0,0,0,1815,1417,582,430,455,904,513],
     hiyoko:  [0,0,0,147,407,624,276,805,0,0,0,0,66,250]
   };
-  var totals = { // targetSeasonId=-1 (career, Ranked only)
+  var totals = {
     you:     { w: 4494, b: 9149 },
     shien:   { w: 10790, b: 22320 },
     nanashi: { w: 2571, b: 4916 },
@@ -736,58 +859,19 @@
     hiyoko:  { w: 1263, b: 2575 }
   };
   function wr(w,b){ return b>0 ? +(100*w/b).toFixed(1) : null; }
-  var seasonData = {
-    you:     { color: 'var(--p-you)',     label: 'あなた',   you: true,  series: battles.you.map(function(b,i){ return wr(wins.you[i], b); }) },
-    shien:   { color: 'var(--p-shien)',   label: 'shien07',  series: battles.shien.map(function(b,i){ return wr(wins.shien[i], b); }) },
-    nanashi: { color: 'var(--p-nanashi)', label: 'nanashi',  series: battles.nanashi.map(function(b,i){ return wr(wins.nanashi[i], b); }) },
-    hitsuji: { color: 'var(--p-hitsuji)', label: 'Hitsuji',  series: battles.hitsuji.map(function(b,i){ return wr(wins.hitsuji[i], b); }) },
-    hiyoko:  { color: 'var(--p-hiyoko)',  label: 'hiyoko',   series: battles.hiyoko.map(function(b,i){ return wr(wins.hiyoko[i], b); }) }
+  var playerMeta = {
+    you:     { color: 'var(--p-you)',     label: 'Octopus', you: true },
+    shien:   { color: 'var(--p-shien)',   label: 'shien07' },
+    nanashi: { color: 'var(--p-nanashi)', label: 'nanashi' },
+    hitsuji: { color: 'var(--p-hitsuji)', label: 'Hitsuji' },
+    hiyoko:  { color: 'var(--p-hiyoko)',  label: 'hiyoko' }
   };
-
-  // ---- Season bars per card ----
-  document.querySelectorAll('.season-strip').forEach(function(el){
-    var key = el.getAttribute('data-player');
-    var b = battles[key];
-    var max = Math.max.apply(null, b);
-    var bars = document.createElement('div');
-    bars.className = 'season-bars';
-    bars.style.setProperty('--player-color', seasonData[key].color);
-    b.forEach(function(v){
-      var bar = document.createElement('div');
-      if (v === 0){
-        bar.className = 'bar empty';
-      } else {
-        bar.className = 'bar';
-        bar.style.height = Math.max(6, (v/max)*46) + 'px';
-        bar.title = v + '戦';
-      }
-      bars.appendChild(bar);
+  var seasonData = {};
+  Object.keys(playerMeta).forEach(function(key){
+    seasonData[key] = Object.assign({}, playerMeta[key], {
+      series: battles[key].map(function(b,i){ return wr(wins[key][i], b); })
     });
-    var caption = document.createElement('div');
-    caption.className = 'season-caption';
-    caption.innerHTML = '<span>S0 試合数推移</span><span>S13</span>';
-    var label = document.createElement('div');
-    label.className = 'label';
-    label.textContent = 'シーズン別 対戦ボリューム (S0〜S13)';
-    el.appendChild(label);
-    el.appendChild(bars);
-    el.appendChild(caption);
   });
-
-  // ---- Trend line chart ----
-  var svg = document.getElementById('trendChart');
-  var W = 1040, H = 380;
-  var padL = 46, padR = 20, padT = 20, padB = 34;
-  var plotW = W - padL - padR;
-  var plotH = H - padT - padB;
-  var seasons = 14;
-  // Real ranked win rates for this group cluster tightly around 50% (as expected on a
-  // rating-based ladder), so zoom the axis into 35–65% instead of 0–100 — otherwise every
-  // line flattens into a nearly indistinguishable band near the top of the chart.
-  var yMin = 35, yMax = 65;
-
-  function x(i){ return padL + (i/(seasons-1))*plotW; }
-  function y(v){ return padT + plotH - ((v-yMin)/(yMax-yMin))*plotH; }
 
   var svgns = 'http://www.w3.org/2000/svg';
   function el(tag, attrs){
@@ -796,50 +880,59 @@
     return e;
   }
 
-  // gridlines + y labels
-  [35,40,45,55,60,65].forEach(function(v){
-    svg.appendChild(el('line', { class:'gridline', x1:padL, x2:W-padR, y1:y(v), y2:y(v) }));
-    var t = el('text', { x: padL-10, y: y(v)+4, 'text-anchor':'end' });
-    t.textContent = v + '%';
-    svg.appendChild(t);
-  });
-  // 50% reference line (break-even in a rating-based ladder)
-  var fifty = el('line', { x1:padL, x2:W-padR, y1:y(50), y2:y(50), stroke:'var(--text-muted)', 'stroke-width':1, 'stroke-dasharray':'3 4', opacity:'0.6' });
-  svg.appendChild(fifty);
-  var fiftyLabel = el('text', { x: padL+4, y: y(50)-6, 'text-anchor':'start' });
-  fiftyLabel.textContent = '五分(50%)';
-  svg.appendChild(fiftyLabel);
-  // x labels
-  for (var i=0;i<seasons;i++){
-    var t = el('text', { x: x(i), y: H-padB+18, 'text-anchor':'middle' });
-    t.textContent = 'S'+i;
-    svg.appendChild(t);
-  }
+  function drawLineChart(svg, seriesMap, opts){
+    var W = 1040, H = 380;
+    var padL = 46, padR = 20, padT = 20, padB = 34;
+    var plotW = W - padL - padR;
+    var plotH = H - padT - padB;
+    var n = opts.n;
+    var yMin = opts.yMin, yMax = opts.yMax;
+    function x(i){ return padL + (i/(n-1))*plotW; }
+    function y(v){ return padT + plotH - ((v-yMin)/(yMax-yMin))*plotH; }
 
-  Object.keys(seasonData).forEach(function(key){
-    var d = seasonData[key];
-    var pts = d.series.map(function(v,i){ return v===null ? null : [i,v]; });
-    // split into contiguous runs
-    var runs = [];
-    var cur = [];
-    pts.forEach(function(p){
-      if (p === null){
-        if (cur.length) runs.push(cur);
-        cur = [];
-      } else {
-        cur.push(p);
-      }
+    (opts.gridlines||[]).forEach(function(v){
+      svg.appendChild(el('line', { class:'gridline', x1:padL, x2:W-padR, y1:y(v), y2:y(v) }));
+      var t = el('text', { x: padL-10, y: y(v)+4, 'text-anchor':'end' });
+      t.textContent = v + '%';
+      svg.appendChild(t);
     });
-    if (cur.length) runs.push(cur);
+    if (opts.refLine != null){
+      svg.appendChild(el('line', { x1:padL, x2:W-padR, y1:y(opts.refLine), y2:y(opts.refLine), stroke:'var(--text-muted)', 'stroke-width':1, 'stroke-dasharray':'3 4', opacity:'0.6' }));
+      var rl = el('text', { x: padL+4, y: y(opts.refLine)-6, 'text-anchor':'start' });
+      rl.textContent = opts.refLineLabel || (opts.refLine+'%');
+      svg.appendChild(rl);
+    }
+    for (var i=0;i<n;i++){
+      var t = el('text', { x: x(i), y: H-padB+18, 'text-anchor':'middle' });
+      t.textContent = opts.xLabel(i);
+      svg.appendChild(t);
+    }
 
-    runs.forEach(function(run){
-      var dAttr = run.map(function(p,idx){ return (idx===0?'M':'L') + x(p[0]) + ' ' + y(p[1]); }).join(' ');
-      svg.appendChild(el('path', { class:'line', d:dAttr, stroke:d.color }));
-      run.forEach(function(p){
-        var r = d.you ? 4.5 : 3.5;
-        svg.appendChild(el('circle', { class:'dot', cx:x(p[0]), cy:y(p[1]), r:r, fill:d.color }));
+    Object.keys(seriesMap).forEach(function(key){
+      var d = seriesMap[key];
+      var pts = d.series.map(function(v,i){ return v===null ? null : [i,v]; });
+      var runs = [], cur = [];
+      pts.forEach(function(p){
+        if (p === null){ if (cur.length) runs.push(cur); cur = []; }
+        else cur.push(p);
+      });
+      if (cur.length) runs.push(cur);
+      runs.forEach(function(run){
+        var dAttr = run.map(function(p,idx){ return (idx===0?'M':'L') + x(p[0]) + ' ' + y(p[1]); }).join(' ');
+        svg.appendChild(el('path', { class:'line', d:dAttr, stroke:d.color }));
+        run.forEach(function(p){
+          var r = d.you ? 4.5 : 3.5;
+          svg.appendChild(el('circle', { class:'dot', cx:x(p[0]), cy:y(p[1]), r:r, fill:d.color }));
+        });
       });
     });
+  }
+
+  drawLineChart(document.getElementById('trendChart'), seasonData, {
+    n: 14, yMin: 35, yMax: 65,
+    gridlines: [35,40,45,55,60,65],
+    refLine: 50, refLineLabel: '五分(50%)',
+    xLabel: function(i){ return 'S'+i; }
   });
 
   var legend = document.getElementById('legend');
@@ -855,7 +948,6 @@
     legend.appendChild(item);
   });
 
-  // ---- Season numbers table ----
   (function(){
     var tbl = document.getElementById('seasonTable');
     var head = '<thead><tr><th>Player</th>' +
@@ -873,7 +965,7 @@
     tbl.innerHTML = head + body;
   })();
 
-  // ---- Play style breakdown (career, all activity types) ----
+  // ============ Play style breakdown (career, all activity types, seconds) ============
   var playTime = {
     you:     { Ranked:1315086, Casual:92404, Custom:868593, Practice:425407, Other:673+10529+116+730+735 },
     shien:   { Ranked:2597573, Casual:66208, Custom:543902, Practice:619205, Other:16+601+1 },
@@ -883,17 +975,24 @@
   };
   var actColors = { Ranked:'var(--gold)', Casual:'#34d399', Custom:'var(--p-hitsuji)', Practice:'var(--accent-2)', Other:'var(--text-muted)' };
   var actLabelsJa = { Ranked:'ランクマッチ', Casual:'カジュアル', Custom:'カスタムルーム', Practice:'トレーニング', Other:'その他' };
+  var totalsSec = {};
+  Object.keys(playTime).forEach(function(k){ totalsSec[k] = Object.values(playTime[k]).reduce(function(a,b){return a+b;},0); });
+  var maxTotalSec = Math.max.apply(null, Object.values(totalsSec));
+
   var styleWrap = document.getElementById('playstyle');
   Object.keys(playTime).forEach(function(key){
     var t = playTime[key];
-    var total = Object.values(t).reduce(function(a,b){return a+b;},0);
+    var total = totalsSec[key];
     var row = document.createElement('div');
     row.className = 'style-row';
     var nameEl = document.createElement('div');
     nameEl.className = 'style-name' + (key==='you' ? ' you' : '');
     nameEl.textContent = seasonData[key].label;
+    var track = document.createElement('div');
+    track.className = 'style-track';
     var barEl = document.createElement('div');
     barEl.className = 'style-bar';
+    barEl.style.width = (100*total/maxTotalSec) + '%';
     ['Ranked','Practice','Custom','Casual','Other'].forEach(function(cat){
       var sec = t[cat];
       if (sec <= 0) return;
@@ -904,11 +1003,12 @@
       seg.title = actLabelsJa[cat] + ' ' + (sec/3600).toFixed(0) + '時間 (' + (100*sec/total).toFixed(0) + '%)';
       barEl.appendChild(seg);
     });
+    track.appendChild(barEl);
     var hoursEl = document.createElement('div');
     hoursEl.className = 'style-hours mono';
     hoursEl.textContent = Math.round(total/3600).toLocaleString() + 'h';
     row.appendChild(nameEl);
-    row.appendChild(barEl);
+    row.appendChild(track);
     row.appendChild(hoursEl);
     styleWrap.appendChild(row);
   });
@@ -922,6 +1022,138 @@
     item.appendChild(sw);
     item.appendChild(document.createTextNode(actLabelsJa[cat]));
     styleLegend.appendChild(item);
+  });
+
+  // ============ Character roster per player (Ranked, career) ============
+  var roster = {
+    you:     [['JURI',9149,4494]],
+    shien07: [['CAMMY',21452,10385],['MAI',714,349],['CHUN-LI',160,57]],
+    nanashi: [['TERRY',2644,1359],['KEN',2272,1212]],
+    Hitsuji: [['ZANGIEF',5996,2914],['SAGAT',54,6],['INGRID',44,12],['ALEX',22,2]],
+    hiyoko:  [['ED',1218,570],['LUKE',914,464],['MAI',316,151],['JP',101,69],['E. HONDA',11,5],['M. BISON',10,3],['AKUMA',5,1]]
+  };
+  var playerColorByTab = { you:'var(--p-you)', shien07:'var(--p-shien)', nanashi:'var(--p-nanashi)', Hitsuji:'var(--p-hitsuji)', hiyoko:'var(--p-hiyoko)' };
+  document.querySelectorAll('[data-roster]').forEach(function(el){
+    var key = el.getAttribute('data-roster');
+    var rows = roster[key];
+    var max = Math.max.apply(null, rows.map(function(r){return r[1];}));
+    rows.forEach(function(r){
+      var name=r[0], b=r[1], w=r[2];
+      var wrPct = wr(w,b);
+      var row = document.createElement('div');
+      row.className = 'roster-row';
+      row.innerHTML =
+        '<span class="rc">'+name+'</span>' +
+        '<span class="roster-track"><span class="roster-fill" style="width:'+(100*b/max)+'%;--player-color:'+playerColorByTab[key]+'"></span></span>' +
+        '<span class="roster-b">'+b+'戦</span>' +
+        '<span class="roster-wr">'+wrPct+'%</span>';
+      el.appendChild(row);
+    });
+  });
+
+  // ============ Custom Room cross matchup matrix (career, current-main proxy) ============
+  var matrix = {
+    you:     { shien07:[1179,1980], nanashi:[232,514], Hitsuji:[174,262], hiyoko:[601,724] },
+    shien07: { you:[828,2040], nanashi:[64,177], Hitsuji:[142,218], hiyoko:[286,356] },
+    nanashi: { you:[280,513], shien07:[113,177], Hitsuji:[14,19], hiyoko:[131,140] },
+    Hitsuji: { you:[88,262], shien07:[76,218], nanashi:[5,19], hiyoko:[110,143] },
+    hiyoko:  { you:[121,702], shien07:[70,356], nanashi:[8,139], Hitsuji:[33,142] }
+  };
+  var order = ['you','shien07','nanashi','Hitsuji','hiyoko'];
+  var displayName = { you:'Octopus', shien07:'shien07', nanashi:'nanashi', Hitsuji:'Hitsuji', hiyoko:'hiyoko' };
+  (function(){
+    var tbl = document.getElementById('matrixTable');
+    var head = '<thead><tr><th>視点\\\\相手</th>' + order.map(function(o){ return '<th>'+displayName[o]+'</th>'; }).join('') + '</tr></thead>';
+    var body = '<tbody>' + order.map(function(row){
+      var cells = order.map(function(col){
+        if (row === col) return '<td class="na">—</td>';
+        var m = matrix[row][col];
+        if (!m || m[1] === 0) return '<td class="na">–</td>';
+        var pct = wr(m[0], m[1]);
+        var cls = pct >= 50 ? 'win' : 'lose';
+        return '<td class="'+cls+'">'+pct+'% <small>('+m[0]+'/'+m[1]+')</small></td>';
+      }).join('');
+      return '<tr class="'+(row==='you'?'you':'')+'"><td>'+displayName[row]+'</td>'+cells+'</tr>';
+    }).join('') + '</tbody>';
+    tbl.innerHTML = head + body;
+  })();
+
+  // vs-list per panel (that player's row in the matrix, sorted by opponent win rate desc)
+  document.querySelectorAll('[data-vs]').forEach(function(el){
+    var key = el.getAttribute('data-vs');
+    var row = matrix[key];
+    if (!row) return;
+    var entries = Object.keys(row).map(function(opp){
+      var m = row[opp];
+      return { opp: opp, w: m[0], b: m[1], wr: wr(m[0], m[1]) };
+    }).sort(function(a,b){ return b.wr - a.wr; });
+    entries.forEach(function(e){
+      var isWin = e.wr >= 50;
+      var r = document.createElement('div');
+      r.className = 'vs-row';
+      r.innerHTML =
+        '<span>'+displayName[e.opp]+'</span>' +
+        '<span class="vs-track"><span class="vs-fill '+(isWin?'win':'lose')+'" style="width:'+e.wr+'%"></span></span>' +
+        '<span class="vs-wr">'+e.wr+'% ('+e.w+'/'+e.b+')</span>';
+      el.appendChild(r);
+    });
+  });
+
+  // ============ Octopus vs friends season trend (Room Match) ============
+  var vsFriendData = {
+    shien07: { color: 'var(--p-shien)',   label: 'shien07' },
+    nanashi: { color: 'var(--p-nanashi)', label: 'nanashi' },
+    Hitsuji: { color: 'var(--p-hitsuji)', label: 'Hitsuji' },
+    hiyoko:  { color: 'var(--p-hiyoko)',  label: 'hiyoko' }
+  };
+  var vsFriendRaw = {
+    shien07: [null,null,null,[215,423],[153,251],[85,127],[213,337],[198,287],[53,71],null,null,null,[88,198],[174,286]],
+    nanashi: [null,null,null,null,null,[28,42],[93,196],[9,14],[23,42],null,null,null,[36,97],[43,123]],
+    Hitsuji: [null,null,null,null,null,null,null,[35,41],null,null,null,null,[96,157],[43,64]],
+    hiyoko:  [null,null,null,null,null,null,null,[41,56],null,null,null,null,[229,275],[331,393]]
+  };
+  Object.keys(vsFriendRaw).forEach(function(k){
+    vsFriendData[k].series = vsFriendRaw[k].map(function(v){ return v ? wr(v[0], v[1]) : null; });
+  });
+  drawLineChart(document.getElementById('vsChart'), vsFriendData, {
+    n: 14, yMin: 20, yMax: 90,
+    gridlines: [20,35,50,65,80],
+    refLine: 50, refLineLabel: '五分(50%)',
+    xLabel: function(i){ return 'S'+i; }
+  });
+  var vsLegend = document.getElementById('vsLegend');
+  Object.keys(vsFriendData).forEach(function(key){
+    var d = vsFriendData[key];
+    var item = document.createElement('div');
+    item.className = 'legend-item';
+    var sw = document.createElement('span');
+    sw.className = 'sw';
+    sw.style.background = d.color;
+    item.appendChild(sw);
+    item.appendChild(document.createTextNode(d.label));
+    vsLegend.appendChild(item);
+  });
+
+  // ============ Tabs ============
+  var tabOrder = [
+    { key:'you', label:'Octopus' },
+    { key:'shien07', label:'shien07' },
+    { key:'nanashi', label:'nanashi' },
+    { key:'Hitsuji', label:'Hitsuji' },
+    { key:'hiyoko', label:'hiyoko' }
+  ];
+  var tabBtns = document.getElementById('tabButtons');
+  tabOrder.forEach(function(t, i){
+    var btn = document.createElement('button');
+    btn.className = 'tab-btn' + (i===0 ? ' active' : '');
+    btn.textContent = t.label;
+    btn.type = 'button';
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.panel').forEach(function(p){ p.hidden = (p.dataset.tab !== t.key); });
+    });
+    tabBtns.appendChild(btn);
   });
 })();
 </script>
