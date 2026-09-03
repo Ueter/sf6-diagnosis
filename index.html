@@ -718,7 +718,7 @@
   <section>
     <div class="section-head">
       <h2>マスターレート（MR）推移</h2>
-      <p class="sub">折れ線はシーズンごとのマスターレート（基本は各シーズン1点のスナップショット。マスター昇格は毎シーズンMR1500からのスタートで、そこから上下する）。破線はMR1600＝ハイマスターのライン。◇マークは、Buckler's Boot Camp側が保持しているシーズン内の実測ハイライト（直近3シーズン=S11〜S13のみ遡れる仕様）で、折れ線の値より高い場合に表示——シーズン中に一瞬だけ到達した本当の自己ベストが、折れ線だけでは見えないことを補っている。それより前のシーズン（S3〜S10）はこの実測ハイライトが取得できないため、スナップショット値がそのまま自己ベストとして扱われる。マスター未到達のシーズンは線が途切れる。</p>
+      <p class="sub">折れ線・●はシーズンごとの自己ベストMR（マスター昇格は毎シーズンMR1500からのスタートで、そこから上下する）。直近3シーズン(S11〜S13)はBuckler's Boot Camp側が保持しているシーズン内の実測ハイライトを使用、それより前(S3〜S10)は実測ハイライトを遡れないためシーズン終了時点のスナップショットをそのまま自己ベストとして扱っている。○マークは「シーズン終了時点ではそこまで下がっていた」実際の着地点——●より下にある場合、シーズン中に一度ベストへ触れてから終了までに調子を落としたことを意味する。破線はMR1600＝ハイマスターのライン。マスター未到達のシーズンは線が途切れる。</p>
     </div>
     <div class="trend-card">
       <svg class="chart" id="mrChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別マスターレート推移チャート"></svg>
@@ -1198,9 +1198,21 @@
     hitsuji: { 8:1493, 9:1482, 10:1495 },
     hiyoko:  {}
   };
+  // The solid line/dots plot the best-known value per season (verified in-season
+  // "Highest" where we have it, otherwise the season-end snapshot). The season-end
+  // snapshot itself becomes a secondary marker whenever it landed below that line.
+  var mrBest = {};
+  Object.keys(mrSeries).forEach(function(key){
+    var hiMap = mrHighest[key] || {};
+    mrBest[key] = mrSeries[key].map(function(v, i){
+      var h = hiMap[i];
+      if (h == null) return v;
+      return v == null ? h : Math.max(v, h);
+    });
+  });
   var mrData = {};
   Object.keys(playerMeta).forEach(function(key){
-    mrData[key] = Object.assign({}, playerMeta[key], { series: mrSeries[key] });
+    mrData[key] = Object.assign({}, playerMeta[key], { series: mrBest[key] });
   });
   var mrChartOpts = {
     n: 11, yMin: 1200, yMax: 1700, yUnit: '',
@@ -1212,31 +1224,29 @@
   };
   drawLineChart(document.getElementById('mrChart'), mrData, mrChartOpts);
 
-  // Overlay diamond markers where the verified in-season "Highest" exceeds the
-  // plotted snapshot value — makes visible that the line can understate a real peak.
-  function drawHighestMarkers(svg, dataMap, highestMap, opts){
+  // Overlay markers where the season actually ENDED below the best-line value —
+  // makes visible that a season's closing number can understate the real peak.
+  function drawSeasonEndMarkers(svg, dataMap, endMap, opts){
     var padL = opts.padL, padT = opts.padT, padB = opts.padB, padR = opts.padR;
     var plotW = opts.W - padL - padR, plotH = opts.H - padT - padB;
     function x(i){ return padL + (i/(opts.n-1))*plotW; }
     function y(v){ return padT + plotH - ((v-opts.yMin)/(opts.yMax-opts.yMin))*plotH; }
-    Object.keys(highestMap).forEach(function(key){
-      var series = dataMap[key].series, color = dataMap[key].color, hi = highestMap[key];
-      Object.keys(hi).forEach(function(iStr){
-        var i = Number(iStr), v = hi[iStr];
+    Object.keys(endMap).forEach(function(key){
+      var bestSeries = dataMap[key].series, color = dataMap[key].color, endSeries = endMap[key];
+      endSeries.forEach(function(v, i){
         if (v == null) return;
-        var lineVal = series[i];
-        if (lineVal != null && v <= lineVal) return;
-        var cx = x(i), cy = y(v), r = 6;
-        var d = 'M'+cx+' '+(cy-r)+' L'+(cx+r)+' '+cy+' L'+cx+' '+(cy+r)+' L'+(cx-r)+' '+cy+' Z';
-        var mark = el('path', { d: d, fill: 'var(--surface)', stroke: color, 'stroke-width': 2 });
+        var bestVal = bestSeries[i];
+        if (bestVal == null || v >= bestVal) return;
+        var cx = x(i), cy = y(v), r = 5.5;
+        var mark = el('circle', { cx:cx, cy:cy, r:r, fill:'var(--surface)', stroke:color, 'stroke-width':2 });
         var t = document.createElementNS(svgns, 'title');
-        t.textContent = dataMap[key].label + ' シーズン内最高: ' + v + '（記録上の値 ' + (lineVal != null ? lineVal : '—') + ' より高い)';
+        t.textContent = dataMap[key].label + ' シーズン終了時点: ' + v + '（自己ベスト ' + bestVal + ' より低下)';
         mark.appendChild(t);
         svg.appendChild(mark);
       });
     });
   }
-  drawHighestMarkers(document.getElementById('mrChart'), mrData, mrHighest, mrChartOpts);
+  drawSeasonEndMarkers(document.getElementById('mrChart'), mrData, mrSeries, mrChartOpts);
   var mrLegend = document.getElementById('mrLegend');
   Object.keys(mrData).forEach(function(key){
     var d = mrData[key];
@@ -1487,9 +1497,9 @@
   document.querySelectorAll('[data-mrmini]').forEach(function(svgEl){
     var tabKey = svgEl.getAttribute('data-mrmini');
     var sKey = tabToSeasonKey[tabKey];
-    var series = mrSeries[sKey];
-    var hiMap = mrHighest[sKey] || {};
-    var vals = series.filter(function(v){ return v !== null; }).concat(Object.values(hiMap).filter(function(v){ return v != null; }));
+    var bestSeries = mrBest[sKey];
+    var endSeries = mrSeries[sKey];
+    var vals = bestSeries.filter(function(v){ return v !== null; });
     if (!vals.length) return; // never reached Master — handled by the .mr-empty message in HTML instead
     var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
     var yMin = Math.max(1000, Math.floor((lo-30)/25)*25);
@@ -1502,8 +1512,8 @@
       dotR: 3.5,
       xLabel: function(i){ return 'S'+(i+SEASON_OFFSET); }
     };
-    drawLineChart(svgEl, { solo: { color: playerMeta[sKey].color, series: series } }, miniOpts);
-    drawHighestMarkers(svgEl, { solo: { color: playerMeta[sKey].color, label: playerMeta[sKey].label, series: series } }, { solo: hiMap }, miniOpts);
+    drawLineChart(svgEl, { solo: { color: playerMeta[sKey].color, series: bestSeries } }, miniOpts);
+    drawSeasonEndMarkers(svgEl, { solo: { color: playerMeta[sKey].color, label: playerMeta[sKey].label, series: bestSeries } }, { solo: endSeries }, miniOpts);
     var f = masterFacts[sKey];
     if (f && f.reached){
       var lbl = el('text', { x: 1040-20, y: 16, 'text-anchor':'end' });
