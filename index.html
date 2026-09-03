@@ -28,6 +28,8 @@
     --p-nanashi:#ffb020;
     --p-hitsuji:#a78bfa;
     --p-hiyoko:#34d399;
+    --cat6:#f472b6;
+    --cat7:#60a5fa;
   }
   @media (prefers-color-scheme: light){
     :root:not([data-theme="dark"]){
@@ -49,6 +51,8 @@
       --p-nanashi:#a3690b;
       --p-hitsuji:#7c5ce0;
       --p-hiyoko:#15825e;
+      --cat6:#b8447e;
+      --cat7:#2563a8;
     }
   }
   :root[data-theme="light"]{
@@ -70,6 +74,8 @@
     --p-nanashi:#a3690b;
     --p-hitsuji:#7c5ce0;
     --p-hiyoko:#15825e;
+    --cat6:#b8447e;
+    --cat7:#2563a8;
   }
 
   *{box-sizing:border-box;}
@@ -429,70 +435,75 @@
     margin:0 0 10px;
   }
 
-  .roster-list{ display:flex; flex-direction:column; gap:8px; }
+  .roster-wrap{ display:flex; gap:18px; align-items:center; }
+  .pie{
+    width:132px; height:132px; border-radius:50%;
+    flex:none;
+    position:relative;
+  }
+  .pie::after{
+    content:'';
+    position:absolute; inset:22%;
+    border-radius:50%;
+    background:var(--surface);
+  }
+  .pie-total{
+    position:absolute; inset:22%;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    font-family:"JetBrains Mono", monospace;
+    font-size:11px;
+    color:var(--text-muted);
+    line-height:1.3;
+  }
+  .pie-total b{ display:block; font-size:14px; color:var(--text); font-weight:700; }
+  .roster-list{ display:flex; flex-direction:column; gap:7px; flex:1; min-width:0; }
   .roster-row{
     display:grid;
-    grid-template-columns: 74px 1fr 46px 70px;
+    grid-template-columns: 12px 62px 1fr 46px;
     align-items:center;
-    gap:10px;
-    font-size:13px;
+    gap:8px;
+    font-size:12.5px;
   }
-  .roster-row .rc{ font-weight:600; }
-  .roster-track{
-    height:8px;
-    border-radius:4px;
-    background:var(--surface-2);
-    border:1px solid var(--border);
-    overflow:hidden;
-  }
-  .roster-fill{ height:100%; border-radius:4px; background:var(--player-color, var(--accent)); }
-  .roster-b{ text-align:right; color:var(--text-muted); font-family:"JetBrains Mono", monospace; }
+  .roster-row .sw{ width:10px; height:10px; border-radius:3px; }
+  .roster-row .rc{ font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .roster-b{ color:var(--text-muted); font-family:"JetBrains Mono", monospace; }
   .roster-wr{ text-align:right; font-family:"JetBrains Mono", monospace; font-weight:600; }
 
   .mini-trend{ width:100%; height:auto; display:block; margin-top:4px; }
-  .mini-bars-row{
-    display:flex;
-    align-items:flex-end;
-    gap:3px;
-    height:36px;
-    margin-top:10px;
-  }
-  .mini-bar{
-    flex:1;
-    min-width:5px;
-    border-radius:2px 2px 0 0;
-  }
-  .mini-bar.empty{ background:var(--surface-2); height:2px !important; }
-  .mini-bars-caption{
-    font-size:10.5px;
-    color:var(--text-muted);
-    margin-top:6px;
-  }
 
-  .matchup-row{
+  .rank-cols{
     display:grid;
     grid-template-columns:1fr 1fr;
-    gap:10px;
+    gap:20px;
     margin-top:22px;
   }
-  .matchup{
-    background:var(--surface-2);
-    border-radius:8px;
-    padding:10px 12px;
-    display:flex;
-    flex-direction:column;
-    gap:2px;
-  }
-  .matchup .label{
+  @media (max-width:560px){ .rank-cols{ grid-template-columns:1fr; } }
+  .rank-col .rank-head{
     font-size:10.5px;
     letter-spacing:.06em;
     text-transform:uppercase;
     color:var(--text-muted);
+    margin:0 0 8px;
   }
-  .matchup .char{ font-size:14px; font-weight:600; }
-  .matchup .wr{ font-family:"JetBrains Mono", monospace; font-size:13px; }
-  .matchup.good .wr{ color:var(--good); }
-  .matchup.bad .wr{ color:var(--bad); }
+  .rank-col.good .rank-head{ color:var(--good); }
+  .rank-col.bad .rank-head{ color:var(--bad); }
+  .rank-row{
+    display:grid;
+    grid-template-columns: 16px 1fr auto;
+    align-items:center;
+    gap:8px;
+    padding:5px 0;
+    font-size:13px;
+    border-bottom:1px solid var(--border);
+  }
+  .rank-row:last-child{ border-bottom:none; }
+  .rank-row .n{ color:var(--text-muted); font-family:"JetBrains Mono", monospace; font-size:11px; }
+  .rank-row .c{ font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .rank-row .v{ font-family:"JetBrains Mono", monospace; font-size:12.5px; color:var(--text-muted); white-space:nowrap; }
+  .rank-col.good .rank-row .v b{ color:var(--good); }
+  .rank-col.bad .rank-row .v b{ color:var(--bad); }
+  .rank-row .v b{ font-weight:700; }
 
   .quote{
     background:var(--surface-2);
@@ -530,7 +541,6 @@
 
   @media (max-width: 520px){
     .lp-row{ grid-template-columns: 78px 1fr 76px; gap:10px;}
-    .matchup-row{ grid-template-columns:1fr; }
     .stat-row{ grid-template-columns:repeat(2,1fr); }
   }
 </style>
@@ -635,17 +645,25 @@
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
-          <div class="roster-list" data-roster="you"></div>
+          <div class="roster-wrap">
+            <div class="pie" data-pie="you"><div class="pie-total" data-pietotal="you"></div></div>
+            <div class="roster-list" data-roster="you"></div>
+          </div>
         </div>
         <div>
-          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
-          <svg class="chart mini-trend" data-mini="you" viewBox="0 0 480 200"></svg>
-          <div class="mini-bars" data-volbars="you"></div>
+          <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="you" viewBox="0 0 480 260"></svg>
         </div>
       </div>
-      <div class="matchup-row">
-        <div class="matchup good"><span class="label">得意</span><span class="char">CAMMY</span><span class="wr mono">60.0% (575戦)</span></div>
-        <div class="matchup bad"><span class="label">苦手</span><span class="char">ELENA</span><span class="wr mono">34.6% (26戦)</span></div>
+      <div class="rank-cols">
+        <div class="rank-col good">
+          <p class="rank-head">得意キャラ TOP5</p>
+          <div data-rank-good="you"></div>
+        </div>
+        <div class="rank-col bad">
+          <p class="rank-head">苦手キャラ TOP5</p>
+          <div data-rank-bad="you"></div>
+        </div>
       </div>
       <div class="quote">
         <span class="title">「Disposition for Destruction」</span>
@@ -672,17 +690,25 @@
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
-          <div class="roster-list" data-roster="shien07"></div>
+          <div class="roster-wrap">
+            <div class="pie" data-pie="shien07"><div class="pie-total" data-pietotal="shien07"></div></div>
+            <div class="roster-list" data-roster="shien07"></div>
+          </div>
         </div>
         <div>
-          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
-          <svg class="chart mini-trend" data-mini="shien07" viewBox="0 0 480 200"></svg>
-          <div class="mini-bars" data-volbars="shien07"></div>
+          <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="shien07" viewBox="0 0 480 260"></svg>
         </div>
       </div>
-      <div class="matchup-row">
-        <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">58.0% (150戦)</span></div>
-        <div class="matchup bad"><span class="label">苦手</span><span class="char">E. HONDA</span><span class="wr mono">34.3% (265戦)</span></div>
+      <div class="rank-cols">
+        <div class="rank-col good">
+          <p class="rank-head">得意キャラ TOP5</p>
+          <div data-rank-good="shien07"></div>
+        </div>
+        <div class="rank-col bad">
+          <p class="rank-head">苦手キャラ TOP5</p>
+          <div data-rank-bad="shien07"></div>
+        </div>
       </div>
       <div class="quote">
         <span class="title">「Let's Do This」</span>
@@ -709,17 +735,25 @@
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
-          <div class="roster-list" data-roster="nanashi"></div>
+          <div class="roster-wrap">
+            <div class="pie" data-pie="nanashi"><div class="pie-total" data-pietotal="nanashi"></div></div>
+            <div class="roster-list" data-roster="nanashi"></div>
+          </div>
         </div>
         <div>
-          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
-          <svg class="chart mini-trend" data-mini="nanashi" viewBox="0 0 480 200"></svg>
-          <div class="mini-bars" data-volbars="nanashi"></div>
+          <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="nanashi" viewBox="0 0 480 260"></svg>
         </div>
       </div>
-      <div class="matchup-row">
-        <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">78.9% (19戦)</span></div>
-        <div class="matchup bad"><span class="label">苦手</span><span class="char">BLANKA</span><span class="wr mono">30.8% (26戦)</span></div>
+      <div class="rank-cols">
+        <div class="rank-col good">
+          <p class="rank-head">得意キャラ TOP5</p>
+          <div data-rank-good="nanashi"></div>
+        </div>
+        <div class="rank-col bad">
+          <p class="rank-head">苦手キャラ TOP5</p>
+          <div data-rank-bad="nanashi"></div>
+        </div>
       </div>
       <div class="quote">
         <span class="title">「OK!」</span>
@@ -746,17 +780,25 @@
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
-          <div class="roster-list" data-roster="Hitsuji"></div>
+          <div class="roster-wrap">
+            <div class="pie" data-pie="Hitsuji"><div class="pie-total" data-pietotal="Hitsuji"></div></div>
+            <div class="roster-list" data-roster="Hitsuji"></div>
+          </div>
         </div>
         <div>
-          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
-          <svg class="chart mini-trend" data-mini="Hitsuji" viewBox="0 0 480 200"></svg>
-          <div class="mini-bars" data-volbars="Hitsuji"></div>
+          <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="Hitsuji" viewBox="0 0 480 260"></svg>
         </div>
       </div>
-      <div class="matchup-row">
-        <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">54.4% (160戦)</span></div>
-        <div class="matchup bad"><span class="label">苦手</span><span class="char">DHALSIM</span><span class="wr mono">26.2% (42戦)</span></div>
+      <div class="rank-cols">
+        <div class="rank-col good">
+          <p class="rank-head">得意キャラ TOP5</p>
+          <div data-rank-good="Hitsuji"></div>
+        </div>
+        <div class="rank-col bad">
+          <p class="rank-head">苦手キャラ TOP5</p>
+          <div data-rank-bad="Hitsuji"></div>
+        </div>
       </div>
       <div class="quote">
         <span class="title">「A Man's Peaceful Passing」</span>
@@ -783,17 +825,25 @@
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
-          <div class="roster-list" data-roster="hiyoko"></div>
+          <div class="roster-wrap">
+            <div class="pie" data-pie="hiyoko"><div class="pie-total" data-pietotal="hiyoko"></div></div>
+            <div class="roster-list" data-roster="hiyoko"></div>
+          </div>
         </div>
         <div>
-          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
-          <svg class="chart mini-trend" data-mini="hiyoko" viewBox="0 0 480 200"></svg>
-          <div class="mini-bars" data-volbars="hiyoko"></div>
+          <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="hiyoko" viewBox="0 0 480 260"></svg>
         </div>
       </div>
-      <div class="matchup-row">
-        <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">72.7% (11戦)</span></div>
-        <div class="matchup bad"><span class="label">苦手</span><span class="char">MARISA</span><span class="wr mono">33.3% (15戦)</span></div>
+      <div class="rank-cols">
+        <div class="rank-col good">
+          <p class="rank-head">得意キャラ TOP5</p>
+          <div data-rank-good="hiyoko"></div>
+        </div>
+        <div class="rank-col bad">
+          <p class="rank-head">苦手キャラ TOP5</p>
+          <div data-rank-bad="hiyoko"></div>
+        </div>
       </div>
       <div class="quote">
         <span class="title">「#KZHCUP」</span>
@@ -1008,7 +1058,7 @@
     styleLegend.appendChild(item);
   });
 
-  // ============ Character roster per player (Ranked, career) ============
+  // ============ Character roster per player (Ranked, career) — pie + legend ============
   var roster = {
     you:     [['JURI',9149,4494]],
     shien07: [['CAMMY',21452,10385],['MAI',714,349],['CHUN-LI',160,57]],
@@ -1016,27 +1066,115 @@
     Hitsuji: [['ZANGIEF',5996,2914],['SAGAT',54,6],['INGRID',44,12],['ALEX',22,2]],
     hiyoko:  [['ED',1218,570],['LUKE',914,464],['MAI',316,151],['JP',101,69],['E. HONDA',11,5],['M. BISON',10,3],['AKUMA',5,1]]
   };
-  var playerColorByTab = { you:'var(--p-you)', shien07:'var(--p-shien)', nanashi:'var(--p-nanashi)', Hitsuji:'var(--p-hitsuji)', hiyoko:'var(--p-hiyoko)' };
+  var catPalette = ['var(--accent)','var(--accent-2)','var(--gold)','var(--p-hitsuji)','var(--p-hiyoko)','var(--cat6)','var(--cat7)'];
+  document.querySelectorAll('[data-pie]').forEach(function(pieEl){
+    var key = pieEl.getAttribute('data-pie');
+    var rows = roster[key];
+    var total = rows.reduce(function(a,r){ return a+r[1]; }, 0);
+    var stops = [], acc = 0;
+    rows.forEach(function(r, i){
+      var start = 100*acc/total;
+      acc += r[1];
+      var end = 100*acc/total;
+      stops.push(catPalette[i % catPalette.length] + ' ' + start.toFixed(2) + '% ' + end.toFixed(2) + '%');
+    });
+    pieEl.style.background = 'conic-gradient(' + stops.join(', ') + ')';
+    var totalEl = document.querySelector('[data-pietotal="'+key+'"]');
+    if (totalEl) totalEl.innerHTML = '<b>'+rows.length+'</b>キャラ';
+  });
   document.querySelectorAll('[data-roster]').forEach(function(el){
     var key = el.getAttribute('data-roster');
     var rows = roster[key];
-    var max = Math.max.apply(null, rows.map(function(r){return r[1];}));
-    rows.forEach(function(r){
+    rows.forEach(function(r, i){
       var name=r[0], b=r[1], w=r[2];
       var wrPct = wr(w,b);
       var row = document.createElement('div');
       row.className = 'roster-row';
       row.innerHTML =
+        '<span class="sw" style="background:'+catPalette[i % catPalette.length]+'"></span>' +
         '<span class="rc">'+name+'</span>' +
-        '<span class="roster-track"><span class="roster-fill" style="width:'+(100*b/max)+'%;--player-color:'+playerColorByTab[key]+'"></span></span>' +
         '<span class="roster-b">'+b+'戦</span>' +
         '<span class="roster-wr">'+wrPct+'%</span>';
       el.appendChild(row);
     });
   });
 
-  // ============ Per-player mini trend chart + Ranked battle-volume bars (own-scaled) ============
+  // ============ Per-player combo chart: win-rate line + Ranked battle-volume bars (own-scaled, shared x-axis) ============
   var tabToSeasonKey = { you:'you', shien07:'shien', nanashi:'nanashi', Hitsuji:'hitsuji', hiyoko:'hiyoko' };
+
+  function drawComboChart(svg, d, barCounts, totalBattles, opts){
+    var W = opts.W, H = opts.H;
+    var padL = opts.padL, padR = opts.padR, padT = opts.padT, padB = opts.padB;
+    var plotW = W - padL - padR;
+    var innerH = H - padT - padB;
+    var gap = 8;
+    var lineH = innerH * 0.66;
+    var barH = innerH - lineH - gap;
+    var barTop = padT + lineH + gap;
+    var n = opts.n, yMin = opts.yMin, yMax = opts.yMax;
+    function x(i){ return padL + (i/(n-1))*plotW; }
+    function yLine(v){ return padT + lineH - ((v-yMin)/(yMax-yMin))*lineH; }
+    var barMax = Math.max.apply(null, barCounts);
+
+    // bar band label
+    var lbl = el('text', { x: padL, y: barTop - 4, 'text-anchor':'start' });
+    lbl.textContent = 'ランクマ試合数（通算 ' + totalBattles.toLocaleString() + '戦）';
+    svg.appendChild(lbl);
+
+    // bars (drawn first, behind gridlines/line)
+    var barW = Math.max(3, (plotW/n) * 0.6);
+    barCounts.forEach(function(v, i){
+      if (v <= 0) return;
+      var h = (v/barMax) * barH;
+      var rect = el('rect', {
+        x: x(i) - barW/2, y: barTop + barH - h, width: barW, height: h,
+        fill: d.color, opacity: '0.28', rx: '1.5'
+      });
+      var t = document.createElementNS(svgns, 'title');
+      t.textContent = 'S'+i+': '+v+'戦';
+      rect.appendChild(t);
+      svg.appendChild(rect);
+    });
+
+    // line-band gridlines + labels
+    (opts.gridlines||[]).forEach(function(v){
+      svg.appendChild(el('line', { class:'gridline', x1:padL, x2:W-padR, y1:yLine(v), y2:yLine(v) }));
+      var t = el('text', { x: padL-8, y: yLine(v)+4, 'text-anchor':'end' });
+      t.textContent = v + '%';
+      svg.appendChild(t);
+    });
+    var sep = el('line', { x1:padL, x2:W-padR, y1: barTop-gap/2, y2: barTop-gap/2, stroke:'var(--border)', 'stroke-width':1 });
+    svg.appendChild(sep);
+
+    // x labels (under bar band)
+    var xStep = opts.xLabelStep || 1;
+    for (var i=0;i<n;i+=xStep){
+      var t = el('text', { x: x(i), y: H-6, 'text-anchor':'middle' });
+      t.textContent = 'S'+i;
+      svg.appendChild(t);
+    }
+
+    // win-rate line + dots
+    var pts = d.series.map(function(v,i){ return v===null ? null : [i,v]; });
+    var runs = [], cur = [];
+    pts.forEach(function(p){
+      if (p === null){ if (cur.length) runs.push(cur); cur = []; }
+      else cur.push(p);
+    });
+    if (cur.length) runs.push(cur);
+    runs.forEach(function(run){
+      var dAttr = run.map(function(p,idx){ return (idx===0?'M':'L') + x(p[0]) + ' ' + yLine(p[1]); }).join(' ');
+      svg.appendChild(el('path', { class:'line', d:dAttr, stroke:d.color }));
+      run.forEach(function(p){
+        var c = el('circle', { class:'dot', cx:x(p[0]), cy:yLine(p[1]), r:3, fill:d.color });
+        var t = document.createElementNS(svgns, 'title');
+        t.textContent = 'S'+p[0]+': 勝率'+p[1].toFixed(1)+'%、'+barCounts[p[0]]+'戦';
+        c.appendChild(t);
+        svg.appendChild(c);
+      });
+    });
+  }
+
   document.querySelectorAll('[data-mini]').forEach(function(svgEl){
     var tabKey = svgEl.getAttribute('data-mini');
     var sKey = tabToSeasonKey[tabKey];
@@ -1046,40 +1184,39 @@
     var yMin = Math.max(0, Math.floor((lo-3)/5)*5);
     var yMax = Math.ceil((hi+3)/5)*5;
     var mid = Math.round((yMin+yMax)/2/5)*5;
-    drawLineChart(svgEl, { solo: { color: d.color, series: d.series, you: d.you } }, {
+    drawComboChart(svgEl, d, battles[sKey], totals[sKey].b, {
       n: 14, yMin: yMin, yMax: yMax,
-      W: 480, H: 200, padL: 34, padR: 10, padT: 14, padB: 22,
+      W: 480, H: 260, padL: 34, padR: 10, padT: 16, padB: 22,
       gridlines: [yMin, mid, yMax],
-      xLabelStep: 2, dotR: 3,
-      xLabel: function(i){ return 'S'+i; }
+      xLabelStep: 2
     });
   });
 
-  document.querySelectorAll('[data-volbars]').forEach(function(el){
-    var tabKey = el.getAttribute('data-volbars');
-    var sKey = tabToSeasonKey[tabKey];
-    var b = battles[sKey];
-    var tot = totals[sKey];
-    var max = Math.max.apply(null, b);
-    var wrap = document.createElement('div');
-    wrap.className = 'mini-bars-row';
-    b.forEach(function(v, i){
-      var bar = document.createElement('div');
-      if (v === 0){
-        bar.className = 'mini-bar empty';
-      } else {
-        bar.className = 'mini-bar';
-        bar.style.height = Math.max(4, (v/max)*32) + 'px';
-        bar.style.background = seasonData[sKey].color;
-        bar.title = 'S'+i+': '+v+'戦';
-      }
-      wrap.appendChild(bar);
-    });
-    el.appendChild(wrap);
-    var caption = document.createElement('div');
-    caption.className = 'mini-bars-caption mono';
-    caption.textContent = 'ランクマ試合数（シーズン別、通算 '+tot.b.toLocaleString()+'戦）';
-    el.appendChild(caption);
+  // ============ Best/worst matchup TOP5 (Ranked, career, min 10 battles) ============
+  var matchupRank = {
+    you:     { best5: [['CAMMY',575,345],['A.K.I.',228,128],['JP',303,164],['MARISA',333,175],['ED',553,288]],
+               worst5: [['ELENA',26,9],['LILY',123,49],['INGRID',74,30],['CHUN-LI',185,76],['YASMINE',17,7]] },
+    shien07: { best5: [['INGRID',150,87],['YASMINE',61,34],['AKUMA',2056,1067],['TERRY',598,309],['ELENA',234,120]],
+               worst5: [['E. HONDA',265,91],['BLANKA',291,101],['DEE JAY',689,300],['RASHID',374,164],['DHALSIM',192,87]] },
+    nanashi: { best5: [['INGRID',19,15],['SAGAT',30,21],['CAMMY',131,83],['C. VIPER',29,18],['DEE JAY',69,42]],
+               worst5: [['BLANKA',26,8],['DHALSIM',18,6],['MANON',63,23],['JP',113,48],['MARISA',83,36]] },
+    Hitsuji: { best5: [['MANON',160,87],['MAI',403,219],['CAMMY',240,129],['KEN',372,199],['ZANGIEF',251,134]],
+               worst5: [['DHALSIM',42,11],['LILY',50,16],['JP',187,69],['BLANKA',55,22],['A.K.I.',119,48]] },
+    hiyoko:  { best5: [['MANON',11,8],['TERRY',16,10],['AKUMA',36,22],['LUKE',24,14],['ALEX',16,9]],
+               worst5: [['MARISA',15,5],['CAMMY',14,5],['YASMINE',41,16],['RYU',23,9],['JAMIE',23,9]] }
+  };
+  function renderRankList(el, rows){
+    el.innerHTML = rows.map(function(r, i){
+      var name=r[0], b=r[1], w=r[2];
+      var pct = wr(w,b);
+      return '<div class="rank-row"><span class="n">'+(i+1)+'</span><span class="c">'+name+'</span><span class="v"><b>'+pct+'%</b> ('+w+'/'+b+')</span></div>';
+    }).join('');
+  }
+  document.querySelectorAll('[data-rank-good]').forEach(function(el){
+    renderRankList(el, matchupRank[el.getAttribute('data-rank-good')].best5);
+  });
+  document.querySelectorAll('[data-rank-bad]').forEach(function(el){
+    renderRankList(el, matchupRank[el.getAttribute('data-rank-bad')].worst5);
   });
 
   // ============ Tabs ============
