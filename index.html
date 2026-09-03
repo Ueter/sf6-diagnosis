@@ -585,6 +585,23 @@
   .quote .title{ font-size:13.5px; font-weight:600; }
   .quote .comment{ font-size:13px; color:var(--text-muted); font-style:italic; }
 
+  .overview{
+    background:var(--surface-2);
+    border-left:3px solid var(--gold);
+    border-radius:6px;
+    padding:16px 18px;
+    margin-top:22px;
+  }
+  .overview .ov-label{
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--gold);
+    font-weight:700;
+    margin:0 0 8px;
+  }
+  .overview p{ margin:0; font-size:14px; line-height:1.75; color:var(--text); }
+
   .note{
     font-size:12.5px;
     color:var(--text-muted);
@@ -659,6 +676,10 @@
         <span class="lp-value mono"><b>21,686</b> LP</span>
       </div>
     </div>
+    <div class="overview">
+      <p class="ov-label">Overview</p>
+      <p>全体を通して見ると、LPの序列（shien07 &gt; Octopus &gt; nanashi &gt; Hitsuji &gt; hiyoko）は、実は自己ベストMRの序列ともかなり近い（shien07 1,630 &gt; Octopus 1,611 &gt; nanashi 1,610 &gt; Hitsuji 1,495）。ただし上位3人の自己ベストMRの差はわずか20点ほどでほぼ横一線。shien07のLPが頭一つ抜けているのは、ランクマ通算22,320戦というダントツの試合数によるところが大きい――「一番稼いでいる人」と「一番高いMRに触れたことがある人」はほぼ同一人物だが、その差を生んでいるのはピーク実力の違いというより投下量の違い、というのが数字から読み取れる面白いポイント。hiyokoのLPが突出して低いのは実力差というより投下時間の差（後述のプレイスタイル内訳を参照）が大きく、通算勝率49.1%だけ見ればグループ内でも上位に食い込む水準にある。</p>
+    </div>
   </section>
 
   <section>
@@ -673,6 +694,10 @@
     <div class="table-scroll">
       <table class="season-table" id="seasonTable" aria-label="シーズン別勝率と試合数の実数値"></table>
     </div>
+    <div class="overview">
+      <p class="ov-label">Overview</p>
+      <p>5人の勝率は多くのシーズンで44〜54%のレンジに収まっている。これはランクマッチのマッチメイキングが機能して、それぞれ実力に見合った相手と当たり続けている証拠でもある。つまりこのグラフの見どころは「誰が勝っているか」より「誰がどの方向にシーズンをまたいで動いているか」。通算勝率トップはnanashiの52.3%で、5人の中で唯一安定して五分より一段上を維持し続けている。一方で大きく崩れて連敗が続くようなシーズンは誰にも見られず、グループ全体として大きな失速なく推移しているのは素直に良い傾向と言える。</p>
+    </div>
   </section>
 
   <section>
@@ -684,19 +709,27 @@
       <div class="style-list" id="playstyle"></div>
       <div class="style-legend" id="styleLegend"></div>
     </div>
+    <div class="overview">
+      <p class="ov-label">Overview</p>
+      <p>総プレイ時間の順位（shien07 1,063h &gt; Octopus 754h &gt; nanashi 478h &gt; hiyoko 441h &gt; Hitsuji 356h）と、LPの順位はきれいには一致しない。中でもHitsujiは総時間こそ5人最少ながら投下時間の約58%をランクマに集中させる特化型で、その結果LPは4位を確保している。時間対効果で見れば実は効率のいいタイプ。逆にhiyokoは総時間こそHitsujiより多いものの、ランクマへの投下は約100時間のみで残りは練習やカスタムルームに分散している。つまりプレイ時間の絶対量そのものより「どこに時間を配分しているか」がLPやMRの差に直結している、というのがこの内訳から読み取れる。</p>
+    </div>
   </section>
 
   <section>
     <div class="section-head">
       <h2>マスターレート（MR）推移</h2>
-      <p class="sub">シーズン別のマスターレート（各シーズン1点のみのスナップショット。マスター昇格は毎シーズンMR1500からのスタートで、そこから上下する）。破線はMR1600＝ハイマスターのライン。表の「シーズン末ベストMR」はあくまでシーズン終了時点での最高値のため、シーズン中に一時的にこれより高いMRへ到達していても、そこが自己ベストとして表には残らない点に注意（例: shien07はS11終了時点で1,580だが、シーズン中は瞬間的にもっと高いMRへ触れていた可能性が高い）。マスター未到達のシーズンは線が途切れる。</p>
+      <p class="sub">折れ線はシーズンごとのマスターレート（基本は各シーズン1点のスナップショット。マスター昇格は毎シーズンMR1500からのスタートで、そこから上下する）。破線はMR1600＝ハイマスターのライン。◇マークは、Buckler's Boot Camp側が保持しているシーズン内の実測ハイライト（直近3シーズン=S11〜S13のみ遡れる仕様）で、折れ線の値より高い場合に表示——シーズン中に一瞬だけ到達した本当の自己ベストが、折れ線だけでは見えないことを補っている。それより前のシーズン（S3〜S10）はこの実測ハイライトが取得できないため、スナップショット値がそのまま自己ベストとして扱われる。マスター未到達のシーズンは線が途切れる。</p>
     </div>
     <div class="trend-card">
       <svg class="chart" id="mrChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別マスターレート推移チャート"></svg>
     </div>
     <div class="legend" id="mrLegend"></div>
     <div class="table-scroll">
-      <table class="season-table" id="masterRaceTable" aria-label="マスター到達シーズンとシーズン末ベストMR"></table>
+      <table class="season-table" id="masterRaceTable" aria-label="マスター到達シーズンと自己ベストMR"></table>
+    </div>
+    <div class="overview">
+      <p class="ov-label">Overview</p>
+      <p>マスター到達済みの4人のうち、Octopus(自己ベスト1,611・S13)とnanashi(自己ベスト1,610・S12)はほぼ現在地が自己ベスト圏内で、まさに今が乗っている時期。shien07はS12中に実測で1,630というシリーズ随一のハイマスター域まで到達した実績があるが、直近のスナップショットでは1,496まで戻しており、ピークと現在の差は5人で最も大きい。Hitsujiは直近S13の最中に自己ベストとなる1,495まで到達しており(現在のスナップショットは1,400)、これは前シーズンまでの記録を更新する動きだった点は見逃せない好材料。hiyokoはまだマスター未到達だが、通算勝率49.1%は4人のマスター到達者と並べても遜色ないラインにあり、ランクマの投下時間さえ増やせば到達は十分に射程内。</p>
     </div>
   </section>
 
@@ -775,14 +808,14 @@
       <h3 class="archetype">物量型の継続戦士<span class="en">The Endurance Player</span></h3>
       <div class="stat-row">
         <div class="stat"><span class="k">LP</span><span class="v mono">298,767</span></div>
-        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,580</span></div>
+        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,630</span></div>
         <div class="stat"><span class="k">Ranked</span><span class="v mono">22,320</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.3%</span></div>
       </div>
       <p class="diagnosis">CAMMY使用率96.2%、5人で唯一シーズン3から11シーズン連続でプレイし続けている。ランクマの勝率は44〜50%で安定、通算48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。</p>
       <p class="diagnosis commentary">ドライブラッシュ比率51.8%はOctopusと並んで5人最高水準、CAMMYの機動力を存分に使い倒している。ただしドライブパリィは1.7回/ラウンドと全員中最多で、前に出るだけでなく受けの技術もしっかり仕込んでいる二刀流。とはいえ被ドライブインパクトも0.4回と最多タイで、攻め込む分だけインパクトも食らいがちな諸刃の剣。SAレベル2は0%、Octopus同様に中間ゲージには興味を示さない。コーナー時間10.6・詰められ時間10.5とほぼ互角で、力でねじ伏せるというより手数で押し切るタイプ。</p>
       <p class="diagnosis commentary">苦手リストの並びが分かりやすい。E. HONDA(大型・アーマー)、DHALSIM(超遠距離)、BLANKA(不規則な軌道)――飛び込む前に潰されるか、間合いそのもので拒否されるキャラに弱い。CAMMYの強みである機動力を、体格や距離、変則的な動きで無効化されると分が悪くなる典型例。得意リストにAKUMA・TERRYが並ぶのは、彼らも接近戦を厭わないタイプなので、間合いの奪い合いに持ち込めれば普段の練度が生きるということだろう。</p>
-      <p class="diagnosis commentary journey">歩みで見ると、S4でマスター到達後は一貫して右肩上がりでS11に自己ベスト1,580まで到達。ただそこがピークで、S12(1,503)・S13(1,496、現在)と2シーズン連続で自己ベストから落ちたまま。プレイ量は5人で断トツなので「量が質に直結しなくなってきている」フェーズに入っている可能性がある。がむしゃらに回す段階は卒業していて、次に伸びるには量より中身の見直しが効きそう。とはいえ通算1,063時間・22,320戦という土台があるので、少し調整すれば自己ベスト更新は十分射程内。</p>
+      <p class="diagnosis commentary journey">歩みで見ると、S4でマスター到達後は右肩上がりでS11終了時点では1,580まで来ていた。実はそこで終わりではなく、S12の最中に1,630というシリーズ随一のハイマスター域へ瞬間的に到達していたことがゲーム側の実測データからわかっている（推移グラフの折れ線には出てこない、◇マークの値）。ただしS12終了時点のスナップショットは1,503まで下がり、S13も1,496(現在)とやや距離のある状態が続いている。プレイ量は5人で断トツなので、量そのものより「1,630を出せる力を安定して出し切れるか」が次のテーマになりそう。とはいえ一度1,630に触れているという事実は、通算1,063時間・22,320戦の土台が本物であることの証明でもある。次に波が来れば自己ベスト更新、あるいはそれ以上も十分に狙える。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -832,14 +865,14 @@
       <h3 class="archetype">努力型ラボワーカー<span class="en">The Lab Rat</span></h3>
       <div class="stat-row">
         <div class="stat"><span class="k">LP</span><span class="v mono">170,483</span></div>
-        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,606</span></div>
+        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,610</span></div>
         <div class="stat"><span class="k">Ranked</span><span class="v mono">4,916</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">52.3%</span></div>
       </div>
       <p class="diagnosis">キャリア通算ではTERRY(2,644戦)とKEN(2,272戦)がほぼ拮抗する二刀流だったが、シーズン6以降はTERRY一本に絞っている。ランクマ通算勝率52.3%は5人でトップ。トレーニング224時間がランクマ197時間を上回る、全活動時間トップも練習という努力家。</p>
       <p class="diagnosis commentary">コンボトライアルクリア数71は5人で断トツ、練習量の多さが裏付けられた数字。ジャストパリィ0.2回/ラウンドもグループ最多タイで、反射神経より読みと技術で守るタイプ。SAゲージはレベル1〜3・CAをまんべんなく使う唯一のプレイヤー(16/24/38/22%)で、状況に応じた使い分けができている証拠と言える。一方でドライブラッシュ比率は38.2%と中程度、力押しより駆け引き重視。投げ回数3.7回/ラウンドは全員中最多で、意外にもガン投げキャラでもある――読み合いに自信があるからこそ投げを選べるのかもしれない。</p>
       <p class="diagnosis commentary">苦手にDHALSIM・JP(遠距離)とMANON・MARISA(グラップラー)が両方並ぶのが面白い。遠くからは撃たれ、近くでは組まれる――中距離が持ち味のTERRYが両端から挟まれている構図に見える。得意はCAMMY・SAGAT・C.VIPERとやや接近戦寄りのキャラが多く、間合いの奪い合いが常に発生する相手には、研究量の多さで対応できているのかもしれない。</p>
-      <p class="diagnosis commentary journey">歩みが面白い。マスター到達はS5(KEN)とやや遅めだったが、S6でTERRYに転向した直後にMRが1,348→1,602へ一気にジャンプ――キャラ替えが結果的に大当たりだったことが数字にはっきり出ている。以降もS9(1,605)、そして最新S13(1,606)と自己ベスト圏内を維持し続けており、5人で最も「安定して強い」タイプ。練習量・コンボトライアル数もトップなので、伸び悩みというより着実な右肩上がり。あえて課題を挙げるなら、S7・S11のような踊り場が何によるものか(相手の変化かモチベーションか)を振り返ると、次の一段上に繋がるはず。</p>
+      <p class="diagnosis commentary journey">歩みが面白い。マスター到達はS5(KEN)とやや遅めだったが、S6でTERRYに転向した直後にMRが1,348→1,602へ一気にジャンプ――キャラ替えが結果的に大当たりだったことが数字にはっきり出ている。以降もS9(1,605)、S12には実測で1,610というシリーズ自己ベストに到達し、最新S13も1,606とほぼ同じ水準を維持し続けており、5人で最も「安定して強い」タイプ。練習量・コンボトライアル数もトップなので、伸び悩みというより着実な右肩上がり。あえて課題を挙げるなら、S7・S11のような踊り場が何によるものか(相手の変化かモチベーションか)を振り返ると、次の一段上に繋がるはず。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -889,14 +922,14 @@
       <h3 class="archetype">対人戦好きの待ちグラップラー<span class="en">The Patient Grappler</span></h3>
       <div class="stat-row">
         <div class="stat"><span class="k">LP</span><span class="v mono">145,783</span></div>
-        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,462</span></div>
+        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,495</span></div>
         <div class="stat"><span class="k">Ranked</span><span class="v mono">6,116</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.0%</span></div>
       </div>
       <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋(98.0%)で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。</p>
       <p class="diagnosis commentary">コーナー時間4.4に対し詰められ時間10.5、5人で唯一かつ圧倒的にコーナーへ追い込まれる時間の方が長い。グラップラーの宿命で、相手の遠距離戦を耐えて近づく展開が多いことが数字にそのまま出ている。その代わりSAレベル2の使用率は51.2%と全員中突出しており、ZANGIEFの切り札を的確に選び取っている様子がうかがえる。ドライブインパクトの使用(0.4)・被弾(0.5)ともに全員中最多で、我慢比べの読み合いが多いタイプ。受けて詰められて、それでも一発を狙う典型的な待ちグラップラー。</p>
       <p class="diagnosis commentary">苦手リストがDHALSIM・JP・LILY・BLANKAとゾーニング／変則移動のキャラで固まっているのは、グラップラーの教科書通りの弱点。近づく前に削られる展開そのものが数字にきれいに出ている。一方で得意はCAMMY・KENとラッシュ系が多く、寄ってきてくれる相手には投げの読み合いで還す、という得意な形にきちんと持っていけている。</p>
-      <p class="diagnosis commentary journey">5人で最も遅いS8にマスター到達し、直後のS9〜S11は1,410→1,349→1,337とじわじわ下降する苦しい時期が続いた。そこからS12で自己ベスト1,462まで一気に持ち直したのは良い兆候だったが、直近S13はまた1,400まで下がっている。グラップラーはただでさえ苦手キャラ(ゾーナー)の影響を受けやすいので、波があるのは仕方ない面もある。注目したいのは総プレイ時間で、5人のランクマ経験者の中で最も少ない356時間しか投じていない。参戦が一番遅く、かけた時間も一番短いのにMR1,400台まで乗せているのは、時間対効果で見ればむしろ優秀な部類。じっくり型のまま続ければ、次の自己ベスト更新は十分射程内。</p>
+      <p class="diagnosis commentary journey">5人で最も遅いS8にマスター到達し、直後のS9〜S11は1,410→1,349→1,337とじわじわ下降する苦しい時期が続いた。そこからS12で1,462まで持ち直し、さらに直近のS13中には実測で自己ベストとなる1,495まで到達している（現在のスナップショットは1,400まで戻しているが、シーズン中に自己記録を更新した事実は残る）。グラップラーはただでさえ苦手キャラ(ゾーナー)の影響を受けやすいので、波があるのは仕方ない面もある。注目したいのは総プレイ時間で、5人のランクマ経験者の中で最も少ない356時間しか投じていない。参戦が一番遅く、かけた時間も一番短いのに自己ベスト1,495まで乗せているのは、時間対効果で見ればむしろ優秀な部類。じっくり型のまま続ければ、次はこの1,495を安定して超えるところまで見えてくるはず。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -1145,7 +1178,8 @@
   })();
 
   // ============ Master Rating (MR) history per season ============
-  // null = not in Master league that season (or didn't play). Source: api/profile/play/act/leagueinfo (per-season league_info).
+  // null = not in Master league that season (or didn't play). Source: api/profile/play/act/leagueinfo (per-season league_info) — this
+  // is a single snapshot per season, not necessarily the season's true high point.
   var mrSeries = {
     shien:   [null,1330,1223,1503,1505,1579,1552,1484,1580,1503,1496],
     you:     [null,1248,1557,1572,1569,1601,null,null,null,1451,1611],
@@ -1153,18 +1187,56 @@
     hitsuji: [null,null,null,null,null,1404,1410,1349,1337,1462,1400],
     hiyoko:  [null,null,null,null,null,null,null,null,null,null,null]
   };
+  // Verified in-season peak MR, from the site's own "Highest" per-Act tracking
+  // (api/profile/play/act/highest/master_rating_info). Capcom only retains this for the
+  // last 3 Acts (S11-S13 as of writing) — indices 8/9/10 in the trimmed array above.
+  // Older seasons return 0 for everyone, so no verified highest exists before S11.
+  var mrHighest = {
+    shien:   { 8:1598, 9:1630, 10:1602 },
+    you:     { 9:1596, 10:1611 },
+    nanashi: { 8:1552, 9:1610, 10:1606 },
+    hitsuji: { 8:1493, 9:1482, 10:1495 },
+    hiyoko:  {}
+  };
   var mrData = {};
   Object.keys(playerMeta).forEach(function(key){
     mrData[key] = Object.assign({}, playerMeta[key], { series: mrSeries[key] });
   });
-  drawLineChart(document.getElementById('mrChart'), mrData, {
+  var mrChartOpts = {
     n: 11, yMin: 1200, yMax: 1700, yUnit: '',
     W: 1040, H: 380, padL: 50, padR: 20, padT: 20, padB: 34,
     gridlines: [1200,1300,1400,1500,1600,1700],
     refLine: 1600, refLineLabel: 'ハイマスター(1600)',
     xLabelStep: 1,
     xLabel: function(i){ return 'S'+(i+SEASON_OFFSET); }
-  });
+  };
+  drawLineChart(document.getElementById('mrChart'), mrData, mrChartOpts);
+
+  // Overlay diamond markers where the verified in-season "Highest" exceeds the
+  // plotted snapshot value — makes visible that the line can understate a real peak.
+  function drawHighestMarkers(svg, dataMap, highestMap, opts){
+    var padL = opts.padL, padT = opts.padT, padB = opts.padB, padR = opts.padR;
+    var plotW = opts.W - padL - padR, plotH = opts.H - padT - padB;
+    function x(i){ return padL + (i/(opts.n-1))*plotW; }
+    function y(v){ return padT + plotH - ((v-opts.yMin)/(opts.yMax-opts.yMin))*plotH; }
+    Object.keys(highestMap).forEach(function(key){
+      var series = dataMap[key].series, color = dataMap[key].color, hi = highestMap[key];
+      Object.keys(hi).forEach(function(iStr){
+        var i = Number(iStr), v = hi[iStr];
+        if (v == null) return;
+        var lineVal = series[i];
+        if (lineVal != null && v <= lineVal) return;
+        var cx = x(i), cy = y(v), r = 6;
+        var d = 'M'+cx+' '+(cy-r)+' L'+(cx+r)+' '+cy+' L'+cx+' '+(cy+r)+' L'+(cx-r)+' '+cy+' Z';
+        var mark = el('path', { d: d, fill: 'var(--surface)', stroke: color, 'stroke-width': 2 });
+        var t = document.createElementNS(svgns, 'title');
+        t.textContent = dataMap[key].label + ' シーズン内最高: ' + v + '（記録上の値 ' + (lineVal != null ? lineVal : '—') + ' より高い)';
+        mark.appendChild(t);
+        svg.appendChild(mark);
+      });
+    });
+  }
+  drawHighestMarkers(document.getElementById('mrChart'), mrData, mrHighest, mrChartOpts);
   var mrLegend = document.getElementById('mrLegend');
   Object.keys(mrData).forEach(function(key){
     var d = mrData[key];
@@ -1190,15 +1262,21 @@
     }
     var peakVal = -1, peakIdx = -1;
     series.forEach(function(v,i){ if (v !== null && v > peakVal){ peakVal = v; peakIdx = i; } });
+    var hi = mrHighest[key] || {};
+    Object.keys(hi).forEach(function(i){
+      var v = hi[i];
+      if (v != null && v > peakVal){ peakVal = v; peakIdx = Number(i); }
+    });
     masterFacts[key] = {
       reached: true, firstSeason: firstIdx, peakMR: peakVal, peakSeason: peakIdx,
-      current: series[lastIdx], currentSeason: lastIdx
+      current: series[lastIdx], currentSeason: lastIdx,
+      peakVerified: hi[peakIdx] === peakVal
     };
   });
 
   (function(){
     var tbl = document.getElementById('masterRaceTable');
-    var head = '<thead><tr><th>Player</th><th>マスター初到達</th><th>シーズン末ベストMR</th><th>現在MR</th><th>ベストとの差</th></tr></thead>';
+    var head = '<thead><tr><th>Player</th><th>マスター初到達</th><th>自己ベストMR</th><th>現在MR</th><th>ベストとの差</th></tr></thead>';
     var body = '<tbody>' + Object.keys(playerMeta).map(function(key){
       var d = playerMeta[key];
       var f = masterFacts[key];
@@ -1410,23 +1488,26 @@
     var tabKey = svgEl.getAttribute('data-mrmini');
     var sKey = tabToSeasonKey[tabKey];
     var series = mrSeries[sKey];
-    var vals = series.filter(function(v){ return v !== null; });
+    var hiMap = mrHighest[sKey] || {};
+    var vals = series.filter(function(v){ return v !== null; }).concat(Object.values(hiMap).filter(function(v){ return v != null; }));
     if (!vals.length) return; // never reached Master — handled by the .mr-empty message in HTML instead
     var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
     var yMin = Math.max(1000, Math.floor((lo-30)/25)*25);
     var yMax = Math.ceil((hi+30)/25)*25;
     var mid = Math.round((yMin+yMax)/2/25)*25;
-    drawLineChart(svgEl, { solo: { color: playerMeta[sKey].color, series: series } }, {
+    var miniOpts = {
       n: 11, yMin: yMin, yMax: yMax, yUnit: '',
       W: 1040, H: 220, padL: 50, padR: 20, padT: 16, padB: 26,
       gridlines: [yMin, mid, yMax],
       dotR: 3.5,
       xLabel: function(i){ return 'S'+(i+SEASON_OFFSET); }
-    });
+    };
+    drawLineChart(svgEl, { solo: { color: playerMeta[sKey].color, series: series } }, miniOpts);
+    drawHighestMarkers(svgEl, { solo: { color: playerMeta[sKey].color, label: playerMeta[sKey].label, series: series } }, { solo: hiMap }, miniOpts);
     var f = masterFacts[sKey];
     if (f && f.reached){
       var lbl = el('text', { x: 1040-20, y: 16, 'text-anchor':'end' });
-      lbl.textContent = 'シーズン末ベスト '+f.peakMR+'（S'+(f.peakSeason+SEASON_OFFSET)+'）';
+      lbl.textContent = '自己ベスト '+f.peakMR+'（S'+(f.peakSeason+SEASON_OFFSET)+'）'+(f.peakVerified ? ' 実測' : '');
       svgEl.appendChild(lbl);
     }
   });
@@ -1545,7 +1626,7 @@
     if (mf.reached){
       cells.push({ k:'マスター初到達', v: 'S'+(mf.firstSeason+SEASON_OFFSET) });
       var atPeak = mf.current === mf.peakMR;
-      cells.push({ k:'シーズン末ベストMR', v: mf.peakMR+' <span class="vs">(S'+(mf.peakSeason+SEASON_OFFSET)+')</span>', cls: atPeak ? 'hi' : '' });
+      cells.push({ k:'自己ベストMR', v: mf.peakMR+' <span class="vs">(S'+(mf.peakSeason+SEASON_OFFSET)+')</span>', cls: atPeak ? 'hi' : '' });
     } else {
       cells.push({ k:'マスター到達', v: '未到達' });
     }
