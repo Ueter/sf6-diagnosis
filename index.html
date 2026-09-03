@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>スト6診断カルテ</title>
-<meta name="description" content="Buckler's Boot Campの実データから、Octopusと4人のフレンドの闘い方タイプ・シーズン推移・身内対戦成績を診断">
+<meta name="description" content="Buckler's Boot Campの実データから、Octopusと4人のフレンドの闘い方タイプ・シーズン推移・キャラ相性を診断">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -232,47 +232,41 @@
   }
   .legend-item.you{ color:var(--text); font-weight:600; }
 
-  /* ---------- Season / matrix tables ---------- */
+  /* ---------- Season table ---------- */
   .table-scroll{ overflow-x:auto; }
-  .season-table, .matrix-table{
+  .season-table{
     width:100%;
     min-width:760px;
     border-collapse:collapse;
     font-size:13px;
   }
-  .matrix-table{ min-width:560px; }
-  .season-table th, .season-table td,
-  .matrix-table th, .matrix-table td{
+  .season-table th, .season-table td{
     padding:8px 10px;
     text-align:right;
     white-space:nowrap;
     border-bottom:1px solid var(--border);
   }
-  .season-table th, .matrix-table th{
+  .season-table th{
     font-family:"JetBrains Mono", monospace;
     font-size:11px;
     letter-spacing:.04em;
     color:var(--text-muted);
     font-weight:500;
   }
-  .season-table th:first-child, .season-table td:first-child,
-  .matrix-table th:first-child, .matrix-table td:first-child{
+  .season-table th:first-child, .season-table td:first-child{
     text-align:left;
     position:sticky;
     left:0;
     background:var(--surface);
   }
-  .season-table td, .matrix-table td{
+  .season-table td{
     font-family:"JetBrains Mono", monospace;
     font-variant-numeric: tabular-nums;
     color:var(--text-muted);
   }
-  .season-table td.na, .matrix-table td.na{ opacity:.35; }
-  .season-table tr.you td:first-child, .matrix-table tr.you td:first-child{ color:var(--accent); font-weight:600; }
+  .season-table td.na{ opacity:.35; }
+  .season-table tr.you td:first-child{ color:var(--accent); font-weight:600; }
   .season-table td.best{ color:var(--text); font-weight:700; }
-  .matrix-table td.win{ color:var(--good); font-weight:600; }
-  .matrix-table td.lose{ color:var(--bad); font-weight:600; }
-  .matrix-table td small{ opacity:.6; font-weight:400; }
 
   /* ---------- Play style breakdown ---------- */
   .style-list{
@@ -455,25 +449,25 @@
   .roster-b{ text-align:right; color:var(--text-muted); font-family:"JetBrains Mono", monospace; }
   .roster-wr{ text-align:right; font-family:"JetBrains Mono", monospace; font-weight:600; }
 
-  .vs-list{ display:flex; flex-direction:column; gap:8px; }
-  .vs-row{
-    display:grid;
-    grid-template-columns: 84px 1fr 90px;
-    align-items:center;
-    gap:10px;
-    font-size:13px;
+  .mini-trend{ width:100%; height:auto; display:block; margin-top:4px; }
+  .mini-bars-row{
+    display:flex;
+    align-items:flex-end;
+    gap:3px;
+    height:36px;
+    margin-top:10px;
   }
-  .vs-track{
-    height:10px;
-    border-radius:5px;
-    background:var(--surface-2);
-    border:1px solid var(--border);
-    overflow:hidden;
+  .mini-bar{
+    flex:1;
+    min-width:5px;
+    border-radius:2px 2px 0 0;
   }
-  .vs-fill{ height:100%; }
-  .vs-fill.win{ background:var(--good); }
-  .vs-fill.lose{ background:var(--bad); }
-  .vs-wr{ text-align:right; font-family:"JetBrains Mono", monospace; color:var(--text-muted); }
+  .mini-bar.empty{ background:var(--surface-2); height:2px !important; }
+  .mini-bars-caption{
+    font-size:10.5px;
+    color:var(--text-muted);
+    margin-top:6px;
+  }
 
   .matchup-row{
     display:grid;
@@ -548,7 +542,7 @@
   <section class="hero">
     <span class="eyebrow">Buckler's Boot Camp Data · Season 0–13</span>
     <h1>スト6<span>診断カルテ</span></h1>
-    <p>Octopusと4人のフレンド、あわせて5人分のランクマッチ＆カスタムルーム実績を実データから読み解いた診断カルテ。シーズン0〜13の勝率推移・使用キャラの全内訳・プレイスタイルに加え、身内同士の対戦成績（誰が誰に強いか）まで掘り下げた。</p>
+    <p>Octopusと4人のフレンド、あわせて5人分のランクマッチ実績を実データから読み解いた診断カルテ。シーズン0〜13の勝率推移・使用キャラの全内訳・プレイスタイル・キャラ相性まで掘り下げた。</p>
     <div class="hero-meta">
       <span>FIGHTERS <b>5</b></span>
       <span>SEASONS TRACKED <b>14</b></span>
@@ -617,18 +611,8 @@
 
   <section>
     <div class="section-head">
-      <h2>身内対戦成績（カスタムルーム）</h2>
-      <p class="sub">縦の行が「誰視点か」、横の列が「相手」。カスタムルームはほぼ身内戦のため、各プレイヤーの現メインキャラでの対戦を身内対戦の代理指標として使用（数値がわずかに非対称なのは、まれに他のキャラ・他プレイヤーが混ざるため）。</p>
-    </div>
-    <div class="table-scroll">
-      <table class="matrix-table" id="matrixTable" aria-label="身内対戦成績マトリクス"></table>
-    </div>
-  </section>
-
-  <section>
-    <div class="section-head">
       <h2>ファイター診断</h2>
-      <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）・身内対戦成績から診断した、5人それぞれの闘い方タイプ。</p>
+      <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）から診断した、5人それぞれの闘い方タイプ。</p>
     </div>
     <div class="tabs" id="tabButtons"></div>
 
@@ -654,8 +638,9 @@
           <div class="roster-list" data-roster="you"></div>
         </div>
         <div>
-          <p class="subhead">身内対戦成績（カスタムルーム）</p>
-          <div class="vs-list" data-vs="you"></div>
+          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="you" viewBox="0 0 480 200"></svg>
+          <div class="mini-bars" data-volbars="you"></div>
         </div>
       </div>
       <div class="matchup-row">
@@ -683,15 +668,16 @@
         <div class="stat"><span class="k">Ranked</span><span class="v mono">22,320</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.3%</span></div>
       </div>
-      <p class="diagnosis">CAMMY使用率96.2%、5人で唯一シーズン3から11シーズン連続でプレイし続けている。ランクマの勝率は44〜50%で安定、通算48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。身内戦ではOctopus・nanashi相手にはやや苦戦気味。</p>
+      <p class="diagnosis">CAMMY使用率96.2%、5人で唯一シーズン3から11シーズン連続でプレイし続けている。ランクマの勝率は44〜50%で安定、通算48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
           <div class="roster-list" data-roster="shien07"></div>
         </div>
         <div>
-          <p class="subhead">身内対戦成績（カスタムルーム）</p>
-          <div class="vs-list" data-vs="shien07"></div>
+          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="shien07" viewBox="0 0 480 200"></svg>
+          <div class="mini-bars" data-volbars="shien07"></div>
         </div>
       </div>
       <div class="matchup-row">
@@ -719,15 +705,16 @@
         <div class="stat"><span class="k">Ranked</span><span class="v mono">4,916</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">52.3%</span></div>
       </div>
-      <p class="diagnosis">キャリア通算ではTERRY(2,644戦)とKEN(2,272戦)がほぼ拮抗する二刀流だったが、シーズン6以降はTERRY一本に絞っている。ランクマ通算勝率52.3%は5人でトップ。トレーニング224時間がランクマ197時間を上回る、全活動時間トップも練習という努力家。身内戦ではhiyoko相手に93.6%と圧倒。</p>
+      <p class="diagnosis">キャリア通算ではTERRY(2,644戦)とKEN(2,272戦)がほぼ拮抗する二刀流だったが、シーズン6以降はTERRY一本に絞っている。ランクマ通算勝率52.3%は5人でトップ。トレーニング224時間がランクマ197時間を上回る、全活動時間トップも練習という努力家。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
           <div class="roster-list" data-roster="nanashi"></div>
         </div>
         <div>
-          <p class="subhead">身内対戦成績（カスタムルーム・TERRY視点）</p>
-          <div class="vs-list" data-vs="nanashi"></div>
+          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="nanashi" viewBox="0 0 480 200"></svg>
+          <div class="mini-bars" data-volbars="nanashi"></div>
         </div>
       </div>
       <div class="matchup-row">
@@ -755,15 +742,16 @@
         <div class="stat"><span class="k">Ranked</span><span class="v mono">6,116</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.0%</span></div>
       </div>
-      <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋(98.0%)で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。身内戦ではhiyokoに強い一方、Octopus・shien07にはやや分が悪い。</p>
+      <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋(98.0%)で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
           <div class="roster-list" data-roster="Hitsuji"></div>
         </div>
         <div>
-          <p class="subhead">身内対戦成績（カスタムルーム）</p>
-          <div class="vs-list" data-vs="Hitsuji"></div>
+          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="Hitsuji" viewBox="0 0 480 200"></svg>
+          <div class="mini-bars" data-volbars="Hitsuji"></div>
         </div>
       </div>
       <div class="matchup-row">
@@ -791,15 +779,16 @@
         <div class="stat"><span class="k">Ranked</span><span class="v mono">2,575</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">49.1%</span></div>
       </div>
-      <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。キャリア通算で最も使用しているのは現在の主力MAIではなく実はED(1,218戦)。使用率は低いがJPの勝率68.3%が全キャラ中最高で、実は一番強かったのはJPだったのかもしれない。ランクマ通算は49.1%とほぼ五分を維持する一方、身内戦（カスタムルーム）では全員に負け越し中の「胸を貸す」ポジション。</p>
+      <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。キャリア通算で最も使用しているのは現在の主力MAIではなく実はED(1,218戦)。使用率は低いがJPの勝率68.3%が全キャラ中最高で、実は一番強かったのはJPだったのかもしれない。ランクマ通算は49.1%とほぼ五分を維持しており、キャラを変えても地力は落ちていない。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
           <div class="roster-list" data-roster="hiyoko"></div>
         </div>
         <div>
-          <p class="subhead">身内対戦成績（カスタムルーム・MAI視点）</p>
-          <div class="vs-list" data-vs="hiyoko"></div>
+          <p class="subhead">シーズン別勝率の推移（自分のレンジ）</p>
+          <svg class="chart mini-trend" data-mini="hiyoko" viewBox="0 0 480 200"></svg>
+          <div class="mini-bars" data-volbars="hiyoko"></div>
         </div>
       </div>
       <div class="matchup-row">
@@ -813,7 +802,7 @@
     </div>
   </section>
 
-  <p class="note">※ LP・MRはシーズンごとにリセットされ、過去シーズンの数値やマスター到達日は公式サイトからは取得できないため、ここでは各シーズンのランクマッチ成績（勝率・試合数）で強さの推移を表している。ランクマ集計は「ランクマッチ」限定（カジュアル・カスタムルーム・トレーニングは除く）。相性・身内対戦データは通算成績から、母数10戦未満の対面は信頼性が低いため除外している。身内対戦成績はカスタムルームの対キャラ戦績を代理指標として使用しており、厳密な1対1の対戦記録ではない。</p>
+  <p class="note">※ LP・MRはシーズンごとにリセットされ、過去シーズンの数値やマスター到達日は公式サイトからは取得できないため、ここでは各シーズンのランクマッチ成績（勝率・試合数）で強さの推移を表している。ランクマ集計は「ランクマッチ」限定（カジュアル・カスタムルーム・トレーニングは除く）。キャラ相性データは通算成績から、母数10戦未満の対面は信頼性が低いため除外している。</p>
 
   <footer>
     <span>DATA: Buckler's Boot Camp (streetfighter.com/6/buckler)</span>
@@ -870,8 +859,9 @@
   }
 
   function drawLineChart(svg, seriesMap, opts){
-    var W = 1040, H = 380;
-    var padL = 46, padR = 20, padT = 20, padB = 34;
+    var W = opts.W || 1040, H = opts.H || 380;
+    var padL = opts.padL != null ? opts.padL : 46, padR = opts.padR != null ? opts.padR : 20,
+        padT = opts.padT != null ? opts.padT : 20, padB = opts.padB != null ? opts.padB : 34;
     var plotW = W - padL - padR;
     var plotH = H - padT - padB;
     var n = opts.n;
@@ -881,7 +871,7 @@
 
     (opts.gridlines||[]).forEach(function(v){
       svg.appendChild(el('line', { class:'gridline', x1:padL, x2:W-padR, y1:y(v), y2:y(v) }));
-      var t = el('text', { x: padL-10, y: y(v)+4, 'text-anchor':'end' });
+      var t = el('text', { x: padL-8, y: y(v)+4, 'text-anchor':'end' });
       t.textContent = v + '%';
       svg.appendChild(t);
     });
@@ -891,7 +881,8 @@
       rl.textContent = opts.refLineLabel || (opts.refLine+'%');
       svg.appendChild(rl);
     }
-    for (var i=0;i<n;i++){
+    var xStep = opts.xLabelStep || 1;
+    for (var i=0;i<n;i+=xStep){
       var t = el('text', { x: x(i), y: H-padB+18, 'text-anchor':'middle' });
       t.textContent = opts.xLabel(i);
       svg.appendChild(t);
@@ -910,8 +901,12 @@
         var dAttr = run.map(function(p,idx){ return (idx===0?'M':'L') + x(p[0]) + ' ' + y(p[1]); }).join(' ');
         svg.appendChild(el('path', { class:'line', d:dAttr, stroke:d.color }));
         run.forEach(function(p){
-          var r = d.you ? 4.5 : 3.5;
-          svg.appendChild(el('circle', { class:'dot', cx:x(p[0]), cy:y(p[1]), r:r, fill:d.color }));
+          var r = opts.dotR != null ? opts.dotR : (d.you ? 4.5 : 3.5);
+          var c = el('circle', { class:'dot', cx:x(p[0]), cy:y(p[1]), r:r, fill:d.color });
+          var titleEl = document.createElementNS(svgns, 'title');
+          titleEl.textContent = (opts.xLabel(p[0])) + ': ' + p[1].toFixed(1) + '%';
+          c.appendChild(titleEl);
+          svg.appendChild(c);
         });
       });
     });
@@ -1040,52 +1035,51 @@
     });
   });
 
-  // ============ Custom Room cross matchup matrix (career, current-main proxy) ============
-  var matrix = {
-    you:     { shien07:[1179,1980], nanashi:[232,514], Hitsuji:[174,262], hiyoko:[601,724] },
-    shien07: { you:[828,2040], nanashi:[64,177], Hitsuji:[142,218], hiyoko:[286,356] },
-    nanashi: { you:[280,513], shien07:[113,177], Hitsuji:[14,19], hiyoko:[131,140] },
-    Hitsuji: { you:[88,262], shien07:[76,218], nanashi:[5,19], hiyoko:[110,143] },
-    hiyoko:  { you:[121,702], shien07:[70,356], nanashi:[8,139], Hitsuji:[33,142] }
-  };
-  var order = ['you','shien07','nanashi','Hitsuji','hiyoko'];
-  var displayName = { you:'Octopus', shien07:'shien07', nanashi:'nanashi', Hitsuji:'Hitsuji', hiyoko:'hiyoko' };
-  (function(){
-    var tbl = document.getElementById('matrixTable');
-    var head = '<thead><tr><th>視点\\\\相手</th>' + order.map(function(o){ return '<th>'+displayName[o]+'</th>'; }).join('') + '</tr></thead>';
-    var body = '<tbody>' + order.map(function(row){
-      var cells = order.map(function(col){
-        if (row === col) return '<td class="na">—</td>';
-        var m = matrix[row][col];
-        if (!m || m[1] === 0) return '<td class="na">–</td>';
-        var pct = wr(m[0], m[1]);
-        var cls = pct >= 50 ? 'win' : 'lose';
-        return '<td class="'+cls+'">'+pct+'% <small>('+m[0]+'/'+m[1]+')</small></td>';
-      }).join('');
-      return '<tr class="'+(row==='you'?'you':'')+'"><td>'+displayName[row]+'</td>'+cells+'</tr>';
-    }).join('') + '</tbody>';
-    tbl.innerHTML = head + body;
-  })();
-
-  // vs-list per panel (that player's row in the matrix, sorted by opponent win rate desc)
-  document.querySelectorAll('[data-vs]').forEach(function(el){
-    var key = el.getAttribute('data-vs');
-    var row = matrix[key];
-    if (!row) return;
-    var entries = Object.keys(row).map(function(opp){
-      var m = row[opp];
-      return { opp: opp, w: m[0], b: m[1], wr: wr(m[0], m[1]) };
-    }).sort(function(a,b){ return b.wr - a.wr; });
-    entries.forEach(function(e){
-      var isWin = e.wr >= 50;
-      var r = document.createElement('div');
-      r.className = 'vs-row';
-      r.innerHTML =
-        '<span>'+displayName[e.opp]+'</span>' +
-        '<span class="vs-track"><span class="vs-fill '+(isWin?'win':'lose')+'" style="width:'+e.wr+'%"></span></span>' +
-        '<span class="vs-wr">'+e.wr+'% ('+e.w+'/'+e.b+')</span>';
-      el.appendChild(r);
+  // ============ Per-player mini trend chart + Ranked battle-volume bars (own-scaled) ============
+  var tabToSeasonKey = { you:'you', shien07:'shien', nanashi:'nanashi', Hitsuji:'hitsuji', hiyoko:'hiyoko' };
+  document.querySelectorAll('[data-mini]').forEach(function(svgEl){
+    var tabKey = svgEl.getAttribute('data-mini');
+    var sKey = tabToSeasonKey[tabKey];
+    var d = seasonData[sKey];
+    var vals = d.series.filter(function(v){ return v !== null; });
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var yMin = Math.max(0, Math.floor((lo-3)/5)*5);
+    var yMax = Math.ceil((hi+3)/5)*5;
+    var mid = Math.round((yMin+yMax)/2/5)*5;
+    drawLineChart(svgEl, { solo: { color: d.color, series: d.series, you: d.you } }, {
+      n: 14, yMin: yMin, yMax: yMax,
+      W: 480, H: 200, padL: 34, padR: 10, padT: 14, padB: 22,
+      gridlines: [yMin, mid, yMax],
+      xLabelStep: 2, dotR: 3,
+      xLabel: function(i){ return 'S'+i; }
     });
+  });
+
+  document.querySelectorAll('[data-volbars]').forEach(function(el){
+    var tabKey = el.getAttribute('data-volbars');
+    var sKey = tabToSeasonKey[tabKey];
+    var b = battles[sKey];
+    var tot = totals[sKey];
+    var max = Math.max.apply(null, b);
+    var wrap = document.createElement('div');
+    wrap.className = 'mini-bars-row';
+    b.forEach(function(v, i){
+      var bar = document.createElement('div');
+      if (v === 0){
+        bar.className = 'mini-bar empty';
+      } else {
+        bar.className = 'mini-bar';
+        bar.style.height = Math.max(4, (v/max)*32) + 'px';
+        bar.style.background = seasonData[sKey].color;
+        bar.title = 'S'+i+': '+v+'戦';
+      }
+      wrap.appendChild(bar);
+    });
+    el.appendChild(wrap);
+    var caption = document.createElement('div');
+    caption.className = 'mini-bars-caption mono';
+    caption.textContent = 'ランクマ試合数（シーズン別、通算 '+tot.b.toLocaleString()+'戦）';
+    el.appendChild(caption);
   });
 
   // ============ Tabs ============
