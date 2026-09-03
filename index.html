@@ -541,7 +541,7 @@
       <p class="sub">シーズン0〜13の勝率（ランクマッチ）。線が途切れているのはそのシーズンに対戦記録がない期間。相対的な強さの推移が一目でわかる。</p>
     </div>
     <div class="trend-card">
-      <svg id="trendChart" viewBox="0 0 1040 340" role="img" aria-label="シーズン別勝率推移チャート"></svg>
+      <svg id="trendChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別勝率推移チャート"></svg>
     </div>
     <div class="legend" id="legend"></div>
     <div class="table-scroll">
@@ -776,15 +776,18 @@
 
   // ---- Trend line chart ----
   var svg = document.getElementById('trendChart');
-  var W = 1040, H = 340;
+  var W = 1040, H = 380;
   var padL = 46, padR = 20, padT = 20, padB = 34;
   var plotW = W - padL - padR;
   var plotH = H - padT - padB;
   var seasons = 14;
-  var yMax = 70;
+  // Real ranked win rates for this group cluster tightly around 50% (as expected on a
+  // rating-based ladder), so zoom the axis into 35–65% instead of 0–100 — otherwise every
+  // line flattens into a nearly indistinguishable band near the top of the chart.
+  var yMin = 35, yMax = 65;
 
   function x(i){ return padL + (i/(seasons-1))*plotW; }
-  function y(v){ return padT + plotH - (v/yMax)*plotH; }
+  function y(v){ return padT + plotH - ((v-yMin)/(yMax-yMin))*plotH; }
 
   var svgns = 'http://www.w3.org/2000/svg';
   function el(tag, attrs){
@@ -794,7 +797,7 @@
   }
 
   // gridlines + y labels
-  [0,20,40,60].forEach(function(v){
+  [35,40,45,55,60,65].forEach(function(v){
     svg.appendChild(el('line', { class:'gridline', x1:padL, x2:W-padR, y1:y(v), y2:y(v) }));
     var t = el('text', { x: padL-10, y: y(v)+4, 'text-anchor':'end' });
     t.textContent = v + '%';
@@ -803,7 +806,7 @@
   // 50% reference line (break-even in a rating-based ladder)
   var fifty = el('line', { x1:padL, x2:W-padR, y1:y(50), y2:y(50), stroke:'var(--text-muted)', 'stroke-width':1, 'stroke-dasharray':'3 4', opacity:'0.6' });
   svg.appendChild(fifty);
-  var fiftyLabel = el('text', { x: W-padR, y: y(50)-6, 'text-anchor':'end' });
+  var fiftyLabel = el('text', { x: padL+4, y: y(50)-6, 'text-anchor':'start' });
   fiftyLabel.textContent = '五分(50%)';
   svg.appendChild(fiftyLabel);
   // x labels
