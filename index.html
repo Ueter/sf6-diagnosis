@@ -182,7 +182,6 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .lp-name.you{ color:var(--accent); font-weight:600; }
   .lp-track{
     position:relative;
     height:14px;
@@ -236,7 +235,6 @@
   .legend-item .sw{
     width:12px; height:12px; border-radius:3px; flex:none;
   }
-  .legend-item.you{ color:var(--text); font-weight:600; }
 
   /* ---------- Season table ---------- */
   .table-scroll{ overflow-x:auto; }
@@ -271,7 +269,6 @@
     color:var(--text-muted);
   }
   .season-table td.na{ opacity:.35; }
-  .season-table tr.you td:first-child{ color:var(--accent); font-weight:600; }
   .season-table td.best{ color:var(--text); font-weight:700; }
 
   /* ---------- Play style breakdown ---------- */
@@ -287,7 +284,6 @@
     gap:14px;
   }
   .style-name{ font-size:14px; font-weight:500; }
-  .style-name.you{ color:var(--accent); font-weight:600; }
   .style-track{
     position:relative;
     height:22px;
@@ -348,7 +344,6 @@
     box-shadow:var(--shadow);
   }
   .panel[hidden]{ display:none; }
-  .panel.you{ border-color:color-mix(in srgb, var(--accent) 55%, var(--border)); }
 
   .panel-top{
     display:flex;
@@ -365,7 +360,6 @@
     text-transform:uppercase;
     color:var(--text-muted);
   }
-  .tag.you{ color:var(--accent); }
   .handle{ font-size:16px; font-weight:600; }
   .char-badge{
     font-family:"JetBrains Mono", monospace;
@@ -637,7 +631,7 @@
         <span class="lp-value mono"><b>298,767</b> LP</span>
       </div>
       <div class="lp-row">
-        <span class="lp-name you">Octopus</span>
+        <span class="lp-name">Octopus</span>
         <div class="lp-track"><div class="lp-fill" style="width:66.2%"></div></div>
         <span class="lp-value mono"><b>211,872</b> LP</span>
       </div>
@@ -686,15 +680,29 @@
 
   <section>
     <div class="section-head">
+      <h2>マスターレート（MR）推移</h2>
+      <p class="sub">シーズン別のマスターレート（各シーズン1点のみのスナップショット。昇格直後に急落してまた戻る、のようなシーズン内の細かい上下動までは追えない）。マスター未到達のシーズンは線が途切れる。いつマスターに到達したか、今が自己ベスト圏内かどうかが分かる。</p>
+    </div>
+    <div class="trend-card">
+      <svg class="chart" id="mrChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別マスターレート推移チャート"></svg>
+    </div>
+    <div class="legend" id="mrLegend"></div>
+    <div class="table-scroll">
+      <table class="season-table" id="masterRaceTable" aria-label="マスター到達シーズンと自己ベストMR"></table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
       <h2>ファイター診断</h2>
       <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）から診断した、5人それぞれの闘い方タイプ。</p>
     </div>
     <div class="tabs" id="tabButtons"></div>
 
-    <div class="panel you" id="panel-you" data-tab="you">
+    <div class="panel" id="panel-you" data-tab="you" hidden>
       <div class="panel-top">
         <div class="panel-who">
-          <span class="tag you">作成者</span>
+          <span class="tag">作成者</span>
           <span class="handle">Octopus</span>
         </div>
         <span class="char-badge">JURI</span>
@@ -709,6 +717,7 @@
       <p class="diagnosis">シーズン3から一貫してJURI一筋、通算9,149戦すべて同じキャラ。ランクマッチの勝率はシーズンごとに47〜54%で推移し、通算では49.1%とほぼ五分。数字の派手さより、二刀流に目もくれず一人の相棒を回し続ける継続力で語るタイプ。</p>
       <p class="diagnosis commentary">ドライブゲージの使い道を見ると51.6%をドライブラッシュに投入しており、5人で最もラッシュ依存度が高い。とにかく前に出るタイプと見て間違いない。一方でドライブパリィは0.3回/ラウンドと最少で、受けの読み合いより突っ込む選択を好む様子がうかがえる。SAゲージはレベル1(46.2%)とレベル3(41.2%)にほぼ二分され、レベル2は一度も選んでいない――中間の選択肢に興味がないのはJURIというキャラの都合か、それとも性分か。コーナー時間(11.8)が詰められ時間(9.9)を上回る押し込み型で、被スタン0回は5人で唯一。攻めながら無傷を貫く器用さがある。</p>
       <p class="diagnosis commentary">得意リストにはCAMMY・ED・A.K.I.と、こちらも距離を詰めてくるタイプが並ぶ――同じ間合いの勝負に持ち込めれば分が良い自信の裏付けかもしれない。逆に苦手はELENA・CHUN-LIといった足の長い差し合いキャラ、LILY・INGRID・YASMINEといった読み合い・二択を仕掛けてくるキャラが目立つ。ドライブラッシュ主体の一直線な攻めが、間合い管理と二択でいなされるケースに弱い、というのが正直な見立て。</p>
+      <p class="diagnosis commentary journey">歩みを振り返ると、シーズン4で早々にマスター到達（5人で最速タイ）、S6〜S8で1,572→1,601と地力を積み上げた後、S9〜S11はランクマ記録なしの空白期間。ブランク明けのS12はMR1,451まで落ち込んだが、そこから最新のS13で自己ベストを更新する1,611まで巻き返している。停滞ではなく、むしろ「戻ってきたらすぐ調子を取り戻した」ことの証明。今が一番乗っている時期なので、二刀流に浮気せずこのままJURIを掘り下げるのが素直に効率がいい。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -743,7 +752,7 @@
       </div>
     </div>
 
-    <div class="panel" id="panel-shien07" data-tab="shien07" hidden>
+    <div class="panel" id="panel-shien07" data-tab="shien07">
       <div class="panel-top">
         <div class="panel-who">
           <span class="tag">Friend</span>
@@ -761,6 +770,7 @@
       <p class="diagnosis">CAMMY使用率96.2%、5人で唯一シーズン3から11シーズン連続でプレイし続けている。ランクマの勝率は44〜50%で安定、通算48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。</p>
       <p class="diagnosis commentary">ドライブラッシュ比率51.8%はOctopusと並んで5人最高水準、CAMMYの機動力を存分に使い倒している。ただしドライブパリィは1.7回/ラウンドと全員中最多で、前に出るだけでなく受けの技術もしっかり仕込んでいる二刀流。とはいえ被ドライブインパクトも0.4回と最多タイで、攻め込む分だけインパクトも食らいがちな諸刃の剣。SAレベル2は0%、Octopus同様に中間ゲージには興味を示さない。コーナー時間10.6・詰められ時間10.5とほぼ互角で、力でねじ伏せるというより手数で押し切るタイプ。</p>
       <p class="diagnosis commentary">苦手リストの並びが分かりやすい。E. HONDA(大型・アーマー)、DHALSIM(超遠距離)、BLANKA(不規則な軌道)――飛び込む前に潰されるか、間合いそのもので拒否されるキャラに弱い。CAMMYの強みである機動力を、体格や距離、変則的な動きで無効化されると分が悪くなる典型例。得意リストにAKUMA・TERRYが並ぶのは、彼らも接近戦を厭わないタイプなので、間合いの奪い合いに持ち込めれば普段の練度が生きるということだろう。</p>
+      <p class="diagnosis commentary journey">歩みで見ると、S4でマスター到達後は一貫して右肩上がりでS11に自己ベスト1,580まで到達。ただそこがピークで、S12(1,503)・S13(1,496、現在)と2シーズン連続で自己ベストから落ちたまま。プレイ量は5人で断トツなので「量が質に直結しなくなってきている」フェーズに入っている可能性がある。がむしゃらに回す段階は卒業していて、次に伸びるには量より中身の見直しが効きそう。とはいえ通算1,063時間・22,320戦という土台があるので、少し調整すれば自己ベスト更新は十分射程内。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -813,6 +823,7 @@
       <p class="diagnosis">キャリア通算ではTERRY(2,644戦)とKEN(2,272戦)がほぼ拮抗する二刀流だったが、シーズン6以降はTERRY一本に絞っている。ランクマ通算勝率52.3%は5人でトップ。トレーニング224時間がランクマ197時間を上回る、全活動時間トップも練習という努力家。</p>
       <p class="diagnosis commentary">コンボトライアルクリア数71は5人で断トツ、練習量の多さが裏付けられた数字。ジャストパリィ0.2回/ラウンドもグループ最多タイで、反射神経より読みと技術で守るタイプ。SAゲージはレベル1〜3・CAをまんべんなく使う唯一のプレイヤー(16/24/38/22%)で、状況に応じた使い分けができている証拠と言える。一方でドライブラッシュ比率は38.2%と中程度、力押しより駆け引き重視。投げ回数3.7回/ラウンドは全員中最多で、意外にもガン投げキャラでもある――読み合いに自信があるからこそ投げを選べるのかもしれない。</p>
       <p class="diagnosis commentary">苦手にDHALSIM・JP(遠距離)とMANON・MARISA(グラップラー)が両方並ぶのが面白い。遠くからは撃たれ、近くでは組まれる――中距離が持ち味のTERRYが両端から挟まれている構図に見える。得意はCAMMY・SAGAT・C.VIPERとやや接近戦寄りのキャラが多く、間合いの奪い合いが常に発生する相手には、研究量の多さで対応できているのかもしれない。</p>
+      <p class="diagnosis commentary journey">歩みが面白い。マスター到達はS5(KEN)とやや遅めだったが、S6でTERRYに転向した直後にMRが1,348→1,602へ一気にジャンプ――キャラ替えが結果的に大当たりだったことが数字にはっきり出ている。以降もS9(1,605)、そして最新S13(1,606)と自己ベスト圏内を維持し続けており、5人で最も「安定して強い」タイプ。練習量・コンボトライアル数もトップなので、伸び悩みというより着実な右肩上がり。あえて課題を挙げるなら、S7・S11のような踊り場が何によるものか(相手の変化かモチベーションか)を振り返ると、次の一段上に繋がるはず。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -865,6 +876,7 @@
       <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋(98.0%)で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。</p>
       <p class="diagnosis commentary">コーナー時間4.4に対し詰められ時間10.5、5人で唯一かつ圧倒的にコーナーへ追い込まれる時間の方が長い。グラップラーの宿命で、相手の遠距離戦を耐えて近づく展開が多いことが数字にそのまま出ている。その代わりSAレベル2の使用率は51.2%と全員中突出しており、ZANGIEFの切り札を的確に選び取っている様子がうかがえる。ドライブインパクトの使用(0.4)・被弾(0.5)ともに全員中最多で、我慢比べの読み合いが多いタイプ。受けて詰められて、それでも一発を狙う典型的な待ちグラップラー。</p>
       <p class="diagnosis commentary">苦手リストがDHALSIM・JP・LILY・BLANKAとゾーニング／変則移動のキャラで固まっているのは、グラップラーの教科書通りの弱点。近づく前に削られる展開そのものが数字にきれいに出ている。一方で得意はCAMMY・KENとラッシュ系が多く、寄ってきてくれる相手には投げの読み合いで還す、という得意な形にきちんと持っていけている。</p>
+      <p class="diagnosis commentary journey">5人で最も遅いS8にマスター到達し、直後のS9〜S11は1,410→1,349→1,337とじわじわ下降する苦しい時期が続いた。そこからS12で自己ベスト1,462まで一気に持ち直したのは良い兆候だったが、直近S13はまた1,400まで下がっている。グラップラーはただでさえ苦手キャラ(ゾーナー)の影響を受けやすいので、波があるのは仕方ない面もある。注目したいのは総プレイ時間で、5人のランクマ経験者の中で最も少ない356時間しか投じていない。参戦が一番遅く、かけた時間も一番短いのにMR1,400台まで乗せているのは、時間対効果で見ればむしろ優秀な部類。じっくり型のまま続ければ、次の自己ベスト更新は十分射程内。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -917,6 +929,7 @@
       <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。キャリア通算で最も使用しているのは現在の主力MAIではなく実はED(1,218戦)。使用率は低いがJPの勝率68.3%が全キャラ中最高で、実は一番強かったのはJPだったのかもしれない。ランクマ通算は49.1%とほぼ五分を維持しており、キャラを変えても地力は落ちていない。</p>
       <p class="diagnosis commentary">ドライブラッシュ比率はわずか16.0%と5人で圧倒的に最低――前に出るより待つスタイルが数字にはっきり出ている。詰められ時間14.3はグループ最長で、コーナーで我慢を強いられる展開が多い。被投げ回数3.2もグループ最多で、間合いの管理にはまだ伸びしろがありそう。ただしドライブインパクト使用0.4に対し被弾0.2と、この項目だけは全員中最も分がいい。待ちながらインパクトだけは的確に刺す、そんな一芸が光る。</p>
       <p class="diagnosis commentary">苦手・得意ともにグラップラーとラッシュ系が混在していて、キャラタイプだけで綺麗に説明できる傾向は薄い。むしろ苦戦する相手の幅広さそのものが、間合い管理という基礎の課題を物語っている――ドライブラッシュ比率16.0%・詰められ時間14.3というデータと符合していて、対策すべきは特定の相手というより立ち回りの根本、というのが正直な見立て。</p>
+      <p class="diagnosis commentary journey">5人で唯一マスター未到達（S12・S13ともにダイヤモンド帯）。ただしJP→LUKE→ED→MAIと4回もキャラを変えながら、ランクマ通算勝率は49.1%とほぼ五分を維持できているのは実は地力の証拠。キャラを変えるたびにゼロからのスタートを強いられている状態で、これだけ勝率を保てているのは地力の証拠。しかもランクマだけの投下時間は約100時間と5人で最も短く、限られた実戦経験を無駄にしていないとも言える。一つのキャラに腰を据えて、その少ない投下時間をランクマに寄せるだけでも、他の4人と同じようにマスターへ駆け上がる伸び代は十分にある。停滞ではなく、まだ助走中というのが正確なところ。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -952,7 +965,7 @@
     </div>
   </section>
 
-  <p class="note">※ LP・MRはシーズンごとにリセットされ、過去シーズンの数値やマスター到達日は公式サイトからは取得できないため、ここでは各シーズンのランクマッチ成績（勝率・試合数）で強さの推移を表している。ランクマ集計は「ランクマッチ」限定（カジュアル・カスタムルーム・トレーニングは除く）。キャラ相性データは通算成績から、母数10戦未満の対面は信頼性が低いため除外している。</p>
+  <p class="note">※ LP・MRはシーズンごとにリセットされる。シーズン別MR・マスター到達シーズンは取得できているが、各シーズン1点のスナップショットのためシーズン内の細かい上下動は反映していない。勝率の推移は各シーズンのランクマッチ成績（勝率・試合数）で表示（カジュアル・カスタムルーム・トレーニングは除く）。キャラ相性データは通算成績から、母数10戦未満の対面は信頼性が低いため除外している。</p>
 
   <footer>
     <span>DATA: Buckler's Boot Camp (streetfighter.com/6/buckler)</span>
@@ -987,9 +1000,10 @@
     hiyoko:  { w: 1263, b: 2575 }
   };
   function wr(w,b){ return b>0 ? +(100*w/b).toFixed(1) : null; }
+  // Ordered by current-season LP, descending (a neutral, non-arbitrary sort — no player is featured first).
   var playerMeta = {
-    you:     { color: 'var(--p-you)',     label: 'Octopus', you: true },
     shien:   { color: 'var(--p-shien)',   label: 'shien07' },
+    you:     { color: 'var(--p-you)',     label: 'Octopus' },
     nanashi: { color: 'var(--p-nanashi)', label: 'nanashi' },
     hitsuji: { color: 'var(--p-hitsuji)', label: 'Hitsuji' },
     hiyoko:  { color: 'var(--p-hiyoko)',  label: 'hiyoko' }
@@ -1019,10 +1033,11 @@
     function x(i){ return padL + (i/(n-1))*plotW; }
     function y(v){ return padT + plotH - ((v-yMin)/(yMax-yMin))*plotH; }
 
+    var yUnit = opts.yUnit != null ? opts.yUnit : '%';
     (opts.gridlines||[]).forEach(function(v){
       svg.appendChild(el('line', { class:'gridline', x1:padL, x2:W-padR, y1:y(v), y2:y(v) }));
       var t = el('text', { x: padL-8, y: y(v)+4, 'text-anchor':'end' });
-      t.textContent = v + '%';
+      t.textContent = v + yUnit;
       svg.appendChild(t);
     });
     if (opts.refLine != null){
@@ -1051,10 +1066,10 @@
         var dAttr = run.map(function(p,idx){ return (idx===0?'M':'L') + x(p[0]) + ' ' + y(p[1]); }).join(' ');
         svg.appendChild(el('path', { class:'line', d:dAttr, stroke:d.color }));
         run.forEach(function(p){
-          var r = opts.dotR != null ? opts.dotR : (d.you ? 4.5 : 3.5);
+          var r = opts.dotR != null ? opts.dotR : 3.5;
           var c = el('circle', { class:'dot', cx:x(p[0]), cy:y(p[1]), r:r, fill:d.color });
           var titleEl = document.createElementNS(svgns, 'title');
-          titleEl.textContent = (opts.xLabel(p[0])) + ': ' + p[1].toFixed(1) + '%';
+          titleEl.textContent = (opts.xLabel(p[0])) + ': ' + p[1].toFixed(yUnit==='' ? 0 : 1) + yUnit;
           c.appendChild(titleEl);
           svg.appendChild(c);
         });
@@ -1099,10 +1114,77 @@
     tbl.innerHTML = head + body;
   })();
 
+  // ============ Master Rating (MR) history per season ============
+  // null = not in Master league that season (or didn't play). Source: api/profile/play/act/leagueinfo (per-season league_info).
+  var mrSeries = {
+    shien:   [null,null,null,null,1330,1223,1503,1505,1579,1552,1484,1580,1503,1496],
+    you:     [null,null,null,null,1248,1557,1572,1569,1601,null,null,null,1451,1611],
+    nanashi: [null,null,null,null,null,1348,1602,1546,1572,1605,null,1552,1567,1606],
+    hitsuji: [null,null,null,null,null,null,null,null,1404,1410,1349,1337,1462,1400],
+    hiyoko:  [null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+  };
+  var mrData = {};
+  Object.keys(playerMeta).forEach(function(key){
+    mrData[key] = Object.assign({}, playerMeta[key], { series: mrSeries[key] });
+  });
+  drawLineChart(document.getElementById('mrChart'), mrData, {
+    n: 14, yMin: 1150, yMax: 1650, yUnit: '',
+    W: 1040, H: 380, padL: 50, padR: 20, padT: 20, padB: 34,
+    gridlines: [1150,1250,1350,1450,1550,1650],
+    xLabelStep: 1,
+    xLabel: function(i){ return 'S'+i; }
+  });
+  var mrLegend = document.getElementById('mrLegend');
+  Object.keys(mrData).forEach(function(key){
+    var d = mrData[key];
+    var item = document.createElement('div');
+    item.className = 'legend-item';
+    var sw = document.createElement('span');
+    sw.className = 'sw';
+    sw.style.background = d.color;
+    item.appendChild(sw);
+    item.appendChild(document.createTextNode(d.label));
+    mrLegend.appendChild(item);
+  });
+
+  var masterFacts = {}; // { firstSeason, peakMR, peakSeason, current, currentSeason }
+  Object.keys(mrSeries).forEach(function(key){
+    var series = mrSeries[key];
+    var firstIdx = series.findIndex(function(v){ return v !== null; });
+    var lastIdx = -1;
+    for (var i=series.length-1;i>=0;i--){ if (series[i] !== null){ lastIdx = i; break; } }
+    if (firstIdx === -1){
+      masterFacts[key] = { reached: false };
+      return;
+    }
+    var peakVal = -1, peakIdx = -1;
+    series.forEach(function(v,i){ if (v !== null && v > peakVal){ peakVal = v; peakIdx = i; } });
+    masterFacts[key] = {
+      reached: true, firstSeason: firstIdx, peakMR: peakVal, peakSeason: peakIdx,
+      current: series[lastIdx], currentSeason: lastIdx
+    };
+  });
+
+  (function(){
+    var tbl = document.getElementById('masterRaceTable');
+    var head = '<thead><tr><th>Player</th><th>マスター初到達</th><th>自己ベストMR</th><th>現在MR</th><th>自己ベストとの差</th></tr></thead>';
+    var body = '<tbody>' + Object.keys(playerMeta).map(function(key){
+      var d = playerMeta[key];
+      var f = masterFacts[key];
+      if (!f.reached){
+        return '<tr><td>'+d.label+'</td><td class="na">未到達</td><td class="na">–</td><td class="na">–</td><td class="na">–</td></tr>';
+      }
+      var diff = f.current - f.peakMR;
+      var diffTxt = diff === 0 ? '<span class="best">自己ベスト更新中</span>' : (diff > 0 ? '+'+diff : diff);
+      return '<tr><td>'+d.label+'</td><td>S'+f.firstSeason+'</td><td class="best">'+f.peakMR+' <span style="opacity:.6">(S'+f.peakSeason+')</span></td><td>'+f.current+'</td><td>'+diffTxt+'</td></tr>';
+    }).join('') + '</tbody>';
+    tbl.innerHTML = head + body;
+  })();
+
   // ============ Play style breakdown (career, all activity types, seconds) ============
   var playTime = {
-    you:     { Ranked:1315086, Casual:92404, Custom:868593, Practice:425407, Other:673+10529+116+730+735 },
     shien:   { Ranked:2597573, Casual:66208, Custom:543902, Practice:619205, Other:16+601+1 },
+    you:     { Ranked:1315086, Casual:92404, Custom:868593, Practice:425407, Other:673+10529+116+730+735 },
     nanashi: { Ranked:710740,  Casual:4074,  Custom:195055, Practice:807760, Other:1907+7+869 },
     hitsuji: { Ranked:739901,  Casual:2405,  Custom:112231, Practice:375172, Other:48965+1720+1+51+1 },
     hiyoko:  { Ranked:361989,  Casual:25245, Custom:587805, Practice:602541, Other:40+11054+19+1 }
@@ -1398,7 +1480,16 @@
   document.querySelectorAll('[data-statgrid]').forEach(function(grid){
     var key = grid.getAttribute('data-statgrid');
     var s = battleStats[key];
-    var cells = [
+    var mf = masterFacts[tabToSeasonKey[key]];
+    var cells = [];
+    if (mf.reached){
+      cells.push({ k:'マスター初到達', v: 'S'+mf.firstSeason });
+      var atPeak = mf.current === mf.peakMR;
+      cells.push({ k:'自己ベストMR', v: mf.peakMR+' <span class="vs">(S'+mf.peakSeason+')</span>', cls: atPeak ? 'hi' : '' });
+    } else {
+      cells.push({ k:'マスター到達', v: '未到達' });
+    }
+    cells.push(
       { k:'コーナー時間 / 詰め時間', v: s.corner_time.toFixed(1)+' <span class="vs">/ '+s.cornered_time.toFixed(1)+'</span>', cls: statCompare(s.corner_time, s.cornered_time, true) },
       { k:'投げ / 被投げ（1R平均）', v: s.throw_count.toFixed(1)+' <span class="vs">/ '+s.received_throw_count.toFixed(1)+'</span>', cls: statCompare(s.throw_count, s.received_throw_count, true) },
       { k:'DI使用 / 被弾（1R平均）', v: s.drive_impact.toFixed(1)+' <span class="vs">/ '+s.received_drive_impact.toFixed(1)+'</span>', cls: statCompare(s.drive_impact, s.received_drive_impact, true) },
@@ -1406,7 +1497,7 @@
       { k:'ジャストパリィ（1R平均）', v: s.just_parry.toFixed(1)+'回' },
       { k:'被スタン（1R平均）', v: s.received_stun.toFixed(1)+'回', cls: s.received_stun===0 ? 'hi' : '' },
       { k:'コンボトライアル', v: s.target_clear_count+'件' }
-    ];
+    );
     grid.innerHTML = cells.map(function(c){
       return '<div class="stat-mini'+(c.cls?(' '+c.cls):'')+'"><span class="k">'+c.k+'</span><span class="v">'+c.v+'</span></div>';
     }).join('');
@@ -1414,8 +1505,8 @@
 
   // ============ Tabs ============
   var tabOrder = [
-    { key:'you', label:'Octopus' },
     { key:'shien07', label:'shien07' },
+    { key:'you', label:'Octopus' },
     { key:'nanashi', label:'nanashi' },
     { key:'Hitsuji', label:'Hitsuji' },
     { key:'hiyoko', label:'hiyoko' }
