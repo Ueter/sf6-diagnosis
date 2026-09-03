@@ -627,17 +627,6 @@
 
   <section>
     <div class="section-head">
-      <h2>Octopus vs 各フレンド 対戦成績の推移</h2>
-      <p class="sub">カスタムルームでのシーズン別勝率（Octopus視点）。身内内での力関係の変化が見える。</p>
-    </div>
-    <div class="trend-card">
-      <svg class="chart" id="vsChart" viewBox="0 0 1040 380" role="img" aria-label="Octopus対フレンド勝率推移チャート"></svg>
-    </div>
-    <div class="legend" id="vsLegend"></div>
-  </section>
-
-  <section>
-    <div class="section-head">
       <h2>ファイター診断</h2>
       <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）・身内対戦成績から診断した、5人それぞれの闘い方タイプ。</p>
     </div>
@@ -1097,41 +1086,6 @@
         '<span class="vs-wr">'+e.wr+'% ('+e.w+'/'+e.b+')</span>';
       el.appendChild(r);
     });
-  });
-
-  // ============ Octopus vs friends season trend (Room Match) ============
-  var vsFriendData = {
-    shien07: { color: 'var(--p-shien)',   label: 'shien07' },
-    nanashi: { color: 'var(--p-nanashi)', label: 'nanashi' },
-    Hitsuji: { color: 'var(--p-hitsuji)', label: 'Hitsuji' },
-    hiyoko:  { color: 'var(--p-hiyoko)',  label: 'hiyoko' }
-  };
-  var vsFriendRaw = {
-    shien07: [null,null,null,[215,423],[153,251],[85,127],[213,337],[198,287],[53,71],null,null,null,[88,198],[174,286]],
-    nanashi: [null,null,null,null,null,[28,42],[93,196],[9,14],[23,42],null,null,null,[36,97],[43,123]],
-    Hitsuji: [null,null,null,null,null,null,null,[35,41],null,null,null,null,[96,157],[43,64]],
-    hiyoko:  [null,null,null,null,null,null,null,[41,56],null,null,null,null,[229,275],[331,393]]
-  };
-  Object.keys(vsFriendRaw).forEach(function(k){
-    vsFriendData[k].series = vsFriendRaw[k].map(function(v){ return v ? wr(v[0], v[1]) : null; });
-  });
-  drawLineChart(document.getElementById('vsChart'), vsFriendData, {
-    n: 14, yMin: 20, yMax: 90,
-    gridlines: [20,35,50,65,80],
-    refLine: 50, refLineLabel: '五分(50%)',
-    xLabel: function(i){ return 'S'+i; }
-  });
-  var vsLegend = document.getElementById('vsLegend');
-  Object.keys(vsFriendData).forEach(function(key){
-    var d = vsFriendData[key];
-    var item = document.createElement('div');
-    item.className = 'legend-item';
-    var sw = document.createElement('span');
-    sw.className = 'sw';
-    sw.style.background = d.color;
-    item.appendChild(sw);
-    item.appendChild(document.createTextNode(d.label));
-    vsLegend.appendChild(item);
   });
 
   // ============ Tabs ============
