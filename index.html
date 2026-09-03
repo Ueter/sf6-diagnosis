@@ -1,0 +1,488 @@
+<title>スト6診断カルテ</title>
+<meta name="description" content="Buckler's Boot Campの実データから、あなたと4人のフレンドの闘い方を診断">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14111a;
+    --surface:#1e1a26;
+    --surface-2:#262032;
+    --border:#362f45;
+    --text:#f2eef5;
+    --text-muted:#a89bc0;
+    --accent:#ff3d7f;
+    --accent-2:#22d3ee;
+    --gold:#ffb020;
+    --shadow: 0 12px 32px -16px rgba(0,0,0,.55);
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#f5f1fa;
+      --surface:#ffffff;
+      --surface-2:#ede7f6;
+      --border:#ddd3ea;
+      --text:#1e1526;
+      --text-muted:#6b6280;
+      --accent:#d6285f;
+      --accent-2:#0a7f96;
+      --gold:#a3690b;
+      --shadow: 0 10px 26px -16px rgba(30,20,40,.25);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#f5f1fa;
+    --surface:#ffffff;
+    --surface-2:#ede7f6;
+    --border:#ddd3ea;
+    --text:#1e1526;
+    --text-muted:#6b6280;
+    --accent:#d6285f;
+    --accent-2:#0a7f96;
+    --gold:#a3690b;
+    --shadow: 0 10px 26px -16px rgba(30,20,40,.25);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"Work Sans", "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height:1.65;
+  }
+  h1,h2,h3,.display{
+    font-family:"Rajdhani","Hiragino Sans","Noto Sans JP",sans-serif;
+    text-wrap:balance;
+    letter-spacing:.01em;
+  }
+  .mono{
+    font-family:"JetBrains Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  a{color:var(--accent-2);}
+
+  .wrap{
+    max-width:1080px;
+    margin:0 auto;
+    padding:56px 24px 80px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    padding-bottom:36px;
+    border-bottom:1px solid var(--border);
+    margin-bottom:40px;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    width:fit-content;
+    font-family:"JetBrains Mono", monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 14%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    padding:5px 12px;
+    border-radius:999px;
+  }
+  .hero h1{
+    font-size:clamp(34px, 5.6vw, 54px);
+    font-weight:700;
+    margin:0;
+    line-height:1.05;
+  }
+  .hero h1 span{ color:var(--accent); }
+  .hero p{
+    max-width:62ch;
+    color:var(--text-muted);
+    font-size:16px;
+    margin:0;
+  }
+  .hero-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 22px;
+    margin-top:6px;
+    font-family:"JetBrains Mono", monospace;
+    font-size:12.5px;
+    color:var(--text-muted);
+  }
+  .hero-meta b{ color:var(--text); font-weight:500; }
+
+  /* ---------- LP gauge chart ---------- */
+  .lp-section{
+    margin-bottom:56px;
+  }
+  .lp-section h2{
+    font-size:20px;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  .lp-section .sub{
+    color:var(--text-muted);
+    font-size:14px;
+    margin:0 0 20px;
+  }
+  .lp-chart{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .lp-row{
+    display:grid;
+    grid-template-columns: 108px 1fr 92px;
+    align-items:center;
+    gap:14px;
+  }
+  .lp-name{
+    font-size:14px;
+    font-weight:500;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .lp-name.you{ color:var(--accent); font-weight:600; }
+  .lp-track{
+    position:relative;
+    height:14px;
+    border-radius:7px;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+  .lp-fill{
+    height:100%;
+    border-radius:7px;
+    background:linear-gradient(90deg, color-mix(in srgb, var(--gold) 70%, transparent), var(--gold));
+  }
+  .lp-value{
+    text-align:right;
+    font-size:13.5px;
+    color:var(--text-muted);
+  }
+  .lp-value b{ color:var(--text); font-weight:500; }
+
+  /* ---------- Cards ---------- */
+  .cards-head{
+    margin-bottom:22px;
+  }
+  .cards-head h2{
+    font-size:20px;
+    font-weight:600;
+    margin:0 0 4px;
+  }
+  .cards-head .sub{
+    color:var(--text-muted);
+    font-size:14px;
+    margin:0;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:20px;
+  }
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .card.you{
+    border-color:color-mix(in srgb, var(--accent) 55%, var(--border));
+  }
+  .card-top{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .who{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .tag{
+    font-family:"JetBrains Mono", monospace;
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .tag.you{ color:var(--accent); }
+  .handle{
+    font-size:15px;
+    font-weight:600;
+  }
+  .char-badge{
+    font-family:"JetBrains Mono", monospace;
+    font-size:11.5px;
+    letter-spacing:.08em;
+    color:var(--accent-2);
+    background:color-mix(in srgb, var(--accent-2) 14%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent-2) 38%, transparent);
+    padding:4px 10px;
+    border-radius:999px;
+    white-space:nowrap;
+    height:fit-content;
+  }
+  .archetype{
+    font-size:26px;
+    font-weight:700;
+    color:var(--accent);
+    line-height:1.15;
+    margin:0;
+  }
+  .archetype .en{
+    display:block;
+    font-family:"JetBrains Mono", monospace;
+    font-size:11px;
+    font-weight:400;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    margin-top:4px;
+  }
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    padding:14px 0;
+    border-top:1px solid var(--border);
+    border-bottom:1px solid var(--border);
+  }
+  .stat{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .stat .k{
+    font-size:11px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .stat .v{
+    font-family:"JetBrains Mono", monospace;
+    font-size:16px;
+    font-weight:700;
+  }
+  .diagnosis{
+    font-size:14.5px;
+    color:var(--text);
+    margin:0;
+  }
+  .quote{
+    background:var(--surface-2);
+    border-left:3px solid var(--accent-2);
+    border-radius:6px;
+    padding:12px 14px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .quote .title{
+    font-size:13.5px;
+    font-weight:600;
+  }
+  .quote .comment{
+    font-size:13px;
+    color:var(--text-muted);
+    font-style:italic;
+  }
+
+  footer{
+    margin-top:56px;
+    padding-top:20px;
+    border-top:1px solid var(--border);
+    color:var(--text-muted);
+    font-size:12.5px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 20px;
+    font-family:"JetBrains Mono", monospace;
+  }
+
+  @media (max-width: 520px){
+    .stat-row{ grid-template-columns:repeat(3,1fr); }
+    .lp-row{ grid-template-columns: 78px 1fr 76px; gap:10px;}
+  }
+</style>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow">Buckler's Boot Camp Data</span>
+    <h1>スト6<span>診断カルテ</span></h1>
+    <p>あなたと4人のフレンド、あわせて5人分のランクマッチ実績を実データから読み解いた診断カルテ。使用キャラの偏り、練習量とランクマッチ量のバランス、称号とコメントの温度差から、それぞれの闘い方のタイプを診断した。</p>
+    <div class="hero-meta">
+      <span>FIGHTERS <b>5</b></span>
+      <span>SOURCE <b>Buckler's Boot Camp</b></span>
+      <span>SEASON <b>Phase 13</b></span>
+    </div>
+  </section>
+
+  <section class="lp-section">
+    <h2>League Points 比較</h2>
+    <p class="sub">通算リーグポイント。値が大きいほど、これまでのランクマッチでの積み上げが大きい。</p>
+    <div class="lp-chart">
+      <div class="lp-row">
+        <span class="lp-name">shien07</span>
+        <div class="lp-track"><div class="lp-fill" style="width:93.4%"></div></div>
+        <span class="lp-value mono"><b>298,767</b> LP</span>
+      </div>
+      <div class="lp-row">
+        <span class="lp-name you">あなた</span>
+        <div class="lp-track"><div class="lp-fill" style="width:66.2%"></div></div>
+        <span class="lp-value mono"><b>211,872</b> LP</span>
+      </div>
+      <div class="lp-row">
+        <span class="lp-name">nanashi</span>
+        <div class="lp-track"><div class="lp-fill" style="width:53.2%"></div></div>
+        <span class="lp-value mono"><b>170,483</b> LP</span>
+      </div>
+      <div class="lp-row">
+        <span class="lp-name">Hitsuji</span>
+        <div class="lp-track"><div class="lp-fill" style="width:45.5%"></div></div>
+        <span class="lp-value mono"><b>145,783</b> LP</span>
+      </div>
+      <div class="lp-row">
+        <span class="lp-name">hiyoko</span>
+        <div class="lp-track"><div class="lp-fill" style="width:6.8%"></div></div>
+        <span class="lp-value mono"><b>21,686</b> LP</span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="cards-head">
+      <h2>ファイター診断</h2>
+      <p class="sub">実際のプレイデータをもとにした、5人それぞれの闘い方タイプ。</p>
+    </div>
+    <div class="grid">
+
+      <article class="card you">
+        <div class="card-top">
+          <div class="who">
+            <span class="tag you">You</span>
+            <span class="handle">Octopus</span>
+          </div>
+          <span class="char-badge">JURI</span>
+        </div>
+        <h3 class="archetype">一途の求道者<span class="en">The One-Character Devotee</span></h3>
+        <div class="stat-row">
+          <div class="stat"><span class="k">LP</span><span class="v mono">211,872</span></div>
+          <div class="stat"><span class="k">MR</span><span class="v mono">1,611</span></div>
+          <div class="stat"><span class="k">Ranked</span><span class="v mono">9,149</span></div>
+        </div>
+        <p class="diagnosis">使用キャラは実質JURI一人のみ。今シーズンの戦績は1,172戦で勝率64.33%というハイペース。通算ランクマッチは9,149戦、投下時間365時間18分と、一人の相棒をひたすら極める職人肌。二刀流には目もくれないタイプ。</p>
+        <div class="quote">
+          <span class="title">「Disposition for Destruction」</span>
+          <span class="comment">コメント: Just Learned the Controls — MR1,611にしてまだ「操作を覚えたばかり」を名乗る、その謙遜（？）が逆に不気味。</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <div class="who">
+            <span class="tag">Friend</span>
+            <span class="handle">shien07</span>
+          </div>
+          <span class="char-badge">CAMMY</span>
+        </div>
+        <h3 class="archetype">鉄人グラインダー<span class="en">The Iron Grinder</span></h3>
+        <div class="stat-row">
+          <div class="stat"><span class="k">LP</span><span class="v mono">298,767</span></div>
+          <div class="stat"><span class="k">MR</span><span class="v mono">1,488</span></div>
+          <div class="stat"><span class="k">Ranked</span><span class="v mono">22,313</span></div>
+        </div>
+        <p class="diagnosis">ランクマッチ22,313戦・投下時間721時間32分は5人の中で断トツの1位、LPも298,767でトップ。量で語る生粋のグラインダー。CAMMYで速攻・遠距離管理を淡々とこなし続けている。</p>
+        <div class="quote">
+          <span class="title">「Let's Do This」</span>
+          <span class="comment">コメント: None — 多くを語らず、対戦数だけで語るタイプ。</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <div class="who">
+            <span class="tag">Friend</span>
+            <span class="handle">nanashi</span>
+          </div>
+          <span class="char-badge">TERRY</span>
+        </div>
+        <h3 class="archetype">努力型ラボワーカー<span class="en">The Lab Rat</span></h3>
+        <div class="stat-row">
+          <div class="stat"><span class="k">LP</span><span class="v mono">170,483</span></div>
+          <div class="stat"><span class="k">MR</span><span class="v mono">1,606</span></div>
+          <div class="stat"><span class="k">Ranked</span><span class="v mono">4,916</span></div>
+        </div>
+        <p class="diagnosis">トレーニングモード224時間22分がランクマッチ197時間25分を上回る、5人で唯一「練習＞実戦」のタイプ。それでいてMRは1,606とグループ2位。地道な研究が結果につながっている。</p>
+        <div class="quote">
+          <span class="title">「OK!」</span>
+          <span class="comment">コメント: Wants to Improve — コメント欄でも素直に上達志向、有言実行タイプ。</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <div class="who">
+            <span class="tag">Friend</span>
+            <span class="handle">Hitsuji</span>
+          </div>
+          <span class="char-badge">ZANGIEF</span>
+        </div>
+        <h3 class="archetype">対人希求のセットコーラー<span class="en">The Set Caller</span></h3>
+        <div class="stat-row">
+          <div class="stat"><span class="k">LP</span><span class="v mono">145,783</span></div>
+          <div class="stat"><span class="k">MR</span><span class="v mono">1,400</span></div>
+          <div class="stat"><span class="k">Ranked</span><span class="v mono">6,116</span></div>
+        </div>
+        <p class="diagnosis">投下時間はランクマッチ205時間31分が圧倒的な1位活動。練習より実戦を選ぶ武闘派で、使用キャラはZANGIEF。一人で回線を回すより、誰かと直接戦いたい志向がコメントにもそのまま出ている。</p>
+        <div class="quote">
+          <span class="title">「A Man's Peaceful Passing」</span>
+          <span class="comment">コメント: I Want to Play Sets! — 意訳: 誰かセットしよう。</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="card-top">
+          <div class="who">
+            <span class="tag">Friend</span>
+            <span class="handle">hiyoko</span>
+          </div>
+          <span class="char-badge">MAI</span>
+        </div>
+        <h3 class="archetype">まったり修行僧<span class="en">The Casual Wanderer</span></h3>
+        <div class="stat-row">
+          <div class="stat"><span class="k">LP</span><span class="v mono">21,686</span></div>
+          <div class="stat"><span class="k">Rank</span><span class="v mono">Diamond 3</span></div>
+          <div class="stat"><span class="k">Ranked</span><span class="v mono">2,575</span></div>
+        </div>
+        <p class="diagnosis">まだマスター未到達（MRなし）。練習167時間22分・カスタムルーム163時間16分が、ランクマッチ100時間33分をどちらも上回る。勝敗より過程を楽しむタイプで、じっくりダイヤモンドを歩いている最中。</p>
+        <div class="quote">
+          <span class="title">「#KZHCUP」</span>
+          <span class="comment">コメント: None — 5人で最もマイペースな一人。</span>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <footer>
+    <span>DATA: Buckler's Boot Camp (streetfighter.com/6/buckler)</span>
+    <span>SEASON: Phase 13</span>
+    <span>診断は実データに基づく個人の見解です</span>
+  </footer>
+
+</div>
