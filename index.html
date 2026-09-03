@@ -505,6 +505,71 @@
   .rank-col.bad .rank-row .v b{ color:var(--bad); }
   .rank-row .v b{ font-weight:700; }
 
+  /* ---------- Gauge usage + battle tendency stats ---------- */
+  .gauge-block{ margin-top:22px; }
+  .gauge-block .subhead{ margin-bottom:12px; }
+  .gauge-row{
+    display:grid;
+    grid-template-columns: 92px 1fr;
+    align-items:center;
+    gap:12px;
+    margin-bottom:10px;
+  }
+  .gauge-row .gname{ font-size:12.5px; color:var(--text-muted); }
+  .gauge-track{
+    display:flex;
+    height:20px;
+    border-radius:5px;
+    overflow:hidden;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+  }
+  .gauge-seg{ height:100%; }
+  .gauge-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 16px;
+    margin:6px 0 18px;
+    font-size:11.5px;
+    color:var(--text-muted);
+  }
+  .gauge-legend span.sw{ width:9px; height:9px; border-radius:2px; display:inline-block; margin-right:5px; vertical-align:middle; }
+
+  .stat-mini-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:14px 16px;
+    margin-top:18px;
+  }
+  @media (max-width:640px){ .stat-mini-grid{ grid-template-columns:repeat(2,1fr); } }
+  .stat-mini{
+    background:var(--surface-2);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .stat-mini .k{
+    font-size:10px;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    display:block;
+    margin-bottom:4px;
+  }
+  .stat-mini .v{
+    font-family:"JetBrains Mono", monospace;
+    font-size:15px;
+    font-weight:700;
+  }
+  .stat-mini .v .vs{
+    font-size:11px;
+    font-weight:400;
+    color:var(--text-muted);
+  }
+  .stat-mini.hi .v{ color:var(--good); }
+  .stat-mini.lo .v{ color:var(--bad); }
+
+  .commentary{ margin-top:16px; }
+
   .quote{
     background:var(--surface-2);
     border-left:3px solid var(--accent-2);
@@ -642,6 +707,7 @@
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">49.1%</span></div>
       </div>
       <p class="diagnosis">シーズン3から一貫してJURI一筋、通算9,149戦すべて同じキャラ。ランクマッチの勝率はシーズンごとに47〜54%で推移し、通算では49.1%とほぼ五分。数字の派手さより、二刀流に目もくれず一人の相棒を回し続ける継続力で語るタイプ。</p>
+      <p class="diagnosis commentary">ドライブゲージの使い道を見ると51.6%をドライブラッシュに投入しており、5人で最もラッシュ依存度が高い。とにかく前に出るタイプと見て間違いない。一方でドライブパリィは0.3回/ラウンドと最少で、受けの読み合いより突っ込む選択を好む様子がうかがえる。SAゲージはレベル1(46.2%)とレベル3(41.2%)にほぼ二分され、レベル2は一度も選んでいない――中間の選択肢に興味がないのはJURIというキャラの都合か、それとも性分か。コーナー時間(11.8)が詰められ時間(9.9)を上回る押し込み型で、被スタン0回は5人で唯一。攻めながら無傷を貫く器用さがある。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -654,6 +720,11 @@
           <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
           <svg class="chart mini-trend" data-mini="you" viewBox="0 0 480 260"></svg>
         </div>
+      </div>
+      <div class="gauge-block">
+        <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
+        <div data-gauge="you"></div>
+        <div class="stat-mini-grid" data-statgrid="you"></div>
       </div>
       <div class="rank-cols">
         <div class="rank-col good">
@@ -687,6 +758,7 @@
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.3%</span></div>
       </div>
       <p class="diagnosis">CAMMY使用率96.2%、5人で唯一シーズン3から11シーズン連続でプレイし続けている。ランクマの勝率は44〜50%で安定、通算48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。</p>
+      <p class="diagnosis commentary">ドライブラッシュ比率51.8%はOctopusと並んで5人最高水準、CAMMYの機動力を存分に使い倒している。ただしドライブパリィは1.7回/ラウンドと全員中最多で、前に出るだけでなく受けの技術もしっかり仕込んでいる二刀流。とはいえ被ドライブインパクトも0.4回と最多タイで、攻め込む分だけインパクトも食らいがちな諸刃の剣。SAレベル2は0%、Octopus同様に中間ゲージには興味を示さない。コーナー時間10.6・詰められ時間10.5とほぼ互角で、力でねじ伏せるというより手数で押し切るタイプ。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -699,6 +771,11 @@
           <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
           <svg class="chart mini-trend" data-mini="shien07" viewBox="0 0 480 260"></svg>
         </div>
+      </div>
+      <div class="gauge-block">
+        <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
+        <div data-gauge="shien07"></div>
+        <div class="stat-mini-grid" data-statgrid="shien07"></div>
       </div>
       <div class="rank-cols">
         <div class="rank-col good">
@@ -732,6 +809,7 @@
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">52.3%</span></div>
       </div>
       <p class="diagnosis">キャリア通算ではTERRY(2,644戦)とKEN(2,272戦)がほぼ拮抗する二刀流だったが、シーズン6以降はTERRY一本に絞っている。ランクマ通算勝率52.3%は5人でトップ。トレーニング224時間がランクマ197時間を上回る、全活動時間トップも練習という努力家。</p>
+      <p class="diagnosis commentary">コンボトライアルクリア数71は5人で断トツ、練習量の多さが裏付けられた数字。ジャストパリィ0.2回/ラウンドもグループ最多タイで、反射神経より読みと技術で守るタイプ。SAゲージはレベル1〜3・CAをまんべんなく使う唯一のプレイヤー(16/24/38/22%)で、状況に応じた使い分けができている証拠と言える。一方でドライブラッシュ比率は38.2%と中程度、力押しより駆け引き重視。投げ回数3.7回/ラウンドは全員中最多で、意外にもガン投げキャラでもある――読み合いに自信があるからこそ投げを選べるのかもしれない。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -744,6 +822,11 @@
           <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
           <svg class="chart mini-trend" data-mini="nanashi" viewBox="0 0 480 260"></svg>
         </div>
+      </div>
+      <div class="gauge-block">
+        <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
+        <div data-gauge="nanashi"></div>
+        <div class="stat-mini-grid" data-statgrid="nanashi"></div>
       </div>
       <div class="rank-cols">
         <div class="rank-col good">
@@ -777,6 +860,7 @@
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.0%</span></div>
       </div>
       <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋(98.0%)で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。</p>
+      <p class="diagnosis commentary">コーナー時間4.4に対し詰められ時間10.5、5人で唯一かつ圧倒的にコーナーへ追い込まれる時間の方が長い。グラップラーの宿命で、相手の遠距離戦を耐えて近づく展開が多いことが数字にそのまま出ている。その代わりSAレベル2の使用率は51.2%と全員中突出しており、ZANGIEFの切り札を的確に選び取っている様子がうかがえる。ドライブインパクトの使用(0.4)・被弾(0.5)ともに全員中最多で、我慢比べの読み合いが多いタイプ。受けて詰められて、それでも一発を狙う典型的な待ちグラップラー。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -789,6 +873,11 @@
           <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
           <svg class="chart mini-trend" data-mini="Hitsuji" viewBox="0 0 480 260"></svg>
         </div>
+      </div>
+      <div class="gauge-block">
+        <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
+        <div data-gauge="Hitsuji"></div>
+        <div class="stat-mini-grid" data-statgrid="Hitsuji"></div>
       </div>
       <div class="rank-cols">
         <div class="rank-col good">
@@ -822,6 +911,7 @@
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">49.1%</span></div>
       </div>
       <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。キャリア通算で最も使用しているのは現在の主力MAIではなく実はED(1,218戦)。使用率は低いがJPの勝率68.3%が全キャラ中最高で、実は一番強かったのはJPだったのかもしれない。ランクマ通算は49.1%とほぼ五分を維持しており、キャラを変えても地力は落ちていない。</p>
+      <p class="diagnosis commentary">ドライブラッシュ比率はわずか16.0%と5人で圧倒的に最低――前に出るより待つスタイルが数字にはっきり出ている。詰められ時間14.3はグループ最長で、コーナーで我慢を強いられる展開が多い。被投げ回数3.2もグループ最多で、間合いの管理にはまだ伸びしろがありそう。ただしドライブインパクト使用0.4に対し被弾0.2と、この項目だけは全員中最も分がいい。待ちながらインパクトだけは的確に刺す、そんな一芸が光る。</p>
       <div class="panel-grid">
         <div>
           <p class="subhead">使用キャラ内訳（ランクマ通算）</p>
@@ -834,6 +924,11 @@
           <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
           <svg class="chart mini-trend" data-mini="hiyoko" viewBox="0 0 480 260"></svg>
         </div>
+      </div>
+      <div class="gauge-block">
+        <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
+        <div data-gauge="hiyoko"></div>
+        <div class="stat-mini-grid" data-statgrid="hiyoko"></div>
       </div>
       <div class="rank-cols">
         <div class="rank-col good">
@@ -1217,6 +1312,99 @@
   });
   document.querySelectorAll('[data-rank-bad]').forEach(function(el){
     renderRankList(el, matchupRank[el.getAttribute('data-rank-bad')].worst5);
+  });
+
+  // ============ Gauge usage + battle tendency stats ============
+  var battleStats = {
+    you:     { corner_time:11.8, cornered_time:9.9, drive_impact:0.2, received_drive_impact:0.3, drive_parry:0.3, just_parry:0, received_stun:0, throw_count:2.7, received_throw_count:2.7, target_clear_count:38,
+               gauge_rate_drive_rush_from_cancel:0.4434, gauge_rate_drive_rush_from_parry:0.0722, gauge_rate_drive_other:0.2397, gauge_rate_drive_arts:0.134, gauge_rate_drive_guard:0.0811, gauge_rate_drive_impact:0.0293, gauge_rate_drive_reversal:0,
+               gauge_rate_sa_lv1:0.4621, gauge_rate_sa_lv2:0, gauge_rate_sa_lv3:0.4117, gauge_rate_ca:0.126 },
+    shien07: { corner_time:10.6, cornered_time:10.5, drive_impact:0.3, received_drive_impact:0.4, drive_parry:1.7, just_parry:0.1, received_stun:0.1, throw_count:2.9, received_throw_count:2.4, target_clear_count:27,
+               gauge_rate_drive_rush_from_cancel:0.4691, gauge_rate_drive_rush_from_parry:0.049, gauge_rate_drive_other:0.2362, gauge_rate_drive_arts:0.0959, gauge_rate_drive_guard:0.1008, gauge_rate_drive_impact:0.0325, gauge_rate_drive_reversal:0.0161,
+               gauge_rate_sa_lv1:0.4794, gauge_rate_sa_lv2:0, gauge_rate_sa_lv3:0.3424, gauge_rate_ca:0.178 },
+    nanashi: { corner_time:10.3, cornered_time:8.9, drive_impact:0.1, received_drive_impact:0.2, drive_parry:1.0, just_parry:0.2, received_stun:0.1, throw_count:3.7, received_throw_count:2.5, target_clear_count:71,
+               gauge_rate_drive_rush_from_cancel:0.2589, gauge_rate_drive_rush_from_parry:0.1231, gauge_rate_drive_other:0.2831, gauge_rate_drive_arts:0.1494, gauge_rate_drive_guard:0.1655, gauge_rate_drive_impact:0.0188, gauge_rate_drive_reversal:0.0009,
+               gauge_rate_sa_lv1:0.16, gauge_rate_sa_lv2:0.24, gauge_rate_sa_lv3:0.38, gauge_rate_ca:0.22 },
+    Hitsuji: { corner_time:4.4, cornered_time:10.5, drive_impact:0.4, received_drive_impact:0.5, drive_parry:1.2, just_parry:0.2, received_stun:0.1, throw_count:2.4, received_throw_count:2.2, target_clear_count:58,
+               gauge_rate_drive_rush_from_cancel:0.1873, gauge_rate_drive_rush_from_parry:0.1113, gauge_rate_drive_other:0.2816, gauge_rate_drive_arts:0.1877, gauge_rate_drive_guard:0.1669, gauge_rate_drive_impact:0.0374, gauge_rate_drive_reversal:0.0275,
+               gauge_rate_sa_lv1:0.1219, gauge_rate_sa_lv2:0.5121, gauge_rate_sa_lv3:0.317, gauge_rate_ca:0.0487 },
+    hiyoko:  { corner_time:9.2, cornered_time:14.3, drive_impact:0.4, received_drive_impact:0.2, drive_parry:1.1, just_parry:0.1, received_stun:0.1, throw_count:2.4, received_throw_count:3.2, target_clear_count:28,
+               gauge_rate_drive_rush_from_cancel:0.0442, gauge_rate_drive_rush_from_parry:0.1158, gauge_rate_drive_other:0.3411, gauge_rate_drive_arts:0.3018, gauge_rate_drive_guard:0.1553, gauge_rate_drive_impact:0.0379, gauge_rate_drive_reversal:0.0035,
+               gauge_rate_sa_lv1:0.325, gauge_rate_sa_lv2:0.1875, gauge_rate_sa_lv3:0.3, gauge_rate_ca:0.1875 }
+  };
+  var driveCats = [
+    ['ドライブラッシュ', function(s){ return s.gauge_rate_drive_rush_from_cancel + s.gauge_rate_drive_rush_from_parry; }, 'var(--accent)'],
+    ['オーバードライブ等', function(s){ return s.gauge_rate_drive_other; }, 'var(--accent-2)'],
+    ['ドライブアーツ', function(s){ return s.gauge_rate_drive_arts; }, 'var(--gold)'],
+    ['ガード', function(s){ return s.gauge_rate_drive_guard; }, 'var(--p-hitsuji)'],
+    ['インパクト', function(s){ return s.gauge_rate_drive_impact; }, 'var(--p-hiyoko)'],
+    ['リバーサル', function(s){ return s.gauge_rate_drive_reversal; }, 'var(--text-muted)']
+  ];
+  var saCats = [
+    ['SAレベル1', function(s){ return s.gauge_rate_sa_lv1; }, 'var(--accent)'],
+    ['SAレベル2', function(s){ return s.gauge_rate_sa_lv2; }, 'var(--accent-2)'],
+    ['SAレベル3', function(s){ return s.gauge_rate_sa_lv3; }, 'var(--gold)'],
+    ['クリティカルアーツ', function(s){ return s.gauge_rate_ca; }, 'var(--p-hitsuji)']
+  ];
+  function renderGaugeBar(wrap, label, cats, s){
+    var row = document.createElement('div');
+    row.className = 'gauge-row';
+    var nameEl = document.createElement('span');
+    nameEl.className = 'gname';
+    nameEl.textContent = label;
+    var track = document.createElement('div');
+    track.className = 'gauge-track';
+    cats.forEach(function(c){
+      var pct = c[1](s) * 100;
+      if (pct <= 0) return;
+      var seg = document.createElement('div');
+      seg.className = 'gauge-seg';
+      seg.style.width = pct + '%';
+      seg.style.background = c[2];
+      seg.title = c[0] + ' ' + pct.toFixed(1) + '%';
+      track.appendChild(seg);
+    });
+    row.appendChild(nameEl);
+    row.appendChild(track);
+    wrap.appendChild(row);
+  }
+  document.querySelectorAll('[data-gauge]').forEach(function(wrap){
+    var key = wrap.getAttribute('data-gauge');
+    var s = battleStats[key];
+    renderGaugeBar(wrap, 'ドライブ', driveCats, s);
+    renderGaugeBar(wrap, 'SA', saCats, s);
+    var legend = document.createElement('div');
+    legend.className = 'gauge-legend';
+    driveCats.concat(saCats).forEach(function(c){
+      var pct = c[1](s) * 100;
+      if (pct <= 0) return;
+      var span = document.createElement('span');
+      span.innerHTML = '<span class="sw" style="background:'+c[2]+'"></span>' + c[0] + ' ' + pct.toFixed(1) + '%';
+      legend.appendChild(span);
+    });
+    wrap.appendChild(legend);
+  });
+
+  function statCompare(a, b, higherIsBetter){
+    if (a === b) return '';
+    var aWins = higherIsBetter ? a > b : a < b;
+    return aWins ? 'hi' : 'lo';
+  }
+  document.querySelectorAll('[data-statgrid]').forEach(function(grid){
+    var key = grid.getAttribute('data-statgrid');
+    var s = battleStats[key];
+    var cells = [
+      { k:'コーナー時間 / 詰め時間', v: s.corner_time.toFixed(1)+' <span class="vs">/ '+s.cornered_time.toFixed(1)+'</span>', cls: statCompare(s.corner_time, s.cornered_time, true) },
+      { k:'投げ / 被投げ（1R平均）', v: s.throw_count.toFixed(1)+' <span class="vs">/ '+s.received_throw_count.toFixed(1)+'</span>', cls: statCompare(s.throw_count, s.received_throw_count, true) },
+      { k:'DI使用 / 被弾（1R平均）', v: s.drive_impact.toFixed(1)+' <span class="vs">/ '+s.received_drive_impact.toFixed(1)+'</span>', cls: statCompare(s.drive_impact, s.received_drive_impact, true) },
+      { k:'ドライブパリィ（1R平均）', v: s.drive_parry.toFixed(1)+'回' },
+      { k:'ジャストパリィ（1R平均）', v: s.just_parry.toFixed(1)+'回' },
+      { k:'被スタン（1R平均）', v: s.received_stun.toFixed(1)+'回', cls: s.received_stun===0 ? 'hi' : '' },
+      { k:'コンボトライアル', v: s.target_clear_count+'件' }
+    ];
+    grid.innerHTML = cells.map(function(c){
+      return '<div class="stat-mini'+(c.cls?(' '+c.cls):'')+'"><span class="k">'+c.k+'</span><span class="v">'+c.v+'</span></div>';
+    }).join('');
   });
 
   // ============ Tabs ============
