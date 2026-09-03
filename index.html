@@ -232,6 +232,78 @@
   }
   .legend-item.you{ color:var(--text); font-weight:600; }
 
+  .table-scroll{ overflow-x:auto; }
+  .season-table{
+    width:100%;
+    min-width:760px;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  .season-table th, .season-table td{
+    padding:8px 10px;
+    text-align:right;
+    white-space:nowrap;
+    border-bottom:1px solid var(--border);
+  }
+  .season-table th{
+    font-family:"JetBrains Mono", monospace;
+    font-size:11px;
+    letter-spacing:.04em;
+    color:var(--text-muted);
+    font-weight:500;
+  }
+  .season-table th:first-child, .season-table td:first-child{
+    text-align:left;
+    position:sticky;
+    left:0;
+    background:var(--surface);
+  }
+  .season-table td{
+    font-family:"JetBrains Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    color:var(--text-muted);
+  }
+  .season-table td.na{ opacity:.35; }
+  .season-table tr.you td:first-child{ color:var(--accent); font-weight:600; }
+  .season-table td.best{ color:var(--text); font-weight:700; }
+
+  /* ---------- Play style breakdown ---------- */
+  .style-list{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .style-row{
+    display:grid;
+    grid-template-columns: 90px 1fr 64px;
+    align-items:center;
+    gap:14px;
+  }
+  .style-name{ font-size:14px; font-weight:500; }
+  .style-name.you{ color:var(--accent); font-weight:600; }
+  .style-bar{
+    display:flex;
+    height:22px;
+    border-radius:6px;
+    overflow:hidden;
+    background:var(--surface-2);
+    border:1px solid var(--border);
+  }
+  .style-seg{ height:100%; }
+  .style-hours{
+    text-align:right;
+    font-size:13.5px;
+    color:var(--text-muted);
+  }
+  .style-legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px 20px;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid var(--border);
+  }
+
   /* ---------- Cards ---------- */
   .grid{
     display:grid;
@@ -421,7 +493,7 @@
   <section class="hero">
     <span class="eyebrow">Buckler's Boot Camp Data · Season 0–13</span>
     <h1>スト6<span>診断カルテ</span></h1>
-    <p>あなたと4人のフレンド、あわせて5人分のランクマッチ実績を実データから読み解いた診断カルテ。現在の戦績だけでなく、シーズン0〜13の勝率推移・メインキャラの変遷・キャラ相性まで掘り下げた。</p>
+    <p>あなたと4人のフレンド、あわせて5人分のランクマッチ実績を実データから読み解いた診断カルテ。現在の戦績だけでなく、シーズン0〜13の勝率推移・メインキャラの変遷・通算キャラ相性・プレイスタイル（ランクマ／カジュアル／カスタム／練習）の時間配分まで掘り下げた。</p>
     <div class="hero-meta">
       <span>FIGHTERS <b>5</b></span>
       <span>SEASONS TRACKED <b>14</b></span>
@@ -472,12 +544,26 @@
       <svg id="trendChart" viewBox="0 0 1040 340" role="img" aria-label="シーズン別勝率推移チャート"></svg>
     </div>
     <div class="legend" id="legend"></div>
+    <div class="table-scroll">
+      <table class="season-table" id="seasonTable" aria-label="シーズン別勝率と試合数の実数値"></table>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>プレイスタイル内訳</h2>
+      <p class="sub">キャリア通算の活動時間の内訳。ランクマッチ・カジュアル・カスタムルーム・トレーニングにどれだけ時間を使っているか。</p>
+    </div>
+    <div class="trend-card">
+      <div class="style-list" id="playstyle"></div>
+      <div class="style-legend" id="styleLegend"></div>
+    </div>
   </section>
 
   <section>
     <div class="section-head">
       <h2>ファイター診断</h2>
-      <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・キャラ相性から診断した、5人それぞれの闘い方タイプ。</p>
+      <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）から診断した、5人それぞれの闘い方タイプ。</p>
     </div>
     <div class="grid">
 
@@ -495,11 +581,11 @@
           <div class="stat"><span class="k">MR</span><span class="v mono">1,611</span></div>
           <div class="stat"><span class="k">Ranked</span><span class="v mono">9,149</span></div>
         </div>
-        <p class="diagnosis">シーズン3から一貫してJURI一筋。勝率は52〜56%のレンジで長く安定していたが、直近シーズン13で64.3%まで急上昇。通算365時間18分をランクマッチに投下する職人肌で、二刀流には目もくれないタイプ。</p>
+        <p class="diagnosis">シーズン3から一貫してJURI一筋。ランクマッチの勝率はシーズンごとに47〜54%で推移し、通算(9,149戦)では49.1%とほぼ五分。数字の派手さより、二刀流に目もくれず一人の相棒を回し続ける継続力で語るタイプ。</p>
         <div class="season-strip" data-player="you"></div>
         <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">MAI</span><span class="wr mono">83.6% (403戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">RASHID</span><span class="wr mono">0% (2戦)</span></div>
+          <div class="matchup good"><span class="label">得意</span><span class="char">CAMMY</span><span class="wr mono">60.0% (575戦)</span></div>
+          <div class="matchup bad"><span class="label">苦手</span><span class="char">ELENA</span><span class="wr mono">34.6% (26戦)</span></div>
         </div>
         <div class="quote">
           <span class="title">「Disposition for Destruction」</span>
@@ -521,11 +607,11 @@
           <div class="stat"><span class="k">MR</span><span class="v mono">1,488</span></div>
           <div class="stat"><span class="k">Ranked</span><span class="v mono">22,313</span></div>
         </div>
-        <p class="diagnosis">CAMMYをシーズン3から11シーズン連続でメイン固定、5人で唯一途切れなくプレイし続けている。勝率は45〜54%で安定推移。投下時間721時間32分・22,313戦はグループ断トツの1位で、量で語る生粋のグラインダー。</p>
+        <p class="diagnosis">CAMMYをシーズン3から11シーズン連続でメイン固定、5人で唯一途切れなくプレイし続けている。ランクマの勝率は44〜50%で安定推移、通算22,320戦・48.3%とほぼ五分をキープ。ランクマだけで通算721時間、全活動1,063時間の約68%をランクマに注ぐ生粋のグラインダー。</p>
         <div class="season-strip" data-player="shien"></div>
         <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">MAI</span><span class="wr mono">72.3% (249戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">TERRY</span><span class="wr mono">33.1% (121戦)</span></div>
+          <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">58.0% (150戦)</span></div>
+          <div class="matchup bad"><span class="label">苦手</span><span class="char">E. HONDA</span><span class="wr mono">34.3% (265戦)</span></div>
         </div>
         <div class="quote">
           <span class="title">「Let's Do This」</span>
@@ -547,11 +633,11 @@
           <div class="stat"><span class="k">MR</span><span class="v mono">1,606</span></div>
           <div class="stat"><span class="k">Ranked</span><span class="v mono">4,916</span></div>
         </div>
-        <p class="diagnosis">シーズン3〜5はKENを使用、シーズン6でTERRYに転向して以降は一貫してTERRY一本。転向後は勝率が右肩上がりで、直近2シーズンは60%超え。トレーニングモード224時間22分がランクマッチ197時間25分を上回る、5人で唯一「練習＞実戦」の努力家。</p>
+        <p class="diagnosis">シーズン3〜5はKENを使用(この間の勝率50〜61%と好調)、シーズン6でTERRYに転向して以降は一貫してTERRY一本。転向後も勝率50〜55%を維持し、通算52.3%とグループトップの勝率。トレーニング224時間がランクマ197時間を上回る、5人で唯一「練習＞実戦」の全活動時間トップは練習という努力家。</p>
         <div class="season-strip" data-player="nanashi"></div>
         <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">MAI</span><span class="wr mono">83.8% (99戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">MANON</span><span class="wr mono">14.3% (7戦)</span></div>
+          <div class="matchup good"><span class="label">得意</span><span class="char">INGRID</span><span class="wr mono">78.9% (19戦)</span></div>
+          <div class="matchup bad"><span class="label">苦手</span><span class="char">BLANKA</span><span class="wr mono">30.8% (26戦)</span></div>
         </div>
         <div class="quote">
           <span class="title">「OK!」</span>
@@ -573,11 +659,11 @@
           <div class="stat"><span class="k">MR</span><span class="v mono">1,400</span></div>
           <div class="stat"><span class="k">Ranked</span><span class="v mono">6,116</span></div>
         </div>
-        <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋で、勝率は44〜49%のレンジで安定。投下時間はランクマッチ205時間31分が圧倒的1位で、練習より実戦、一人回線より対人を選ぶ武闘派。</p>
+        <p class="diagnosis">5人の中で唯一シーズン7からの参戦（それ以前はランクマ記録なし）。以降はZANGIEF一筋で、勝率は44〜50%のレンジで安定、通算48.0%とほぼ五分。投下時間はランクマッチ205時間が最大で、練習より実戦、一人回線より対人を選ぶ武闘派。</p>
         <div class="season-strip" data-player="hitsuji"></div>
         <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">ELENA</span><span class="wr mono">85.7% (7戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">MARISA</span><span class="wr mono">12.5% (8戦)</span></div>
+          <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">54.4% (160戦)</span></div>
+          <div class="matchup bad"><span class="label">苦手</span><span class="char">DHALSIM</span><span class="wr mono">26.2% (42戦)</span></div>
         </div>
         <div class="quote">
           <span class="title">「A Man's Peaceful Passing」</span>
@@ -599,11 +685,11 @@
           <div class="stat"><span class="k">Rank</span><span class="v mono">Diamond 3</span></div>
           <div class="stat"><span class="k">Ranked</span><span class="v mono">2,575</span></div>
         </div>
-        <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。勝率はシーズン12の19.8%からシーズン13は29.4%まで改善中で、まだ発展途上。練習・カスタムルームがランクマッチより長く、過程を楽しむタイプ。</p>
+        <p class="diagnosis">JP→LUKE→ED→（休止）→MAIと、5人で唯一メインキャラを4度変えている根っからの模索型。JP時代のシーズン3は63.3%と好スタートだったが、キャラを転々とする中で45〜51%まで低下。それでも通算(2,575戦)では49.1%とほぼ五分を維持しており、キャラを変えても地力は落ちていない。練習・カスタムルームの時間がランクマより長く、過程を楽しむタイプ。</p>
         <div class="season-strip" data-player="hiyoko"></div>
         <div class="matchup-row">
-          <div class="matchup good"><span class="label">得意</span><span class="char">CHUN-LI</span><span class="wr mono">100% (3戦)</span></div>
-          <div class="matchup bad"><span class="label">苦手</span><span class="char">LILY</span><span class="wr mono">0% (6戦)</span></div>
+          <div class="matchup good"><span class="label">得意</span><span class="char">MANON</span><span class="wr mono">72.7% (11戦)</span></div>
+          <div class="matchup bad"><span class="label">苦手</span><span class="char">MARISA</span><span class="wr mono">33.3% (15戦)</span></div>
         </div>
         <div class="quote">
           <span class="title">「#KZHCUP」</span>
@@ -614,7 +700,7 @@
     </div>
   </section>
 
-  <p class="note">※ LP・MRはシーズンごとにリセットされ、過去シーズンの数値やマスター到達日は公式サイトからは取得できないため、ここでは各シーズンの対戦成績（勝率・試合数）で強さの推移を表している。相性データは母数が少ない対面（数戦のみ）も含むため参考値。</p>
+  <p class="note">※ LP・MRはシーズンごとにリセットされ、過去シーズンの数値やマスター到達日は公式サイトからは取得できないため、ここでは各シーズンのランクマッチ成績（勝率・試合数）で強さの推移を表している。集計はすべて「ランクマッチ」限定（カジュアル・カスタムルーム・トレーニングは除く）。相性データは通算成績から、母数10戦未満の対面は信頼性が低いため除外している。</p>
 
   <footer>
     <span>DATA: Buckler's Boot Camp (streetfighter.com/6/buckler)</span>
@@ -626,19 +712,36 @@
 
 <script>
 (function(){
-  var seasonData = {
-    you:     { color: 'var(--p-you)',     label: 'あなた',   you: true,  series: [null,null,null,52.8,51.6,54.3,53.8,54.9,55.8,null,null,null,54.7,64.3] },
-    shien:   { color: 'var(--p-shien)',   label: 'shien07',  series: [null,null,null,50.7,44.7,48.4,48.6,48.3,49.4,50.2,49.0,49.5,53.9,50.8] },
-    nanashi: { color: 'var(--p-nanashi)', label: 'nanashi',  series: [null,null,null,54.6,53.7,52.5,52.6,49.1,51.6,54.9,null,54.1,60.8,62.1] },
-    hitsuji: { color: 'var(--p-hitsuji)', label: 'Hitsuji',  series: [null,null,null,null,null,null,null,48.8,48.5,44.6,46.1,44.4,48.1,47.4] },
-    hiyoko:  { color: 'var(--p-hiyoko)',  label: 'hiyoko',   series: [null,null,null,28.9,36.2,39.0,32.5,41.6,null,null,null,null,19.8,29.4] }
+  // Ranked Matches only (targetModeId=2). "All modes" was mistakenly used in an earlier draft
+  // and included Casual/Custom Room games, which skewed several win rates.
+  var wins = {
+    you:     [0,0,0,773,925,659,538,951,184,0,0,0,342,122],
+    shien:   [0,0,0,1072,1732,998,1086,1540,938,962,825,511,679,447],
+    nanashi: [0,0,0,194,730,491,314,127,314,67,0,41,108,185],
+    hitsuji: [0,0,0,0,0,0,0,904,687,258,201,202,436,246],
+    hiyoko:  [0,0,0,93,208,310,126,375,0,0,0,0,30,121]
   };
   var battles = {
-    you:     [0,0,0,2354,2595,1807,1861,2598,475,0,0,0,1506,1172],
-    shien:   [0,0,0,3055,4797,2329,2613,3609,1959,1945,1809,1100,1887,1542],
-    nanashi: [0,0,0,425,1606,1252,853,269,653,122,0,98,411,651],
-    hitsuji: [0,0,0,0,0,0,0,1891,1417,617,469,455,1242,705],
-    hiyoko:  [0,0,0,620,814,920,437,964,0,0,0,0,722,1129]
+    you:     [0,0,0,1613,1970,1320,1073,1898,353,0,0,0,695,227],
+    shien:   [0,0,0,2260,3945,2054,2194,3108,1865,1922,1683,1023,1370,896],
+    nanashi: [0,0,0,318,1371,981,617,255,606,122,0,75,210,361],
+    hitsuji: [0,0,0,0,0,0,0,1815,1417,582,430,455,904,513],
+    hiyoko:  [0,0,0,147,407,624,276,805,0,0,0,0,66,250]
+  };
+  var totals = { // targetSeasonId=-1 (career, Ranked only)
+    you:     { w: 4494, b: 9149 },
+    shien:   { w: 10790, b: 22320 },
+    nanashi: { w: 2571, b: 4916 },
+    hitsuji: { w: 2934, b: 6116 },
+    hiyoko:  { w: 1263, b: 2575 }
+  };
+  function wr(w,b){ return b>0 ? +(100*w/b).toFixed(1) : null; }
+  var seasonData = {
+    you:     { color: 'var(--p-you)',     label: 'あなた',   you: true,  series: battles.you.map(function(b,i){ return wr(wins.you[i], b); }) },
+    shien:   { color: 'var(--p-shien)',   label: 'shien07',  series: battles.shien.map(function(b,i){ return wr(wins.shien[i], b); }) },
+    nanashi: { color: 'var(--p-nanashi)', label: 'nanashi',  series: battles.nanashi.map(function(b,i){ return wr(wins.nanashi[i], b); }) },
+    hitsuji: { color: 'var(--p-hitsuji)', label: 'Hitsuji',  series: battles.hitsuji.map(function(b,i){ return wr(wins.hitsuji[i], b); }) },
+    hiyoko:  { color: 'var(--p-hiyoko)',  label: 'hiyoko',   series: battles.hiyoko.map(function(b,i){ return wr(wins.hiyoko[i], b); }) }
   };
 
   // ---- Season bars per card ----
@@ -697,6 +800,12 @@
     t.textContent = v + '%';
     svg.appendChild(t);
   });
+  // 50% reference line (break-even in a rating-based ladder)
+  var fifty = el('line', { x1:padL, x2:W-padR, y1:y(50), y2:y(50), stroke:'var(--text-muted)', 'stroke-width':1, 'stroke-dasharray':'3 4', opacity:'0.6' });
+  svg.appendChild(fifty);
+  var fiftyLabel = el('text', { x: W-padR, y: y(50)-6, 'text-anchor':'end' });
+  fiftyLabel.textContent = '五分(50%)';
+  svg.appendChild(fiftyLabel);
   // x labels
   for (var i=0;i<seasons;i++){
     var t = el('text', { x: x(i), y: H-padB+18, 'text-anchor':'middle' });
@@ -741,6 +850,75 @@
     item.appendChild(sw);
     item.appendChild(document.createTextNode(d.label));
     legend.appendChild(item);
+  });
+
+  // ---- Season numbers table ----
+  (function(){
+    var tbl = document.getElementById('seasonTable');
+    var head = '<thead><tr><th>Player</th>' +
+      Array.from({length:14}, function(_,i){ return '<th>S'+i+'</th>'; }).join('') +
+      '<th>通算</th></tr></thead>';
+    var body = '<tbody>' + Object.keys(seasonData).map(function(key){
+      var d = seasonData[key];
+      var cells = d.series.map(function(v){
+        return v === null ? '<td class="na">–</td>' : '<td>'+v.toFixed(1)+'%</td>';
+      }).join('');
+      var tot = totals[key];
+      var totWr = wr(tot.w, tot.b);
+      return '<tr class="'+(d.you?'you':'')+'"><td>'+d.label+'</td>'+cells+'<td class="best">'+totWr+'% <span style="opacity:.6">('+tot.w+'/'+tot.b+')</span></td></tr>';
+    }).join('') + '</tbody>';
+    tbl.innerHTML = head + body;
+  })();
+
+  // ---- Play style breakdown (career, all activity types) ----
+  var playTime = {
+    you:     { Ranked:1315086, Casual:92404, Custom:868593, Practice:425407, Other:673+10529+116+730+735 },
+    shien:   { Ranked:2597573, Casual:66208, Custom:543902, Practice:619205, Other:16+601+1 },
+    nanashi: { Ranked:710740,  Casual:4074,  Custom:195055, Practice:807760, Other:1907+7+869 },
+    hitsuji: { Ranked:739901,  Casual:2405,  Custom:112231, Practice:375172, Other:48965+1720+1+51+1 },
+    hiyoko:  { Ranked:361989,  Casual:25245, Custom:587805, Practice:602541, Other:40+11054+19+1 }
+  };
+  var actColors = { Ranked:'var(--gold)', Casual:'#34d399', Custom:'var(--p-hitsuji)', Practice:'var(--accent-2)', Other:'var(--text-muted)' };
+  var actLabelsJa = { Ranked:'ランクマッチ', Casual:'カジュアル', Custom:'カスタムルーム', Practice:'トレーニング', Other:'その他' };
+  var styleWrap = document.getElementById('playstyle');
+  Object.keys(playTime).forEach(function(key){
+    var t = playTime[key];
+    var total = Object.values(t).reduce(function(a,b){return a+b;},0);
+    var row = document.createElement('div');
+    row.className = 'style-row';
+    var nameEl = document.createElement('div');
+    nameEl.className = 'style-name' + (key==='you' ? ' you' : '');
+    nameEl.textContent = seasonData[key].label;
+    var barEl = document.createElement('div');
+    barEl.className = 'style-bar';
+    ['Ranked','Practice','Custom','Casual','Other'].forEach(function(cat){
+      var sec = t[cat];
+      if (sec <= 0) return;
+      var seg = document.createElement('div');
+      seg.className = 'style-seg';
+      seg.style.width = (100*sec/total) + '%';
+      seg.style.background = actColors[cat];
+      seg.title = actLabelsJa[cat] + ' ' + (sec/3600).toFixed(0) + '時間 (' + (100*sec/total).toFixed(0) + '%)';
+      barEl.appendChild(seg);
+    });
+    var hoursEl = document.createElement('div');
+    hoursEl.className = 'style-hours mono';
+    hoursEl.textContent = Math.round(total/3600).toLocaleString() + 'h';
+    row.appendChild(nameEl);
+    row.appendChild(barEl);
+    row.appendChild(hoursEl);
+    styleWrap.appendChild(row);
+  });
+  var styleLegend = document.getElementById('styleLegend');
+  ['Ranked','Practice','Custom','Casual','Other'].forEach(function(cat){
+    var item = document.createElement('div');
+    item.className = 'legend-item';
+    var sw = document.createElement('span');
+    sw.className = 'sw';
+    sw.style.background = actColors[cat];
+    item.appendChild(sw);
+    item.appendChild(document.createTextNode(actLabelsJa[cat]));
+    styleLegend.appendChild(item);
   });
 })();
 </script>
