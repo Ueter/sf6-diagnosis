@@ -442,7 +442,7 @@
     background:var(--surface);
   }
   .pie-total{
-    position:absolute; inset:22%;
+    position:absolute; inset:22%; z-index:1;
     display:flex; align-items:center; justify-content:center;
     text-align:center;
     font-family:"JetBrains Mono", monospace;
@@ -511,35 +511,31 @@
   .rank-col.bad .rank-row .v b{ color:var(--bad); }
   .rank-row .v b{ font-weight:700; }
 
-  /* ---------- Gauge usage + battle tendency stats ---------- */
+  /* ---------- Gauge usage (composition-of-whole donuts) ---------- */
   .gauge-block{ margin-top:22px; }
   .gauge-block .subhead{ margin-bottom:12px; }
-  .gauge-row{
+  .gauge-pies{ display:flex; gap:26px; flex-wrap:wrap; }
+  .gauge-pie-item{ display:flex; gap:14px; align-items:center; flex:1 1 260px; min-width:240px; }
+  .gpie{ width:132px; height:132px; border-radius:50%; flex:none; position:relative; }
+  .gpie::after{ content:''; position:absolute; inset:22%; border-radius:50%; background:var(--surface); }
+  .gpie-label{
+    position:absolute; inset:22%; z-index:1;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; font-family:"JetBrains Mono", monospace;
+    font-size:9.5px; letter-spacing:.04em; color:var(--text-muted); line-height:1.3;
+  }
+  .gpie-label b{ display:block; font-family:"Rajdhani", sans-serif; font-size:19px; color:var(--text); font-weight:700; letter-spacing:0; }
+  .gpie-legend{ display:flex; flex-direction:column; gap:6px; flex:1; min-width:0; }
+  .gpie-legend-row{
     display:grid;
-    grid-template-columns: 92px 1fr;
+    grid-template-columns: 9px 1fr 42px;
     align-items:center;
-    gap:12px;
-    margin-bottom:10px;
+    gap:8px;
+    font-size:12px;
   }
-  .gauge-row .gname{ font-size:12.5px; color:var(--text-muted); }
-  .gauge-track{
-    display:flex;
-    height:20px;
-    border-radius:5px;
-    overflow:hidden;
-    background:var(--surface-2);
-    border:1px solid var(--border);
-  }
-  .gauge-seg{ height:100%; }
-  .gauge-legend{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px 16px;
-    margin:6px 0 18px;
-    font-size:11.5px;
-    color:var(--text-muted);
-  }
-  .gauge-legend span.sw{ width:9px; height:9px; border-radius:2px; display:inline-block; margin-right:5px; vertical-align:middle; }
+  .gpie-legend-row .sw{ width:9px; height:9px; border-radius:2px; }
+  .gpie-legend-row .lbl{ color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .gpie-legend-row .val{ text-align:right; font-family:"JetBrains Mono", monospace; font-weight:600; }
 
   .stat-mini-grid{
     display:grid;
@@ -621,12 +617,12 @@
 <div class="wrap">
 
   <section class="hero">
-    <span class="eyebrow">Buckler's Boot Camp Data · Season 0–13</span>
+    <span class="eyebrow">Buckler's Boot Camp Data · Season 3–13</span>
     <h1>スト6<span>診断カルテ</span></h1>
-    <p>Octopusと4人のフレンド、あわせて5人分のランクマッチ実績を実データから読み解いた診断カルテ。シーズン0〜13の勝率推移・使用キャラの全内訳・プレイスタイル・キャラ相性まで掘り下げた。</p>
+    <p>Octopusと4人のフレンド、あわせて5人分のランクマッチ実績を実データから読み解いた診断カルテ。シーズン3〜13の勝率推移・使用キャラの全内訳・プレイスタイル・キャラ相性まで掘り下げた。</p>
     <div class="hero-meta">
       <span>FIGHTERS <b>5</b></span>
-      <span>SEASONS TRACKED <b>14</b></span>
+      <span>SEASONS TRACKED <b>11</b></span>
       <span>SOURCE <b>Buckler's Boot Camp</b></span>
     </div>
   </section>
@@ -668,7 +664,7 @@
   <section>
     <div class="section-head">
       <h2>シーズン別 勝率の推移</h2>
-      <p class="sub">シーズン0〜13のランクマッチ勝率。線が途切れているのは対戦記録がない期間。実際の値は44〜63%に収まるため、軸は35〜65%にズームしている。</p>
+      <p class="sub">シーズン3〜13のランクマッチ勝率。線が途切れているのは対戦記録がない期間。実際の値は44〜63%に収まるため、軸は35〜65%にズームしている。</p>
     </div>
     <div class="trend-card">
       <svg class="chart" id="trendChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別ランクマッチ勝率推移チャート"></svg>
@@ -693,21 +689,21 @@
   <section>
     <div class="section-head">
       <h2>マスターレート（MR）推移</h2>
-      <p class="sub">シーズン別のマスターレート（各シーズン1点のみのスナップショット。昇格直後に急落してまた戻る、のようなシーズン内の細かい上下動までは追えない）。マスター未到達のシーズンは線が途切れる。いつマスターに到達したか、今が自己ベスト圏内かどうかが分かる。</p>
+      <p class="sub">シーズン別のマスターレート（各シーズン1点のみのスナップショット。マスター昇格は毎シーズンMR1500からのスタートで、そこから上下する）。破線はMR1600＝ハイマスターのライン。表の「シーズン末ベストMR」はあくまでシーズン終了時点での最高値のため、シーズン中に一時的にこれより高いMRへ到達していても、そこが自己ベストとして表には残らない点に注意（例: shien07はS11終了時点で1,580だが、シーズン中は瞬間的にもっと高いMRへ触れていた可能性が高い）。マスター未到達のシーズンは線が途切れる。</p>
     </div>
     <div class="trend-card">
       <svg class="chart" id="mrChart" viewBox="0 0 1040 380" role="img" aria-label="シーズン別マスターレート推移チャート"></svg>
     </div>
     <div class="legend" id="mrLegend"></div>
     <div class="table-scroll">
-      <table class="season-table" id="masterRaceTable" aria-label="マスター到達シーズンと自己ベストMR"></table>
+      <table class="season-table" id="masterRaceTable" aria-label="マスター到達シーズンとシーズン末ベストMR"></table>
     </div>
   </section>
 
   <section>
     <div class="section-head">
       <h2>ファイター診断</h2>
-      <p class="sub">現行シーズンの戦績・シーズン0〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）から診断した、5人それぞれの闘い方タイプ。</p>
+      <p class="sub">現行シーズンの戦績・シーズン3〜13の対戦ボリューム・通算キャラ相性（ランクマッチ限定、母数10戦以上）から診断した、5人それぞれの闘い方タイプ。</p>
     </div>
     <div class="tabs" id="tabButtons"></div>
 
@@ -722,7 +718,7 @@
       <h3 class="archetype">一途の求道者<span class="en">The One-Character Devotee</span></h3>
       <div class="stat-row">
         <div class="stat"><span class="k">LP</span><span class="v mono">211,872</span></div>
-        <div class="stat"><span class="k">MR</span><span class="v mono">1,611</span></div>
+        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,611</span></div>
         <div class="stat"><span class="k">Ranked</span><span class="v mono">9,149</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">49.1%</span></div>
       </div>
@@ -776,10 +772,10 @@
         </div>
         <span class="char-badge">CAMMY</span>
       </div>
-      <h3 class="archetype">鉄人グラインダー<span class="en">The Iron Grinder</span></h3>
+      <h3 class="archetype">物量型の継続戦士<span class="en">The Endurance Player</span></h3>
       <div class="stat-row">
         <div class="stat"><span class="k">LP</span><span class="v mono">298,767</span></div>
-        <div class="stat"><span class="k">MR</span><span class="v mono">1,488</span></div>
+        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,580</span></div>
         <div class="stat"><span class="k">Ranked</span><span class="v mono">22,320</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.3%</span></div>
       </div>
@@ -836,7 +832,7 @@
       <h3 class="archetype">努力型ラボワーカー<span class="en">The Lab Rat</span></h3>
       <div class="stat-row">
         <div class="stat"><span class="k">LP</span><span class="v mono">170,483</span></div>
-        <div class="stat"><span class="k">MR</span><span class="v mono">1,606</span></div>
+        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,606</span></div>
         <div class="stat"><span class="k">Ranked</span><span class="v mono">4,916</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">52.3%</span></div>
       </div>
@@ -890,10 +886,10 @@
         </div>
         <span class="char-badge">ZANGIEF</span>
       </div>
-      <h3 class="archetype">対人希求のセットコーラー<span class="en">The Set Caller</span></h3>
+      <h3 class="archetype">対人戦好きの待ちグラップラー<span class="en">The Patient Grappler</span></h3>
       <div class="stat-row">
         <div class="stat"><span class="k">LP</span><span class="v mono">145,783</span></div>
-        <div class="stat"><span class="k">MR</span><span class="v mono">1,400</span></div>
+        <div class="stat"><span class="k">MR(ベスト)</span><span class="v mono">1,462</span></div>
         <div class="stat"><span class="k">Ranked</span><span class="v mono">6,116</span></div>
         <div class="stat"><span class="k">通算勝率</span><span class="v mono">48.0%</span></div>
       </div>
@@ -1010,19 +1006,21 @@
 <script>
 (function(){
   // ============ Ranked Matches only (targetModeId=2) season history ============
+  // Seasons 0-2: no one in the group has any Ranked record, so they're dropped entirely — charts start at S3.
+  var SEASON_OFFSET = 3;
   var wins = {
-    you:     [0,0,0,773,925,659,538,951,184,0,0,0,342,122],
-    shien:   [0,0,0,1072,1732,998,1086,1540,938,962,825,511,679,447],
-    nanashi: [0,0,0,194,730,491,314,127,314,67,0,41,108,185],
-    hitsuji: [0,0,0,0,0,0,0,904,687,258,201,202,436,246],
-    hiyoko:  [0,0,0,93,208,310,126,375,0,0,0,0,30,121]
+    you:     [773,925,659,538,951,184,0,0,0,342,122],
+    shien:   [1072,1732,998,1086,1540,938,962,825,511,679,447],
+    nanashi: [194,730,491,314,127,314,67,0,41,108,185],
+    hitsuji: [0,0,0,0,904,687,258,201,202,436,246],
+    hiyoko:  [93,208,310,126,375,0,0,0,0,30,121]
   };
   var battles = {
-    you:     [0,0,0,1613,1970,1320,1073,1898,353,0,0,0,695,227],
-    shien:   [0,0,0,2260,3945,2054,2194,3108,1865,1922,1683,1023,1370,896],
-    nanashi: [0,0,0,318,1371,981,617,255,606,122,0,75,210,361],
-    hitsuji: [0,0,0,0,0,0,0,1815,1417,582,430,455,904,513],
-    hiyoko:  [0,0,0,147,407,624,276,805,0,0,0,0,66,250]
+    you:     [1613,1970,1320,1073,1898,353,0,0,0,695,227],
+    shien:   [2260,3945,2054,2194,3108,1865,1922,1683,1023,1370,896],
+    nanashi: [318,1371,981,617,255,606,122,0,75,210,361],
+    hitsuji: [0,0,0,0,1815,1417,582,430,455,904,513],
+    hiyoko:  [147,407,624,276,805,0,0,0,0,66,250]
   };
   var totals = {
     you:     { w: 4494, b: 9149 },
@@ -1110,10 +1108,10 @@
   }
 
   drawLineChart(document.getElementById('trendChart'), seasonData, {
-    n: 14, yMin: 35, yMax: 65,
+    n: 11, yMin: 35, yMax: 65,
     gridlines: [35,40,45,55,60,65],
     refLine: 50, refLineLabel: '五分(50%)',
-    xLabel: function(i){ return 'S'+i; }
+    xLabel: function(i){ return 'S'+(i+SEASON_OFFSET); }
   });
 
   var legend = document.getElementById('legend');
@@ -1132,7 +1130,7 @@
   (function(){
     var tbl = document.getElementById('seasonTable');
     var head = '<thead><tr><th>Player</th>' +
-      Array.from({length:14}, function(_,i){ return '<th>S'+i+'</th>'; }).join('') +
+      Array.from({length:11}, function(_,i){ return '<th>S'+(i+SEASON_OFFSET)+'</th>'; }).join('') +
       '<th>通算</th></tr></thead>';
     var body = '<tbody>' + Object.keys(seasonData).map(function(key){
       var d = seasonData[key];
@@ -1149,22 +1147,23 @@
   // ============ Master Rating (MR) history per season ============
   // null = not in Master league that season (or didn't play). Source: api/profile/play/act/leagueinfo (per-season league_info).
   var mrSeries = {
-    shien:   [null,null,null,null,1330,1223,1503,1505,1579,1552,1484,1580,1503,1496],
-    you:     [null,null,null,null,1248,1557,1572,1569,1601,null,null,null,1451,1611],
-    nanashi: [null,null,null,null,null,1348,1602,1546,1572,1605,null,1552,1567,1606],
-    hitsuji: [null,null,null,null,null,null,null,null,1404,1410,1349,1337,1462,1400],
-    hiyoko:  [null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+    shien:   [null,1330,1223,1503,1505,1579,1552,1484,1580,1503,1496],
+    you:     [null,1248,1557,1572,1569,1601,null,null,null,1451,1611],
+    nanashi: [null,null,1348,1602,1546,1572,1605,null,1552,1567,1606],
+    hitsuji: [null,null,null,null,null,1404,1410,1349,1337,1462,1400],
+    hiyoko:  [null,null,null,null,null,null,null,null,null,null,null]
   };
   var mrData = {};
   Object.keys(playerMeta).forEach(function(key){
     mrData[key] = Object.assign({}, playerMeta[key], { series: mrSeries[key] });
   });
   drawLineChart(document.getElementById('mrChart'), mrData, {
-    n: 14, yMin: 1150, yMax: 1650, yUnit: '',
+    n: 11, yMin: 1200, yMax: 1700, yUnit: '',
     W: 1040, H: 380, padL: 50, padR: 20, padT: 20, padB: 34,
-    gridlines: [1150,1250,1350,1450,1550,1650],
+    gridlines: [1200,1300,1400,1500,1600,1700],
+    refLine: 1600, refLineLabel: 'ハイマスター(1600)',
     xLabelStep: 1,
-    xLabel: function(i){ return 'S'+i; }
+    xLabel: function(i){ return 'S'+(i+SEASON_OFFSET); }
   });
   var mrLegend = document.getElementById('mrLegend');
   Object.keys(mrData).forEach(function(key){
@@ -1199,7 +1198,7 @@
 
   (function(){
     var tbl = document.getElementById('masterRaceTable');
-    var head = '<thead><tr><th>Player</th><th>マスター初到達</th><th>自己ベストMR</th><th>現在MR</th><th>自己ベストとの差</th></tr></thead>';
+    var head = '<thead><tr><th>Player</th><th>マスター初到達</th><th>シーズン末ベストMR</th><th>現在MR</th><th>ベストとの差</th></tr></thead>';
     var body = '<tbody>' + Object.keys(playerMeta).map(function(key){
       var d = playerMeta[key];
       var f = masterFacts[key];
@@ -1208,7 +1207,7 @@
       }
       var diff = f.current - f.peakMR;
       var diffTxt = diff === 0 ? '<span class="best">自己ベスト更新中</span>' : (diff > 0 ? '+'+diff : diff);
-      return '<tr><td>'+d.label+'</td><td>S'+f.firstSeason+'</td><td class="best">'+f.peakMR+' <span style="opacity:.6">(S'+f.peakSeason+')</span></td><td>'+f.current+'</td><td>'+diffTxt+'</td></tr>';
+      return '<tr><td>'+d.label+'</td><td>S'+(f.firstSeason+SEASON_OFFSET)+'</td><td class="best">'+f.peakMR+' <span style="opacity:.6">(S'+(f.peakSeason+SEASON_OFFSET)+')</span></td><td>'+f.current+'</td><td>'+diffTxt+'</td></tr>';
     }).join('') + '</tbody>';
     tbl.innerHTML = head + body;
   })();
@@ -1345,7 +1344,7 @@
         fill: d.color, opacity: '0.28', rx: '1.5'
       });
       var t = document.createElementNS(svgns, 'title');
-      t.textContent = 'S'+i+': '+v+'戦';
+      t.textContent = 'S'+(i+SEASON_OFFSET)+': '+v+'戦';
       rect.appendChild(t);
       svg.appendChild(rect);
     });
@@ -1364,7 +1363,7 @@
     var xStep = opts.xLabelStep || 1;
     for (var i=0;i<n;i+=xStep){
       var t = el('text', { x: x(i), y: H-6, 'text-anchor':'middle' });
-      t.textContent = 'S'+i;
+      t.textContent = 'S'+(i+SEASON_OFFSET);
       svg.appendChild(t);
     }
 
@@ -1399,7 +1398,7 @@
     var yMax = Math.ceil((hi+3)/5)*5;
     var mid = Math.round((yMin+yMax)/2/5)*5;
     drawComboChart(svgEl, d, battles[sKey], totals[sKey].b, {
-      n: 14, yMin: yMin, yMax: yMax,
+      n: 11, yMin: yMin, yMax: yMax,
       W: 480, H: 260, padL: 34, padR: 10, padT: 16, padB: 22,
       gridlines: [yMin, mid, yMax],
       xLabelStep: 2
@@ -1418,16 +1417,16 @@
     var yMax = Math.ceil((hi+30)/25)*25;
     var mid = Math.round((yMin+yMax)/2/25)*25;
     drawLineChart(svgEl, { solo: { color: playerMeta[sKey].color, series: series } }, {
-      n: 14, yMin: yMin, yMax: yMax, yUnit: '',
+      n: 11, yMin: yMin, yMax: yMax, yUnit: '',
       W: 1040, H: 220, padL: 50, padR: 20, padT: 16, padB: 26,
       gridlines: [yMin, mid, yMax],
       dotR: 3.5,
-      xLabel: function(i){ return 'S'+i; }
+      xLabel: function(i){ return 'S'+(i+SEASON_OFFSET); }
     });
     var f = masterFacts[sKey];
     if (f && f.reached){
       var lbl = el('text', { x: 1040-20, y: 16, 'text-anchor':'end' });
-      lbl.textContent = '自己ベスト '+f.peakMR+'（S'+f.peakSeason+'）';
+      lbl.textContent = 'シーズン末ベスト '+f.peakMR+'（S'+(f.peakSeason+SEASON_OFFSET)+'）';
       svgEl.appendChild(lbl);
     }
   });
@@ -1491,43 +1490,46 @@
     ['SAレベル3', function(s){ return s.gauge_rate_sa_lv3; }, 'var(--gold)'],
     ['クリティカルアーツ', function(s){ return s.gauge_rate_ca; }, 'var(--p-hitsuji)']
   ];
-  function renderGaugeBar(wrap, label, cats, s){
-    var row = document.createElement('div');
-    row.className = 'gauge-row';
-    var nameEl = document.createElement('span');
-    nameEl.className = 'gname';
-    nameEl.textContent = label;
-    var track = document.createElement('div');
-    track.className = 'gauge-track';
-    cats.forEach(function(c){
-      var pct = c[1](s) * 100;
-      if (pct <= 0) return;
-      var seg = document.createElement('div');
-      seg.className = 'gauge-seg';
-      seg.style.width = pct + '%';
-      seg.style.background = c[2];
-      seg.title = c[0] + ' ' + pct.toFixed(1) + '%';
-      track.appendChild(seg);
+  function renderGaugePie(container, label, cats, s){
+    var rows = cats.map(function(c){ return [c[0], c[1](s)*100, c[2]]; }).filter(function(r){ return r[1] > 0; });
+    var total = rows.reduce(function(a,r){ return a+r[1]; }, 0);
+    var item = document.createElement('div');
+    item.className = 'gauge-pie-item';
+    var pie = document.createElement('div');
+    pie.className = 'gpie';
+    var stops = [], acc = 0;
+    rows.forEach(function(r){
+      var start = 100*acc/total;
+      acc += r[1];
+      var end = 100*acc/total;
+      stops.push(r[2] + ' ' + start.toFixed(2) + '% ' + end.toFixed(2) + '%');
     });
-    row.appendChild(nameEl);
-    row.appendChild(track);
-    wrap.appendChild(row);
+    pie.style.background = 'conic-gradient(' + stops.join(', ') + ')';
+    var top = rows.slice().sort(function(a,b){ return b[1]-a[1]; })[0];
+    var pieLabel = document.createElement('div');
+    pieLabel.className = 'gpie-label';
+    pieLabel.innerHTML = '<b>'+top[1].toFixed(0)+'%</b>'+label;
+    pie.appendChild(pieLabel);
+    var legend = document.createElement('div');
+    legend.className = 'gpie-legend';
+    rows.forEach(function(r){
+      var row = document.createElement('div');
+      row.className = 'gpie-legend-row';
+      row.innerHTML = '<span class="sw" style="background:'+r[2]+'"></span><span class="lbl">'+r[0]+'</span><span class="val">'+r[1].toFixed(1)+'%</span>';
+      legend.appendChild(row);
+    });
+    item.appendChild(pie);
+    item.appendChild(legend);
+    container.appendChild(item);
   }
   document.querySelectorAll('[data-gauge]').forEach(function(wrap){
     var key = wrap.getAttribute('data-gauge');
     var s = battleStats[key];
-    renderGaugeBar(wrap, 'ドライブ', driveCats, s);
-    renderGaugeBar(wrap, 'SA', saCats, s);
-    var legend = document.createElement('div');
-    legend.className = 'gauge-legend';
-    driveCats.concat(saCats).forEach(function(c){
-      var pct = c[1](s) * 100;
-      if (pct <= 0) return;
-      var span = document.createElement('span');
-      span.innerHTML = '<span class="sw" style="background:'+c[2]+'"></span>' + c[0] + ' ' + pct.toFixed(1) + '%';
-      legend.appendChild(span);
-    });
-    wrap.appendChild(legend);
+    var pies = document.createElement('div');
+    pies.className = 'gauge-pies';
+    renderGaugePie(pies, 'DRIVE', driveCats, s);
+    renderGaugePie(pies, 'SA', saCats, s);
+    wrap.appendChild(pies);
   });
 
   function statCompare(a, b, higherIsBetter){
@@ -1541,9 +1543,9 @@
     var mf = masterFacts[tabToSeasonKey[key]];
     var cells = [];
     if (mf.reached){
-      cells.push({ k:'マスター初到達', v: 'S'+mf.firstSeason });
+      cells.push({ k:'マスター初到達', v: 'S'+(mf.firstSeason+SEASON_OFFSET) });
       var atPeak = mf.current === mf.peakMR;
-      cells.push({ k:'自己ベストMR', v: mf.peakMR+' <span class="vs">(S'+mf.peakSeason+')</span>', cls: atPeak ? 'hi' : '' });
+      cells.push({ k:'シーズン末ベストMR', v: mf.peakMR+' <span class="vs">(S'+(mf.peakSeason+SEASON_OFFSET)+')</span>', cls: atPeak ? 'hi' : '' });
     } else {
       cells.push({ k:'マスター到達', v: '未到達' });
     }
