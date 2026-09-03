@@ -466,6 +466,18 @@
 
   .mini-trend{ width:100%; height:auto; display:block; margin-top:4px; }
 
+  .mr-mini-block{ margin-top:22px; }
+  .mr-mini-block .subhead{ margin-bottom:10px; }
+  .mr-mini-block svg{ width:100%; height:auto; display:block; }
+  .mr-empty{
+    font-size:13px;
+    color:var(--text-muted);
+    background:var(--surface-2);
+    border-radius:8px;
+    padding:14px 16px;
+    margin:0;
+  }
+
   .rank-cols{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -731,6 +743,10 @@
           <svg class="chart mini-trend" data-mini="you" viewBox="0 0 480 260"></svg>
         </div>
       </div>
+      <div class="mr-mini-block">
+        <p class="subhead">マスターレート推移（自分のレンジ）</p>
+        <svg class="chart" data-mrmini="you" viewBox="0 0 1040 220"></svg>
+      </div>
       <div class="gauge-block">
         <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
         <div data-gauge="you"></div>
@@ -783,6 +799,10 @@
           <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
           <svg class="chart mini-trend" data-mini="shien07" viewBox="0 0 480 260"></svg>
         </div>
+      </div>
+      <div class="mr-mini-block">
+        <p class="subhead">マスターレート推移（自分のレンジ）</p>
+        <svg class="chart" data-mrmini="shien07" viewBox="0 0 1040 220"></svg>
       </div>
       <div class="gauge-block">
         <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
@@ -837,6 +857,10 @@
           <svg class="chart mini-trend" data-mini="nanashi" viewBox="0 0 480 260"></svg>
         </div>
       </div>
+      <div class="mr-mini-block">
+        <p class="subhead">マスターレート推移（自分のレンジ）</p>
+        <svg class="chart" data-mrmini="nanashi" viewBox="0 0 1040 220"></svg>
+      </div>
       <div class="gauge-block">
         <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
         <div data-gauge="nanashi"></div>
@@ -890,6 +914,10 @@
           <svg class="chart mini-trend" data-mini="Hitsuji" viewBox="0 0 480 260"></svg>
         </div>
       </div>
+      <div class="mr-mini-block">
+        <p class="subhead">マスターレート推移（自分のレンジ）</p>
+        <svg class="chart" data-mrmini="Hitsuji" viewBox="0 0 1040 220"></svg>
+      </div>
       <div class="gauge-block">
         <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
         <div data-gauge="Hitsuji"></div>
@@ -942,6 +970,10 @@
           <p class="subhead">シーズン別勝率＆試合数の推移（自分のレンジ）</p>
           <svg class="chart mini-trend" data-mini="hiyoko" viewBox="0 0 480 260"></svg>
         </div>
+      </div>
+      <div class="mr-mini-block">
+        <p class="subhead">マスターレート推移（自分のレンジ）</p>
+        <p class="mr-empty">マスター未到達のため、このシーズン範囲ではMRデータなし（マスター昇格後に表示されます）。</p>
       </div>
       <div class="gauge-block">
         <p class="subhead">ゲージ利用傾向（ラウンド平均）</p>
@@ -1372,6 +1404,32 @@
       gridlines: [yMin, mid, yMax],
       xLabelStep: 2
     });
+  });
+
+  // ============ Per-player MR trend, self-scaled (own min/max range) ============
+  document.querySelectorAll('[data-mrmini]').forEach(function(svgEl){
+    var tabKey = svgEl.getAttribute('data-mrmini');
+    var sKey = tabToSeasonKey[tabKey];
+    var series = mrSeries[sKey];
+    var vals = series.filter(function(v){ return v !== null; });
+    if (!vals.length) return; // never reached Master — handled by the .mr-empty message in HTML instead
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var yMin = Math.max(1000, Math.floor((lo-30)/25)*25);
+    var yMax = Math.ceil((hi+30)/25)*25;
+    var mid = Math.round((yMin+yMax)/2/25)*25;
+    drawLineChart(svgEl, { solo: { color: playerMeta[sKey].color, series: series } }, {
+      n: 14, yMin: yMin, yMax: yMax, yUnit: '',
+      W: 1040, H: 220, padL: 50, padR: 20, padT: 16, padB: 26,
+      gridlines: [yMin, mid, yMax],
+      dotR: 3.5,
+      xLabel: function(i){ return 'S'+i; }
+    });
+    var f = masterFacts[sKey];
+    if (f && f.reached){
+      var lbl = el('text', { x: 1040-20, y: 16, 'text-anchor':'end' });
+      lbl.textContent = '自己ベスト '+f.peakMR+'（S'+f.peakSeason+'）';
+      svgEl.appendChild(lbl);
+    }
   });
 
   // ============ Best/worst matchup TOP5 (Ranked, career, min 10 battles) ============
