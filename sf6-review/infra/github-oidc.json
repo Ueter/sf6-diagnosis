@@ -1,0 +1,78 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "Dedicated OIDC entry role for Ueter/sf6-diagnosis master. Uses existing CDK bootstrap.",
+  "Parameters": {
+    "GitHubSubject": {
+      "Type": "String",
+      "AllowedValues": [
+        "repo:Ueter/sf6-diagnosis:ref:refs/heads/master",
+        "repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master"
+      ],
+      "Description": "Select the exact subject emitted by this repository; no default."
+    }
+  },
+  "Resources": {
+    "GitHubRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "GitHubActions-Sf6ReviewDeploy",
+        "MaxSessionDuration": 3600,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": {
+                  "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+                }
+              },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "token.actions.githubusercontent.com:aud": "sts.amazonaws.com",
+                  "token.actions.githubusercontent.com:sub": {
+                    "Ref": "GitHubSubject"
+                  }
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "AssumeExistingCdkDeploy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": "sts:AssumeRole",
+                  "Resource": {
+                    "Fn::Sub": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "Tags": [
+          {
+            "Key": "Project",
+            "Value": "sf6-review"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "GitHubRoleArn": {
+      "Value": {
+        "Fn::GetAtt": [
+          "GitHubRole",
+          "Arn"
+        ]
+      }
+    }
+  }
+}

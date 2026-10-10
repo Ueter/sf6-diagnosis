@@ -1,0 +1,9 @@
+# 本人が指定したフレンドだけを登録する。以下は空の雛形。
+opponents: []
+# - opponent_id: friend_01
+#   alias: フレンドA
+#   cfn_id: null
+#   exact_display_names: []
+#   characters: []
+#   source_urls: []
+#   identity_verified: false

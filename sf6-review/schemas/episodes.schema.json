@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SF6 analysis episodes; observations, not causal proof",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "video_id", "sampling", "coverage", "episodes"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "job_id": {"type": "string", "minLength": 1},
+    "video_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{11}$"},
+    "sampling": {
+      "type": "object",
+      "required": ["method", "seed", "eligible_matches", "analyzed_matches"],
+      "properties": {
+        "method": {"enum": ["census", "uniform_random_matches", "pilot", "stratified"]},
+        "seed": {"type": ["integer", "null"]},
+        "eligible_matches": {"type": "integer", "minimum": 0},
+        "analyzed_matches": {"type": "integer", "minimum": 0}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "required": ["analyzed_seconds", "opportunity_detection_validated"],
+      "properties": {
+        "analyzed_seconds": {"type": "number", "minimum": 0},
+        "opportunity_detection_validated": {"type": "boolean"},
+        "manual_validation_matches": {"type": "integer", "minimum": 0},
+        "missingness_notes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "episodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["episode_id", "session_id", "match_id", "round_id", "mode", "opponent_id", "character", "opponent_character", "patch", "kind", "start_seconds", "end_seconds", "player_side", "action", "opponent_response", "previous_episode_id", "context", "result", "evidence", "confidence", "classification"],
+        "properties": {
+          "episode_id": {"type": "string", "minLength": 1},
+          "session_id": {"type": "string", "minLength": 1},
+          "match_id": {"type": "string", "minLength": 1},
+          "round_id": {"type": "string", "minLength": 1},
+          "mode": {"enum": ["ranked_general", "friend_focus", "unknown"]},
+          "opponent_id": {"type": ["string", "null"]},
+          "character": {"type": "string"},
+          "opponent_character": {"type": ["string", "null"]},
+          "patch": {"type": ["string", "null"]},
+          "kind": {"enum": ["wakeup_attack", "wakeup_defend", "anti_air_opportunity", "drive_impact_opportunity", "neutral_exchange", "damage_sequence", "unknown"]},
+          "start_seconds": {"type": "number", "minimum": 0},
+          "end_seconds": {"type": "number", "minimum": 0},
+          "player_side": {"enum": ["1P", "2P", "unknown"]},
+          "action": {"type": ["string", "null"]},
+          "opponent_response": {"type": ["string", "null"]},
+          "previous_episode_id": {"type": ["string", "null"]},
+          "context": {
+            "type": "object",
+            "properties": {
+              "position": {"enum": ["mid_screen", "player_corner", "opponent_corner", "unknown"]},
+              "player_burnout": {"type": ["boolean", "null"]},
+              "opponent_burnout": {"type": ["boolean", "null"]},
+              "player_drive": {"type": ["number", "null"], "minimum": 0, "maximum": 6},
+              "player_sa": {"type": ["number", "null"], "minimum": 0, "maximum": 3},
+              "fuha_stock": {"type": ["integer", "null"], "minimum": 0, "maximum": 3},
+              "opponent_mr": {"type": ["number", "null"]}
+            }
+          },
+          "result": {
+            "type": "object",
+            "required": ["success", "health_unit", "dealt", "received", "horizon_seconds", "censored"],
+            "properties": {
+              "success": {"type": ["boolean", "null"]},
+              "health_unit": {"const": "percent_max_health"},
+              "dealt": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+              "received": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+              "horizon_seconds": {"enum": [3, 5]},
+              "censored": {"type": "boolean"},
+              "measurement_error_percent": {"type": ["number", "null"], "minimum": 0}
+            }
+          },
+          "evidence": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["timestamp_seconds", "observation"], "properties": {"timestamp_seconds": {"type": "number", "minimum": 0}, "observation": {"type": "string", "minLength": 1}}}},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "classification": {"enum": ["observed", "inferred", "unknown"]}
+        }
+      }
+    }
+  }
+}

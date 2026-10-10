@@ -1,0 +1,51 @@
+project: sf6-review
+review:
+  mode: ranked_general # ranked_general / friend_focus / mixed
+  focus_opponent_id: ''
+  opponents_file: opponents.example.yaml
+aws:
+  account_id: '516035591962'
+  region: ap-northeast-1
+  stack_name: Sf6ReviewFoundation
+  ssm_prefix: /sf6-review
+source:
+  mode: youtube_public_url
+  url: https://www.youtube.com/watch?v=3BGM_C5DHHs
+  duration_seconds: 10684
+player:
+  name: '' # Claude導入時にゲーム内の正確な表示名を設定
+  character: Juri
+  controls: unknown
+analysis:
+  mode: pilot # 精度確認後にstatisticalへ切替。pilotの少数試合で全体傾向を断定しない
+  model: '' # APIで利用可能な動画対応モデルを確認して設定
+  pipeline_version: v0
+  prompt_version: v0
+  game_patch: unknown
+  scan_window_seconds: 900
+  overlap_seconds: 5
+  max_detail_matches: 5
+  max_detail_clip_seconds: 180
+  scan_fps: 1
+  detail_fps: 5
+  concurrency: 1
+statistics:
+  sampling: uniform_random_matches
+  sampling_seed: 20261011
+  wakeup_horizon_seconds: 3
+  alternative_horizon_seconds: 5
+  min_context_episodes_for_advice: 30
+  min_distinct_matches_for_advice: 10
+  confidence_level: 0.95
+  bootstrap_unit: match
+  health_unit: percent_max_health
+limits:
+  max_video_seconds: 14400
+  max_api_calls: 20
+  max_job_runtime_seconds: 7200
+  api_budget_usd: 3.0 # 初期案。ライブ実行前に本人が設定。AWS費用は別管理
+  live_analysis_enabled: false
+retention:
+  raw_days: 7
+  evidence_days: 30
+  report_days: 365

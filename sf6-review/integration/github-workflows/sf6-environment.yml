@@ -1,0 +1,56 @@
+name: SF6 Environment
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Validate locally or create an AWS change set (does not deploy)
+        type: choice
+        default: validate
+        options: [validate, plan]
+      vpc_id:
+        description: Existing VPC ID, required only for plan
+        type: string
+        required: false
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: sf6-review-environment
+  cancel-in-progress: false
+jobs:
+  environment:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install -r sf6-review/requirements.lock.txt
+      - name: Check configuration and tests
+        run: |
+          python -m unittest discover -s sf6-review/tests
+          cfn-lint -t sf6-review/infra/foundation.json sf6-review/infra/github-oidc.json
+      - name: Configure SF6 OIDC credentials
+        if: inputs.operation == 'plan'
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::516035591962:role/GitHubActions-Sf6ReviewDeploy
+          aws-region: ap-northeast-1
+          allowed-account-ids: '516035591962'
+      - name: Assume existing CDK deployment role
+        if: inputs.operation == 'plan'
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: arn:aws:iam::516035591962:role/cdk-hnb659fds-deploy-role-516035591962-ap-northeast-1
+          role-chaining: true
+          aws-region: ap-northeast-1
+          allowed-account-ids: '516035591962'
+      - name: Create foundation change set only
+        if: inputs.operation == 'plan'
+        env:
+          VPC_ID: ${{ inputs.vpc_id }}
+        run: |
+          test -n "$VPC_ID"
+          python sf6-review/scripts/plan_foundation.py --vpc-id "$VPC_ID" --execution-role-arn arn:aws:iam::516035591962:role/cdk-hnb659fds-cfn-exec-role-516035591962-ap-northeast-1

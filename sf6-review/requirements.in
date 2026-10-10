@@ -1,0 +1,5 @@
+boto3
+google-genai
+PyYAML
+jsonschema
+yt-dlp[default]
