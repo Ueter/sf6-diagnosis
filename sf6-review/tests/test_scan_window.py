@@ -9,6 +9,7 @@ from unittest import mock
 import yaml
 
 root = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(root / 'scripts'))  # scan_window.py imports sibling gemini_common
 spec = importlib.util.spec_from_file_location('scan_window', root / 'scripts/scan_window.py')
 module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(module)

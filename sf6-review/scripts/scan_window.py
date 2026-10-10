@@ -3,7 +3,7 @@
 This is step 3/4 of CLAUDE.md's handoff: explore 0-900s, identify match boundaries and the
 player's own matches as *candidates* that a human must cross-check, not confirmed facts.
 
-Safety gates (see docs/design.md section 4-5 and config.example.yaml):
+Safety gates (see gemini_common.py, docs/design.md section 4-5, and config.example.yaml):
 - Refuses to call the API unless limits.live_analysis_enabled is true in config.
 - Refuses to call the API if the estimated cost of this call would exceed the remaining budget.
 - Never asserts damage/fight outcomes beyond what the model reports with evidence timestamps.
@@ -20,48 +20,9 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
-ROOT = Path(__file__).resolve().parents[1]
+import gemini_common as gc
 
-# Published Gemini API price (checked 2026-10-11, see docs/validation.md). Re-check before trusting
-# this for a real budget decision; pricing pages change without this script's knowledge.
-# gemini-3.8-flash rate is introductory through 2026-12-31; doubles 2027-01-01.
-PRICE_PER_1M_INPUT_USD = {'gemini-2.5-flash': 0.30, 'gemini-3.8-flash': 0.75}
-PRICE_PER_1M_OUTPUT_USD = {'gemini-2.5-flash': 2.50, 'gemini-3.8-flash': 3.75}
-# Google's documented approximate video tokenization rate at 1fps; scales ~linearly with fps.
-# This is an estimate for pre-flight budget checks only, not an authoritative billing figure.
-TOKENS_PER_VIDEO_SECOND_AT_1FPS = 263
-
-
-def load_env(path: Path) -> dict:
-    env = {}
-    if not path.exists():
-        return env
-    for line in path.read_text(encoding='utf-8').splitlines():
-        s = line.strip()
-        if not s or s.startswith('#') or '=' not in s:
-            continue
-        k, v = s.split('=', 1)
-        env[k.strip()] = v.strip()
-    return env
-
-
-def load_cost_log(path: Path) -> dict:
-    if path.exists():
-        return json.loads(path.read_text(encoding='utf-8'))
-    return {'total_usd': 0.0, 'calls': []}
-
-
-def save_cost_log(path: Path, log: dict) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(log, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
-
-
-def estimate_input_tokens(duration_seconds: float, fps: float, prompt_chars: int) -> int:
-    video_tokens = duration_seconds * TOKENS_PER_VIDEO_SECOND_AT_1FPS * max(fps, 1) / 1
-    # crude chars->tokens for the text prompt; video dominates the estimate.
-    text_tokens = prompt_chars / 4
-    return int(video_tokens + text_tokens)
-
+ROOT = gc.ROOT
 
 SCAN_PROMPT_TEMPLATE = """あなたはStreet Fighter 6の配信映像を確認するアシスタントです。以下の区間（{start}秒〜{end}秒、動画の絶対時刻）を見て、試合の候補を列挙してください。
 
@@ -101,16 +62,7 @@ def main() -> int:
     args = p.parse_args()
 
     config = yaml.safe_load((ROOT / args.config).read_text(encoding='utf-8'))
-    env = load_env(ROOT / '.env')
-
-    if not config['limits']['live_analysis_enabled']:
-        print(json.dumps({'error': 'live_analysis_enabled is false in config; refusing to call the API.'}))
-        return 1
-
-    model = config['analysis']['model']
-    if not model:
-        print(json.dumps({'error': 'analysis.model is not set in config.'}))
-        return 1
+    env = gc.load_env()
 
     fps = config['analysis']['scan_fps']
     duration = args.end - args.start
@@ -120,32 +72,14 @@ def main() -> int:
         player_character=config['player']['character'],
     )
 
-    est_input_tokens = estimate_input_tokens(duration, fps, len(prompt))
-    est_output_tokens = 4000  # rough ceiling for a 15-minute window's worth of candidates
-    price_in = PRICE_PER_1M_INPUT_USD.get(model)
-    price_out = PRICE_PER_1M_OUTPUT_USD.get(model)
-    if price_in is None or price_out is None:
-        print(json.dumps({'error': f'No known price for model {model}; refusing to estimate cost or call the API.'}))
-        return 1
-    est_cost_usd = (est_input_tokens / 1_000_000) * price_in + (est_output_tokens / 1_000_000) * price_out
-
-    cost_log_path = ROOT / 'data' / 'cost-log.json'
-    cost_log = load_cost_log(cost_log_path)
-    budget = config['limits']['api_budget_usd']
-    remaining = budget - cost_log['total_usd']
-    estimate_report = {
-        'model': model, 'duration_seconds': duration, 'fps': fps,
-        'estimated_input_tokens': est_input_tokens, 'estimated_output_tokens_ceiling': est_output_tokens,
-        'estimated_cost_usd': round(est_cost_usd, 4),
-        'budget_usd': budget, 'already_spent_usd': cost_log['total_usd'], 'remaining_budget_usd': round(remaining, 4),
-    }
-
-    if est_cost_usd > remaining:
-        print(json.dumps({'error': 'Estimated cost exceeds remaining budget; refusing to call the API.', **estimate_report}, ensure_ascii=False, indent=2))
+    try:
+        estimate = gc.preflight(config, duration, fps, len(prompt), output_tokens_ceiling=4000)
+    except gc.BudgetGateError as exc:
+        print(json.dumps(exc.payload, ensure_ascii=False, indent=2))
         return 1
 
     if args.dry_run:
-        print(json.dumps({'dry_run': True, **estimate_report}, ensure_ascii=False, indent=2))
+        print(json.dumps({'dry_run': True, **estimate}, ensure_ascii=False, indent=2))
         return 0
 
     if not env.get('GEMINI_API_KEY'):
@@ -164,23 +98,19 @@ def main() -> int:
         video_metadata=types.VideoMetadata(start_offset=f'{args.start}s', end_offset=f'{args.end}s', fps=fps),
     )
     response = client.models.generate_content(
-        model=model,
+        model=config['analysis']['model'],
         contents=[prompt, video_part],
         config=types.GenerateContentConfig(response_mime_type='application/json', response_json_schema=request_schema),
     )
 
-    usage = response.usage_metadata
-    actual_input = usage.prompt_token_count or 0
-    actual_output = usage.candidates_token_count or 0
-    actual_cost = (actual_input / 1_000_000) * price_in + (actual_output / 1_000_000) * price_out
-
     parsed = json.loads(response.text)
     video_id_match = re.search(r'v=([A-Za-z0-9_-]{11})', config['source']['url'])
+    window = {'start_seconds': args.start, 'end_seconds': args.end, 'fps': fps}
     result = {
         'schema_version': '1.0',
         'job_key': f"scan-{video_id_match.group(1)}-{args.start}-{args.end}",
         'video_id': video_id_match.group(1),
-        'window': {'start_seconds': args.start, 'end_seconds': args.end, 'fps': fps},
+        'window': window,
         'candidates': parsed.get('candidates', []),
     }
 
@@ -188,12 +118,8 @@ def main() -> int:
     errors = sorted(validator.iter_errors(result), key=str)
     schema_valid = not errors
 
-    cost_log['total_usd'] += actual_cost
-    cost_log['calls'].append({
-        'script': 'scan_window.py', 'model': model, 'window': result['window'],
-        'input_tokens': actual_input, 'output_tokens': actual_output, 'cost_usd': round(actual_cost, 4),
-    })
-    save_cost_log(cost_log_path, cost_log)
+    actual_cost, actual_input, actual_output, cumulative = gc.record_actual_cost(
+        'scan_window.py', config['analysis']['model'], window, response.usage_metadata)
 
     out_path = ROOT / args.output
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -205,7 +131,7 @@ def main() -> int:
         'schema_errors': [e.message for e in errors][:5],
         'actual_input_tokens': actual_input, 'actual_output_tokens': actual_output,
         'actual_cost_usd': round(actual_cost, 4),
-        'cumulative_cost_usd': round(cost_log['total_usd'], 4), 'budget_usd': budget,
+        'cumulative_cost_usd': round(cumulative, 4), 'budget_usd': config['limits']['api_budget_usd'],
     }, ensure_ascii=False, indent=2))
     return 0 if schema_valid else 2
 
