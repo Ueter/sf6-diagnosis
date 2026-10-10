@@ -11,7 +11,7 @@ spec.loader.exec_module(module)
 
 class PlanTest(unittest.TestCase):
     def test_same_video_has_stable_key(self):
-        config = yaml.safe_load((root / 'config.example.yaml').read_text())
+        config = yaml.safe_load((root / 'config.example.yaml').read_text(encoding='utf-8'))
         first = module.build_plan(config, 'https://www.youtube.com/live/3BGM_C5DHHs?si=abc', 0, 900)
         second = module.build_plan(config, 'https://youtu.be/3BGM_C5DHHs', 0, 900)
         self.assertEqual(first['job_key'], second['job_key'])
@@ -35,7 +35,7 @@ class PlanTest(unittest.TestCase):
                 module.normalize_url(bad)
 
     def test_budget_call_limit_and_range(self):
-        config = yaml.safe_load((root / 'config.example.yaml').read_text())
+        config = yaml.safe_load((root / 'config.example.yaml').read_text(encoding='utf-8'))
         config['limits']['max_api_calls'] = 1
         with self.assertRaises(ValueError):
             module.build_plan(config, config['source']['url'], 0, 900)
@@ -43,7 +43,7 @@ class PlanTest(unittest.TestCase):
             module.windows(0, 900, 900, 900)
 
     def test_friend_population_has_separate_key(self):
-        config = yaml.safe_load((root / 'config.example.yaml').read_text())
+        config = yaml.safe_load((root / 'config.example.yaml').read_text(encoding='utf-8'))
         general = module.build_plan(config, config['source']['url'], 0, 900)
         config['review']['mode'] = 'friend_focus'
         with self.assertRaises(ValueError):

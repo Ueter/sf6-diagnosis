@@ -111,4 +111,4 @@ def build():
 
 
 if __name__ == '__main__':
-    Path(__file__).with_name('foundation.json').write_text(json.dumps(build(), indent=2) + '\n')
+    Path(__file__).with_name('foundation.json').write_text(json.dumps(build(), indent=2) + '\n', encoding='utf-8')

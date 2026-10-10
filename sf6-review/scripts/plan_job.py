@@ -89,11 +89,11 @@ def main():
     p.add_argument('--end', type=int)
     p.add_argument('--output', required=True)
     args = p.parse_args()
-    config = yaml.safe_load(Path(args.config).read_text())
+    config = yaml.safe_load(Path(args.config).read_text(encoding='utf-8'))
     plan = build_plan(config, args.url or config['source']['url'], args.start, args.end)
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(plan, ensure_ascii=False, indent=2) + '\n')
+    out.write_text(json.dumps(plan, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     print(json.dumps({'state': 'PLANNED', 'windows': len(plan['scan_windows']),
                       'analysis_executed': False, 'output': str(out)}))
 

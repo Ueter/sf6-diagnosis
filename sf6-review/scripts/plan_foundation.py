@@ -30,7 +30,7 @@ def main():
     template = Path(__file__).resolve().parents[1] / 'infra/foundation.json'
     params = {'StackName': args.stack_name,
               'ChangeSetName': 'sf6-foundation-' + datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f'),
-              'ChangeSetType': kind, 'TemplateBody': template.read_text(),
+              'ChangeSetType': kind, 'TemplateBody': template.read_text(encoding='utf-8'),
               'Parameters': [{'ParameterKey': 'VpcId', 'ParameterValue': args.vpc_id}],
               'Capabilities': ['CAPABILITY_IAM'],
               'Tags': [{'Key': 'Project', 'Value': 'sf6-review'}]}

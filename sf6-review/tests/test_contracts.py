@@ -17,20 +17,20 @@ class ContractTest(unittest.TestCase):
         self.assertEqual(part.video_metadata.end_offset, '900s')
 
     def test_episode_contract_is_valid_and_requires_quality_fields(self):
-        schema = json.loads((root / 'schemas/episodes.schema.json').read_text())
+        schema = json.loads((root / 'schemas/episodes.schema.json').read_text(encoding='utf-8'))
         Draft202012Validator.check_schema(schema)
         validator = Draft202012Validator(schema)
         with self.assertRaises(ValidationError):
             validator.validate({'schema_version': '1.0', 'episodes': []})
 
     def test_config_has_separate_population_and_no_live_run(self):
-        config = yaml.safe_load((root / 'config.example.yaml').read_text())
+        config = yaml.safe_load((root / 'config.example.yaml').read_text(encoding='utf-8'))
         self.assertEqual(config['review']['mode'], 'ranked_general')
         self.assertFalse(config['limits']['live_analysis_enabled'])
         self.assertEqual(config['statistics']['sampling'], 'uniform_random_matches')
 
     def test_no_runtime_or_existing_business_resources_in_foundation(self):
-        template = json.loads((root / 'infra/foundation.json').read_text())
+        template = json.loads((root / 'infra/foundation.json').read_text(encoding='utf-8'))
         kinds = [v['Type'] for v in template['Resources'].values()]
         self.assertNotIn('AWS::EC2::Instance', kinds)
         self.assertNotIn('AWS::ECS::Service', kinds)
