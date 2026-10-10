@@ -35,22 +35,20 @@
 - モデルは`models.list()`に出ていた`gemini-2.5-flash`ではなく`gemini-3.8-flash`（新規ユーザー向けにAPIが明示的に案内）。単価: 入力$0.75/1M・出力$3.75/1Mトークン（2026-12-31までの導入価格）。
 - **`scripts/scan_window.py`（探索段階）と`schemas/match_index.schema.json`を新規実装**。予算超過・モデル未設定・ライブ無効時はAPIを呼ばない安全装置つき。`--dry-run`で課金なしに見積もり確認可能。
 - **0〜900秒区間の実スキャンに成功**: 候補6試合を検出、スキーマ検証合格、実コスト$0.0657（予算$13に対し十分な余裕）、`data/cost-log.json`に記録。本人表示名「octopus」を複数候補でobserved確認。
+- **スキャン段階の手動照合が完了・6/6一致**。対戦相手「ガチコイニキ」（舞、試合1-2）と判定・ラウンドスコアを本人が確認し、design.md §9の目標（3〜5試合）を上回る件数で本人サイド誤認0・勝敗誤認0を確認。サガット戦2件・ディージェイ戦2件も含め全件一致。
 
 ## 未実施・ブロッカー
 
 - AWSデプロイ/疎通（foundation側）、ECRイメージbuild/push、Fargate、Step Functionsは未実施。
-- **スキャン結果6候補のユーザー本人による手動照合（正解ラベル付け）が未実施**。design.md §9の受入基準（本人サイド誤認0、試合境界±3秒、勝敗誤認0）はこの確認なしには判定できない。
-- 詳細解析（events.schema.json、5fps、最大5試合）、checkpoint/lease/有限retry/キャンセル（design.md §7）は未実装。
-- 試合・機会・HP推定の抽出精度、実データ統計は未検証（手動照合待ち）。
+- 詳細解析（events.schema.json、5fps）、checkpoint/lease/有限retry/キャンセル（design.md §7）は未実装・未検証。
+- 統計集計、実データ統計は未着手（詳細解析の精度確認後）。
 - 配置先はUeter/sf6-diagnosisのsf6-review/。既存index.htmlとの結果連携は未実装（データ契約確定後に着手）。
 
 ## 次のアクション
 
-1. **ユーザーに`data/scan-0-900.json`の候補6件（特にverify_timestamps）を実際の動画で目視確認してもらう**（手動正解ラベル付け）。
-2. 照合結果をもとに抽出精度を評価し、必要ならプロンプト・スキーマを調整。
-3. 詳細解析（1試合のevents.schema.json出力）を実装し、同様に手動照合。
-4. 統計集計とフレンドの条件付き反応を実装。
-5. AWSの変更計画（foundation.json）を確認し基盤とruntimeを構築。
-6. 3時間一本、次に複数アーカイブへ拡張。
+1. 詳細解析（1試合のevents.schema.json出力、5fps）を実装し、スキャンと同様に手動照合。
+2. 統計集計とフレンドの条件付き反応を実装。
+3. AWSの変更計画（foundation.json）を確認し基盤とruntimeを構築。
+4. 3時間一本、次に複数アーカイブへ拡張。
 
 詳細な検証記録: docs/validation.md。設計正本: docs/design.md / docs/statistical-analysis.md / docs/opponent-analysis.md。
