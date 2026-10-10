@@ -4,7 +4,7 @@
 
 ## 現在地
 
-設計、ローカルのPython環境、AWS基盤テンプレート、Claude引継ぎを作成。Claude Codeでの引継ぎ・PC環境構築・ローカル検証・AWS環境の事前確認まで完了。対戦解析本体・AWS資源作成は未実装。
+設計、ローカルのPython環境、AWS基盤テンプレート、Claude引継ぎを作成。Claude Codeでの引継ぎ・PC環境構築・ローカル検証・AWS環境の事前確認・**Gemini APIでの実スキャン初回成功**まで完了。詳細解析・統計集計・AWS資源作成は未実装。
 
 ## 確定要件
 
@@ -31,21 +31,26 @@
 
 - プレイヤー表示名: Octopus。操作タイプ: クラシック。ゲームパッチ: 本人未把握のため暫定で2.0401（2026-10-11のWeb検索、要再確認）。ライブAPI予算: ¥2,000以内の指定を受け`api_budget_usd: 13.0`（1ドル150円換算、安全側）に設定。いずれも`config.yaml`（Git管理外）へ反映し、plan_job.pyの再生成で動作確認済み。
 - **Sf6ReviewGitHubOidcスタックをユーザー自身が実行し`CREATE_COMPLETE`で成功**。trust policyがStringEquals厳密一致（`repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master`のみ）であることを確認。ロールARN: `arn:aws:iam::516035591962:role/GitHubActions-Sf6ReviewDeploy`。
-- `.env`を作成済み。Gemini APIキーの取得・設定をユーザーへ依頼中（Google AI Studioの案内を実施）。
+- `.env`を作成済み・Gemini APIキー設定済み（値はコミット・表示とも一切なし）。途中、AI Studio画面のテキストを誤って`.env`へ貼り付けた際にキー断片が確認用コマンドの出力へ表示される事故が発生。ユーザーに失効・再発行を依頼し、`.env`は安全な方法で再構成済み。
+- モデルは`models.list()`に出ていた`gemini-2.5-flash`ではなく`gemini-3.8-flash`（新規ユーザー向けにAPIが明示的に案内）。単価: 入力$0.75/1M・出力$3.75/1Mトークン（2026-12-31までの導入価格）。
+- **`scripts/scan_window.py`（探索段階）と`schemas/match_index.schema.json`を新規実装**。予算超過・モデル未設定・ライブ無効時はAPIを呼ばない安全装置つき。`--dry-run`で課金なしに見積もり確認可能。
+- **0〜900秒区間の実スキャンに成功**: 候補6試合を検出、スキーマ検証合格、実コスト$0.0657（予算$13に対し十分な余裕）、`data/cost-log.json`に記録。本人表示名「octopus」を複数候補でobserved確認。
 
 ## 未実施・ブロッカー
 
 - AWSデプロイ/疎通（foundation側）、ECRイメージbuild/push、Fargate、Step Functionsは未実施。
-- Gemini APIキー・利用モデルはユーザー確認待ち（フレンド識別情報は分析対象を絞る段階で別途）。
-- 試合・機会・HP推定の抽出精度、実データ統計、料金/予算は未検証。
+- **スキャン結果6候補のユーザー本人による手動照合（正解ラベル付け）が未実施**。design.md §9の受入基準（本人サイド誤認0、試合境界±3秒、勝敗誤認0）はこの確認なしには判定できない。
+- 詳細解析（events.schema.json、5fps、最大5試合）、checkpoint/lease/有限retry/キャンセル（design.md §7）は未実装。
+- 試合・機会・HP推定の抽出精度、実データ統計は未検証（手動照合待ち）。
 - 配置先はUeter/sf6-diagnosisのsf6-review/。既存index.htmlとの結果連携は未実装（データ契約確定後に着手）。
 
 ## 次のアクション
 
-1. Gemini APIキーの.env設定・利用可能モデル確認・GEMINI_MODEL設定（ユーザー対応待ち）。
-2. 15分pilotで機会の成功・失敗を両方取り、手動で精度検証。
-3. 統計集計とフレンドの条件付き反応を実装。
-4. AWSの変更計画（foundation.json）を確認し基盤とruntimeを構築。
-5. 3時間一本、次に複数アーカイブへ拡張。
+1. **ユーザーに`data/scan-0-900.json`の候補6件（特にverify_timestamps）を実際の動画で目視確認してもらう**（手動正解ラベル付け）。
+2. 照合結果をもとに抽出精度を評価し、必要ならプロンプト・スキーマを調整。
+3. 詳細解析（1試合のevents.schema.json出力）を実装し、同様に手動照合。
+4. 統計集計とフレンドの条件付き反応を実装。
+5. AWSの変更計画（foundation.json）を確認し基盤とruntimeを構築。
+6. 3時間一本、次に複数アーカイブへ拡張。
 
 詳細な検証記録: docs/validation.md。設計正本: docs/design.md / docs/statistical-analysis.md / docs/opponent-analysis.md。

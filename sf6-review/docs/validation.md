@@ -32,11 +32,16 @@
 - **`Sf6ReviewGitHubOidc`スタックをユーザー自身が実行し、`CREATE_COMPLETE`で成功**。`aws iam get-role`でtrust policyを確認し、`StringEquals`で`token.actions.githubusercontent.com:sub`が`repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master`に厳密一致する設定になっていることを確認（ワイルドカードなし）。ロールARN: `arn:aws:iam::516035591962:role/GitHubActions-Sf6ReviewDeploy`。
 - `.env`を`.env.example`から作成（Git管理外）。
 - **インシデント**: ユーザーがAI Studio画面のテキストをそのまま`.env`に貼り付け、確認用スクリプトの出力にキーの断片がそのままターミナルへ表示される事故が発生。ユーザーへ当該キーの失効・再発行を依頼し、`.env`は正規表現で安全に再構成（値を一切表示しないスクリプトで実施）。以後、`.env`の値を読む処理はbool/lengthのみ出力し、値そのものは一切printしない運用を徹底。
-- Gemini APIキー（再発行後のもの）を設定・`length=53`で存在確認（値は非表示）。`google-genai`で`client.models.list()`疎通成功。動画対応・multimodal・1Mトークンコンテキストの安定版モデルとして`gemini-2.5-flash`を選定（`gemini-flash-latest`等のエイリアスはモデルが無断で切り替わり再現性を損なうため不採用）。2026-10-11のWeb検索で単価を確認: 入力（text/image/video）$0.30/1Mトークン、出力$2.50/1Mトークン。公式動画トークン化レート（約263トークン/秒@1fps）から15分pilot全体の概算コストは1ドル未満（スキャン900秒×1fps + 詳細最大5試合×180秒×5fps + 出力）と見積もり、予算$13に対して十分な余裕を確認。`config.yaml`・`.env`の`GEMINI_MODEL`に設定。
+- Gemini APIキー（再発行後のもの）を設定・`length=53`で存在確認（値は非表示）。`google-genai`で`client.models.list()`疎通成功。
+- **モデル選定のやり直し**: `models.list()`に出ていた`gemini-2.5-flash`を最初に選定したが、実際の`generate_content`呼び出しは404（「新規ユーザーには提供されていない、gemini-3.8-flashへ切り替えよ」とAPIが明示）。一覧に出ることと実際に呼べることは別だと判明。`gemini-3.8-flash`に切替。2026-10-11のWeb検索で単価確認: 入力$0.75/1Mトークン、出力$3.75/1Mトークン（2026-12-31までの導入価格、2027-01-01に倍額）。
+- **`scripts/scan_window.py`を新規実装**（スキャン段階、CLAUDE.md手順3）。`schemas/match_index.schema.json`を新規作成（探索段階の候補専用スキーマ、design.md §4の出力要件に対応）。安全装置: `live_analysis_enabled`が`false`なら拒否、価格未定義モデルなら拒否、見積コストが残予算を超えるなら拒否、`--dry-run`で課金なしに見積もりだけ取得可能、実行ごとに`data/cost-log.json`へ実コストを積算。
+- **`config.yaml`の`live_analysis_enabled`をユーザー承認済み予算のもとで`true`に変更**（15分pilot範囲に限定する前提）。
+- **0〜900秒区間の実スキャンを実行**: dry-runでの見積り$0.19に対し、実際は入力82,266トークン・出力1,076トークン・実コスト$0.0657（見積りより低い実績）。候補6試合を検出、`schemas/match_index.schema.json`でスキーマ検証も合格。本人表示名「octopus」が複数候補で画面確認（observed, confidence 0.9〜0.95）。900秒境界をまたいだ試合6はincomplete・round_result未確定として正しく扱われている（design.mdの窓境界処理方針どおり）。累積コスト$0.0657、予算$13に対し十分な余裕。
+- 出力は`data/scan-0-900.json`（Git管理外）。**本人によるタイムスタンプ目視確認（手動正解ラベル付け）はこれから依頼** — design.md §9の受入基準（本人サイド誤認0、試合境界±3秒、勝敗誤認0）を満たすかはこの確認が必須。
 
 ## 未実施・ブロッカー
 
-- CloudFormation changeset/実デプロイ（foundation.json側）、GitHub Actions実行、Docker build、ECR登録、Fargate/Step Functions実行、実動画の抽出と統計、費用検証（ライブ実行後の実額確認）は未実施。
-- 0〜900秒の実際のGemini呼び出し（index生成）はこれから実施。
-
-この環境にはGemini APIキーがまだない。doctorのlocal_environment_readyと実対戦解析の準備完了は別。機会検出・体力推定の精度をpilotで手動評価してから統計とアドバイスを実装する。
+- CloudFormation changeset/実デプロイ（foundation.json側）、GitHub Actions実行、Docker build、ECR登録、Fargate/Step Functions実行は未実施。
+- **0〜900秒のスキャン結果6候補について、ユーザー本人による手動照合が未実施**。これが完了するまで、抽出精度（§9の受入基準）は未検証のまま。
+- 詳細解析（1試合のevents.schema.json出力、5fps、最大5試合）は未実装。checkpoint/lease/有限retry/キャンセルも未実装（design.md §7、CLAUDE.md手順5）。
+- 統計集計、フレンド分析、3時間全体・複数URLへの拡張はいずれも未着手（手動照合完了後）。

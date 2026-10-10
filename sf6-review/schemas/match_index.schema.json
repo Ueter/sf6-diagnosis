@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SF6 scan-stage match candidates; exploratory, not confirmed matches",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_key", "video_id", "window", "candidates"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "job_key": {"type": "string", "minLength": 1},
+    "video_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{11}$"},
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start_seconds", "end_seconds", "fps"],
+      "properties": {
+        "start_seconds": {"type": "number", "minimum": 0},
+        "end_seconds": {"type": "number", "minimum": 0},
+        "fps": {"type": "number", "minimum": 0}
+      }
+    },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "start_seconds", "end_seconds", "player_character",
+                     "opponent_character", "player_display_name_seen", "player_side",
+                     "round_result", "mode_guess", "verify_timestamps",
+                     "classification", "confidence"],
+        "properties": {
+          "candidate_id": {"type": "string", "minLength": 1},
+          "start_seconds": {"type": "number", "minimum": 0},
+          "end_seconds": {"type": "number", "minimum": 0},
+          "player_character": {"type": ["string", "null"]},
+          "opponent_character": {"type": ["string", "null"]},
+          "player_display_name_seen": {"type": ["string", "null"]},
+          "player_side": {"enum": ["1P", "2P", "unknown"]},
+          "round_result": {"enum": ["win", "loss", "incomplete", "unknown"]},
+          "mode_guess": {"enum": ["ranked_general", "friend_focus", "unknown"]},
+          "verify_timestamps": {"type": "array", "items": {"type": "number", "minimum": 0}},
+          "classification": {"enum": ["observed", "inferred", "unknown"]},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+          "notes": {"type": ["string", "null"]}
+        }
+      }
+    }
+  }
+}
