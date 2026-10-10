@@ -29,12 +29,12 @@
 
 ## ユーザー確認済み（2026-10-11）
 
-- プレイヤー表示名: Octopus。ゲームパッチ: 本人未把握のため暫定で2.0401（2026-10-11のWeb検索、要再確認）。ライブAPI予算: ¥2,000以内の指定を受け`api_budget_usd: 13.0`（1ドル150円換算、安全側）に設定。いずれも`config.yaml`（Git管理外）へ反映し、plan_job.pyの再生成で動作確認済み。
-- 操作タイプ（モダン/クラシック）はまだ未回答。
+- プレイヤー表示名: Octopus。操作タイプ: クラシック。ゲームパッチ: 本人未把握のため暫定で2.0401（2026-10-11のWeb検索、要再確認）。ライブAPI予算: ¥2,000以内の指定を受け`api_budget_usd: 13.0`（1ドル150円換算、安全側）に設定。いずれも`config.yaml`（Git管理外）へ反映し、plan_job.pyの再生成で動作確認済み。
+- **Sf6ReviewGitHubOidcスタックをユーザー自身が実行し`CREATE_COMPLETE`で成功**。trust policyがStringEquals厳密一致（`repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master`のみ）であることを確認。ロールARN: `arn:aws:iam::516035591962:role/GitHubActions-Sf6ReviewDeploy`。
+- `.env`を作成済み。Gemini APIキーの取得・設定をユーザーへ依頼中（Google AI Studioの案内を実施）。
 
 ## 未実施・ブロッカー
 
-- **Sf6ReviewGitHubOidcスタックのデプロイがClaude Code auto modeの分類器にブロックされた**。GitHubSubject値は確定済みのため、ユーザー自身の実行を依頼中（コマンドは渡し済み）。
 - AWSデプロイ/疎通（foundation側）、ECRイメージbuild/push、Fargate、Step Functionsは未実施。
 - Gemini APIキー・利用モデルはユーザー確認待ち（フレンド識別情報は分析対象を絞る段階で別途）。
 - 試合・機会・HP推定の抽出精度、実データ統計、料金/予算は未検証。
@@ -42,11 +42,10 @@
 
 ## 次のアクション
 
-1. Sf6ReviewGitHubOidcスタックのデプロイ（ユーザー実行待ち）。
-2. 操作タイプの回答、Gemini APIキーの.env設定・利用可能モデル確認・GEMINI_MODEL設定。
-3. 15分pilotで機会の成功・失敗を両方取り、手動で精度検証。
-4. 統計集計とフレンドの条件付き反応を実装。
-5. AWSの変更計画を確認し基盤とruntimeを構築。
-6. 3時間一本、次に複数アーカイブへ拡張。
+1. Gemini APIキーの.env設定・利用可能モデル確認・GEMINI_MODEL設定（ユーザー対応待ち）。
+2. 15分pilotで機会の成功・失敗を両方取り、手動で精度検証。
+3. 統計集計とフレンドの条件付き反応を実装。
+4. AWSの変更計画（foundation.json）を確認し基盤とruntimeを構築。
+5. 3時間一本、次に複数アーカイブへ拡張。
 
 詳細な検証記録: docs/validation.md。設計正本: docs/design.md / docs/statistical-analysis.md / docs/opponent-analysis.md。

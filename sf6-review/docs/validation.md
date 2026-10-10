@@ -28,12 +28,13 @@
 - プレイヤー表示名: Octopus。`config.yaml`（Git管理外、.example差分のみ追跡）に設定し、`plan_job.py --config config.yaml`で再生成・動作確認済み。
 - ゲームパッチ: 本人未把握のため、2026-10-11のWeb検索でSF6の最新パッチ（2.0401、Yasmine、2026-08-03）を確認し暫定設定。公式パッチノートでの再確認が必要で、確反・コンボ最適解の精密な判定には使わない方針を`config.yaml`のコメントに明記。
 - ライブ実行のAPI予算: 「このプロジェクトで¥2,000以内」という指定を受け、1ドル150円換算で安全側に切り下げた`api_budget_usd: 13.0`を設定。
-- 操作タイプ（モダン/クラシック）は未回答。`controls: unknown`のまま。
+- 操作タイプ: クラシック。`config.yaml`の`controls`を更新し再生成・動作確認済み。
+- **`Sf6ReviewGitHubOidc`スタックをユーザー自身が実行し、`CREATE_COMPLETE`で成功**。`aws iam get-role`でtrust policyを確認し、`StringEquals`で`token.actions.githubusercontent.com:sub`が`repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master`に厳密一致する設定になっていることを確認（ワイルドカードなし）。ロールARN: `arn:aws:iam::516035591962:role/GitHubActions-Sf6ReviewDeploy`。
+- `.env`を`.env.example`から作成（Git管理外）。Gemini APIキーの取得・設定をユーザーへ依頼中。
 
 ## 未実施・ブロッカー
 
-- **`Sf6ReviewGitHubOidc`スタックのデプロイがClaude Code auto modeの分類器にブロックされた**（IAMロール作成を含むCloudFormation deployが機密性の高い操作として拒否）。ロール自体は未作成。コマンドをユーザーへ渡し、ユーザー自身の実行を依頼中。
 - CloudFormation changeset/実デプロイ（foundation.json側）、GitHub Actions実行、Docker build、ECR登録、Fargate/Step Functions実行、Gemini API疎通、実動画の抽出と統計、費用検証は未実施。
-- 操作タイプ、Gemini APIキー・利用モデルの確定は引き続きユーザー確認待ち（下記「次のアクション」参照）。
+- Gemini APIキー・利用モデルの確定はユーザー確認待ち（下記「次のアクション」参照）。
 
 この環境にはGemini APIキーがまだない。doctorのlocal_environment_readyと実対戦解析の準備完了は別。機会検出・体力推定の精度をpilotで手動評価してから統計とアドバイスを実装する。
