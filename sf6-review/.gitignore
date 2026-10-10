@@ -1,5 +1,7 @@
 .venv/
 .env
+config.yaml
+opponents.yaml
 __pycache__/
 data/
 *.mp4

@@ -27,22 +27,26 @@
 - **（2026-10-11）** AWS STSでアカウント516035591962と一致を確認（root認証情報）。CDKToolkit bootstrap済み（version 32）。Default VPCにPublicサブネット3つ・IGW経路ありを確認し、Fargateの送信経路設計を実地裏付け。
 - **（2026-10-11）** 既存Indeedロールの信頼ポリシーとGitHub APIから、SF6用の正しいOIDC subject実値を確定: `repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master`。
 
+## ユーザー確認済み（2026-10-11）
+
+- プレイヤー表示名: Octopus。ゲームパッチ: 本人未把握のため暫定で2.0401（2026-10-11のWeb検索、要再確認）。ライブAPI予算: ¥2,000以内の指定を受け`api_budget_usd: 13.0`（1ドル150円換算、安全側）に設定。いずれも`config.yaml`（Git管理外）へ反映し、plan_job.pyの再生成で動作確認済み。
+- 操作タイプ（モダン/クラシック）はまだ未回答。
+
 ## 未実施・ブロッカー
 
-- **Sf6ReviewGitHubOidcスタックのデプロイがClaude Code auto modeの分類器にブロックされた**。GitHubSubject値は確定済みのため、ユーザー承認後に`aws cloudformation deploy`を再試行するか、ユーザー自身の実行が必要。
+- **Sf6ReviewGitHubOidcスタックのデプロイがClaude Code auto modeの分類器にブロックされた**。GitHubSubject値は確定済みのため、ユーザー自身の実行を依頼中（コマンドは渡し済み）。
 - AWSデプロイ/疎通（foundation側）、ECRイメージbuild/push、Fargate、Step Functionsは未実施。
-- 動画を解析していない。**本人の正確な表示名、操作タイプ、パッチ、Gemini APIキー・利用モデル・ライブ予算はユーザー確認待ち**（フレンド識別情報は分析対象を絞る段階で別途）。
+- Gemini APIキー・利用モデルはユーザー確認待ち（フレンド識別情報は分析対象を絞る段階で別途）。
 - 試合・機会・HP推定の抽出精度、実データ統計、料金/予算は未検証。
 - 配置先はUeter/sf6-diagnosisのsf6-review/。既存index.htmlとの結果連携は未実装（データ契約確定後に着手）。
 
 ## 次のアクション
 
-1. ユーザーから本人識別情報（表示名・操作タイプ・既知ならパッチ）とGemini APIキー・予算承認を受け取る。
-2. Sf6ReviewGitHubOidcスタックのデプロイ（ユーザー承認/実行待ち）。
-3. Gemini利用可能モデル一覧を確認し、料金・GEMINI_MODELを設定。
-4. 15分pilotで機会の成功・失敗を両方取り、手動で精度検証。
-5. 統計集計とフレンドの条件付き反応を実装。
-6. AWSの変更計画を確認し基盤とruntimeを構築。
-7. 3時間一本、次に複数アーカイブへ拡張。
+1. Sf6ReviewGitHubOidcスタックのデプロイ（ユーザー実行待ち）。
+2. 操作タイプの回答、Gemini APIキーの.env設定・利用可能モデル確認・GEMINI_MODEL設定。
+3. 15分pilotで機会の成功・失敗を両方取り、手動で精度検証。
+4. 統計集計とフレンドの条件付き反応を実装。
+5. AWSの変更計画を確認し基盤とruntimeを構築。
+6. 3時間一本、次に複数アーカイブへ拡張。
 
 詳細な検証記録: docs/validation.md。設計正本: docs/design.md / docs/statistical-analysis.md / docs/opponent-analysis.md。

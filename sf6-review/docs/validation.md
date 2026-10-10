@@ -23,10 +23,17 @@
 - Default VPC（`vpc-0e6e35246f8c573f1`）に3つのPublicサブネット（1a/1c/1d、いずれも`MapPublicIpOnLaunch=true`）とIGW（`igw-05115d48ee7269b87`）への`0.0.0.0/0`ルートを確認。NAT無しでFargateの送信経路が成立する設計を実地確認済み。
 - 既存`GitHubActions-IndeedAiAssistantDeploy`ロールの信頼ポリシーを確認し、OIDC subjectがID付き形式（`repo:Ueter@86462382/indeed-ai-assistant@1388593329:...`）であることを確認。GitHub APIで`sf6-diagnosis`のrepo IDが`1355560250`、ownerの`Ueter`のuser IDが`86462382`であることを確認し、`infra/github-oidc.json`の`GitHubSubject`パラメータは2つの許容値のうち`repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master`が正しいことを確定（推測ではなく実値照合）。
 
+## ユーザー確認済み（2026-10-11）
+
+- プレイヤー表示名: Octopus。`config.yaml`（Git管理外、.example差分のみ追跡）に設定し、`plan_job.py --config config.yaml`で再生成・動作確認済み。
+- ゲームパッチ: 本人未把握のため、2026-10-11のWeb検索でSF6の最新パッチ（2.0401、Yasmine、2026-08-03）を確認し暫定設定。公式パッチノートでの再確認が必要で、確反・コンボ最適解の精密な判定には使わない方針を`config.yaml`のコメントに明記。
+- ライブ実行のAPI予算: 「このプロジェクトで¥2,000以内」という指定を受け、1ドル150円換算で安全側に切り下げた`api_budget_usd: 13.0`を設定。
+- 操作タイプ（モダン/クラシック）は未回答。`controls: unknown`のまま。
+
 ## 未実施・ブロッカー
 
-- **`Sf6ReviewGitHubOidc`スタックのデプロイがClaude Code auto modeの分類器にブロックされた**（IAMロール作成を含むCloudFormation deployが機密性の高い操作として拒否）。ロール自体は未作成。ユーザーの承認・別経路での実行が必要。
+- **`Sf6ReviewGitHubOidc`スタックのデプロイがClaude Code auto modeの分類器にブロックされた**（IAMロール作成を含むCloudFormation deployが機密性の高い操作として拒否）。ロール自体は未作成。コマンドをユーザーへ渡し、ユーザー自身の実行を依頼中。
 - CloudFormation changeset/実デプロイ（foundation.json側）、GitHub Actions実行、Docker build、ECR登録、Fargate/Step Functions実行、Gemini API疎通、実動画の抽出と統計、費用検証は未実施。
-- 本人の正確な表示名、操作タイプ、ゲームパッチ、Gemini APIキー・利用モデル・ライブ実行の予算確定はユーザー確認待ち（下記「次のアクション」参照）。
+- 操作タイプ、Gemini APIキー・利用モデルの確定は引き続きユーザー確認待ち（下記「次のアクション」参照）。
 
 この環境にはGemini APIキーがまだない。doctorのlocal_environment_readyと実対戦解析の準備完了は別。機会検出・体力推定の精度をpilotで手動評価してから統計とアドバイスを実装する。
