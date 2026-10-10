@@ -30,11 +30,13 @@
 - ライブ実行のAPI予算: 「このプロジェクトで¥2,000以内」という指定を受け、1ドル150円換算で安全側に切り下げた`api_budget_usd: 13.0`を設定。
 - 操作タイプ: クラシック。`config.yaml`の`controls`を更新し再生成・動作確認済み。
 - **`Sf6ReviewGitHubOidc`スタックをユーザー自身が実行し、`CREATE_COMPLETE`で成功**。`aws iam get-role`でtrust policyを確認し、`StringEquals`で`token.actions.githubusercontent.com:sub`が`repo:Ueter@86462382/sf6-diagnosis@1355560250:ref:refs/heads/master`に厳密一致する設定になっていることを確認（ワイルドカードなし）。ロールARN: `arn:aws:iam::516035591962:role/GitHubActions-Sf6ReviewDeploy`。
-- `.env`を`.env.example`から作成（Git管理外）。Gemini APIキーの取得・設定をユーザーへ依頼中。
+- `.env`を`.env.example`から作成（Git管理外）。
+- **インシデント**: ユーザーがAI Studio画面のテキストをそのまま`.env`に貼り付け、確認用スクリプトの出力にキーの断片がそのままターミナルへ表示される事故が発生。ユーザーへ当該キーの失効・再発行を依頼し、`.env`は正規表現で安全に再構成（値を一切表示しないスクリプトで実施）。以後、`.env`の値を読む処理はbool/lengthのみ出力し、値そのものは一切printしない運用を徹底。
+- Gemini APIキー（再発行後のもの）を設定・`length=53`で存在確認（値は非表示）。`google-genai`で`client.models.list()`疎通成功。動画対応・multimodal・1Mトークンコンテキストの安定版モデルとして`gemini-2.5-flash`を選定（`gemini-flash-latest`等のエイリアスはモデルが無断で切り替わり再現性を損なうため不採用）。2026-10-11のWeb検索で単価を確認: 入力（text/image/video）$0.30/1Mトークン、出力$2.50/1Mトークン。公式動画トークン化レート（約263トークン/秒@1fps）から15分pilot全体の概算コストは1ドル未満（スキャン900秒×1fps + 詳細最大5試合×180秒×5fps + 出力）と見積もり、予算$13に対して十分な余裕を確認。`config.yaml`・`.env`の`GEMINI_MODEL`に設定。
 
 ## 未実施・ブロッカー
 
-- CloudFormation changeset/実デプロイ（foundation.json側）、GitHub Actions実行、Docker build、ECR登録、Fargate/Step Functions実行、Gemini API疎通、実動画の抽出と統計、費用検証は未実施。
-- Gemini APIキー・利用モデルの確定はユーザー確認待ち（下記「次のアクション」参照）。
+- CloudFormation changeset/実デプロイ（foundation.json側）、GitHub Actions実行、Docker build、ECR登録、Fargate/Step Functions実行、実動画の抽出と統計、費用検証（ライブ実行後の実額確認）は未実施。
+- 0〜900秒の実際のGemini呼び出し（index生成）はこれから実施。
 
 この環境にはGemini APIキーがまだない。doctorのlocal_environment_readyと実対戦解析の準備完了は別。機会検出・体力推定の精度をpilotで手動評価してから統計とアドバイスを実装する。
